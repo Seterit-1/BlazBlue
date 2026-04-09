@@ -577,13 +577,21 @@ function switchTab(tabId) {
         currentPane.classList.remove('active', 'tab-leave');
 
         /* Фаза 2: fade-in новой вкладки */
-        targetPane.classList.add('active', 'tab-enter');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+       targetPane.classList.add('active');                     // сначала display:block
+window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        targetPane.addEventListener('animationend', () => {
+// два RAF = ждём пока браузер применит display:block
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        targetPane.classList.add('tab-enter');
+
+        // надёжный таймер вместо animationend
+        setTimeout(() => {
             targetPane.classList.remove('tab-enter');
             isTabSwitching = false;
-        }, { once: true });
+        }, ENTER_MS + 50);                              // 850 + 50 = 900 мс
+    });
+});
 
     }, LEAVE_MS);
 }

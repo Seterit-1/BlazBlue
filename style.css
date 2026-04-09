@@ -1145,8 +1145,7 @@ button {
 
 /* Базовые состояния */
 .tab-pane          { display: none; opacity: 0; }
-.tab-pane.active   { display: block; }
-
+.tab-pane.active   { display: block; opacity: 1; }
 /* Фаза входа — плавное появление с blur */
 .tab-pane.tab-enter {
     animation: tabEnterAnim 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;

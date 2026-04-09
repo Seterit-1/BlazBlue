@@ -1,104 +1,62 @@
-/* ════════════════════════════════════════════════════════════
-   КАК ПОДКЛЮЧИТЬ ЭТОТ ФАЙЛ К HTML:
-   
-   В секции <head> вашего HTML-файла добавьте тег:
-   
-       <link rel="stylesheet" href="style.css">
-   
-   ▸ <link>              — тег для подключения внешних ресурсов
-   ▸ rel="stylesheet"    — говорит браузеру: "это таблица стилей"
-   ▸ href="style.css"    — путь к файлу:
-       - Если оба файла в одной папке → href="style.css"
-       - Если CSS в папке css/        → href="css/style.css"
-       - Если CSS в родительской папке→ href="../style.css"
-   
-   Файл ДОЛЖЕН называться точно так же, как указано в href!
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   CSS ПЕРЕМЕННЫЕ — цветовая гамма из скриншота
+   (тёмно-синяя/фиолетовая ночная палитра)
+   ═══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
 
-
-/* ════════════════════════════════════════════════════════════
-   1. CSS ПЕРЕМЕННЫЕ (Custom Properties)
-   
-   :root — это псевдокласс, соответствующий корневому элементу
-   документа (<html>). Переменные объявленные здесь доступны
-   ВЕЗДЕ в CSS через функцию var(--имя-переменной).
-   
-   Зачем: если нужно поменять основной цвет — меняем в одном
-   месте, а не ищем по всему файлу.
-   ════════════════════════════════════════════════════════════ */
 :root {
-    /* Основная цветовая палитра */
-    --clr-bg:       #0a0a0f;   /* фон страницы */
-    --clr-bg2:      #0f0f18;   /* немного светлее для секций */
-    --clr-red:      #c0392b;   /* фирменный красный BlazBlue */
-    --clr-red-glow: #e74c3c;   /* красный для свечений */
-    --clr-gold:     #f0c040;   /* золотой для акцентов */
-    --clr-text:     #e8e8f0;   /* основной цвет текста */
-    --clr-text-dim: #888899;   /* приглушённый текст */
-    --clr-border:   #2a2a3a;   /* цвет рамок */
+    --clr-bg:         #070b17;
+    --clr-bg2:        #0b1225;
+    --clr-surface:    #0f1a35;
+    --clr-blue:       #1565c0;
+    --clr-blue-light: #42a5f5;
+    --clr-blue-glow:  #74c0fc;
+    --clr-teal:       #0d9488;
+    --clr-teal-glow:  #2dd4bf;
+    --clr-white:      #e2e8f0;
+    --clr-text:       #ccd6f6;
+    --clr-text-dim:   #8892b0;
+    --clr-border:     #1e3461;
+    --clr-gold:       #38bdf8;
 
-    /* Типографика */
-    --font-main:  'Segoe UI', Arial, sans-serif;
-    --font-size:  16px;
+    /* Псевдонимы для совместимости */
+    --clr-red:        #1565c0;
+    --clr-red-glow:   #42a5f5;
 
-    /* Скругления */
+    --font-main:    'Rajdhani', 'Segoe UI', Arial, sans-serif;
+    --font-display: 'Big Shoulders Display', sans-serif;
+    --font-logo:    'Orbitron', sans-serif;
+
     --radius-sm:  4px;
     --radius-md:  8px;
     --radius-lg:  16px;
-
-    /* Переходы */
     --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   2. CSS RESET + БАЗОВЫЕ СТИЛИ
-   
-   * { ... } — универсальный селектор, применяется ко ВСЕМ
-   элементам страницы.
-   
-   box-sizing: border-box — border и padding включаются
-   в ширину/высоту элемента (без этого всё "разъезжается").
-   
-   margin: 0; padding: 0 — сбрасываем отступы браузера,
-   у разных браузеров они разные.
-   ════════════════════════════════════════════════════════════ */
-*,
-*::before,
-*::after {
+/* ═══════════════════════════════════════════
+   RESET
+   ═══════════════════════════════════════════ */
+*, *::before, *::after {
     box-sizing: border-box;
-    margin:  0;
+    margin: 0;
     padding: 0;
 }
 
-/* html и body — корневые контейнеры страницы */
 html {
-    /* scroll-behavior: smooth — плавная прокрутка при клике
-       на якорные ссылки типа href="#section" */
     scroll-behavior: smooth;
-    font-size: var(--font-size);
+    font-size: 16px;
 }
 
 body {
     font-family: var(--font-main);
-    background-color: var(--clr-bg);
+    background: var(--clr-bg);
     color: var(--clr-text);
-
-    /* overflow-x: hidden — прячет горизонтальную полосу прокрутки
-       (нужно, т.к. некоторые анимации выходят за края) */
     overflow-x: hidden;
-
-    /* min-height: 100vh — страница минимум на весь экран */
     min-height: 100vh;
 }
 
-/* Стили для ссылок */
-a {
-    color: inherit;
-    text-decoration: none;
-}
+a { color: inherit; text-decoration: none; }
 
-/* Кнопки без стандартных браузерных стилей */
 button {
     cursor: pointer;
     border: none;
@@ -106,336 +64,319 @@ button {
     font-family: var(--font-main);
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   3. SCROLLBAR — кастомная полоса прокрутки
-   
-   ::-webkit-scrollbar — работает в Chrome, Edge, Safari.
-   (Firefox использует scrollbar-color, scrollbar-width)
-   ════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 8px; }
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--clr-bg); }
 ::-webkit-scrollbar-thumb {
-    background: var(--clr-red);
-    border-radius: 4px;
+    background: var(--clr-blue);
+    border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
-    background: var(--clr-red-glow);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--clr-blue-light); }
+* { scrollbar-color: var(--clr-blue) var(--clr-bg); scrollbar-width: thin; }
 
-/* Firefox */
-* {
-    scrollbar-color: var(--clr-red) var(--clr-bg);
-    scrollbar-width: thin;
-}
-
-
-/* ════════════════════════════════════════════════════════════
-   4. ФОНОВЫЕ ЧАСТИЦЫ
-   
-   position: fixed — элемент остаётся на месте при прокрутке,
-   "прибит" к окну браузера.
-   
-   z-index: 0 — слой 0, позади всего контента.
-   pointer-events: none — клики "проходят насквозь".
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   ФОНОВЫЕ ЧАСТИЦЫ
+   ═══════════════════════════════════════════ */
 .particle-bg {
     position: fixed;
-    inset: 0;          /* shorthand для top:0; right:0; bottom:0; left:0 */
+    inset: 0;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
 }
 
-/* Отдельная частица */
 .particle {
     position: absolute;
-    border-radius: 50%;   /* круг */
-    background: var(--clr-red);
+    border-radius: 50%;
+    background: var(--clr-blue-light);
     animation: floatUp linear infinite;
 }
 
-/* Анимация подъёма частицы */
 @keyframes floatUp {
-    0%   { transform: translateY(0)   scale(1);   opacity: 0.3; }
-    50%  { transform: translateY(-40vh) scale(1.5); opacity: 0.6; }
+    0%   { transform: translateY(0) scale(1);   opacity: 0.25; }
+    50%  { transform: translateY(-40vh) scale(1.5); opacity: 0.5; }
     100% { transform: translateY(-80vh) scale(0.5); opacity: 0; }
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   5. ШАПКА САЙТА (header)
-   
-   position: sticky — "прилипает" к верху экрана при прокрутке,
-   но до этого ведёт себя как обычный элемент.
-   
-   z-index: 100 — поверх всего остального контента.
-   
-   backdrop-filter: blur() — размытие фона ПОД элементом
-   (эффект "матового стекла" / glassmorphism).
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   ШАПКА
+   ═══════════════════════════════════════════ */
 .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px); /* Safari */
-    background: rgba(10, 10, 15, 0.85);
-    border-bottom: 1px solid var(--clr-red);
-
-    /* box-shadow — тень.
-       Формат: offset-x offset-y blur spread color */
-    box-shadow: 0 2px 30px rgba(192, 57, 43, 0.3);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(7, 11, 23, 0.92);
+    border-bottom: 2px solid var(--clr-blue);
+    box-shadow: 0 2px 40px rgba(21, 101, 192, 0.35);
 }
 
-/* Внутренний контейнер шапки */
 .header-inner {
     max-width: 1400px;
-    margin: 0 auto;     /* центрирование блока */
+    margin: 0 auto;
     padding: 0 2rem;
-    height: 70px;
-
-    /* display: flex — flexbox-контейнер.
-       Дочерние элементы выстраиваются в ряд.
-       align-items — выравнивание по вертикали.
-       justify-content — выравнивание по горизонтали. */
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 2rem;
 }
 
-/* Логотип */
+/* ═══════════════════════════════════════════
+   ЛОГОТИП (левый верхний угол)
+   Воссоздаём надпись с скриншота
+   ═══════════════════════════════════════════ */
 .header-logo {
     display: flex;
-    flex-direction: column; /* элементы в колонку */
-    line-height: 1.1;
+    align-items: center;
+    gap: 0.8rem;
+    flex-shrink: 0;
 }
 
-.logo-bb {
-    font-size: 1.4rem;
-    font-weight: 900;
-    letter-spacing: 0.2em;
-    color: var(--clr-gold);
-
-    /* text-shadow — тень текста. Можно задать несколько
-       через запятую для эффекта свечения. */
-    text-shadow:
-        0 0 10px rgba(240, 192, 64, 0.8),
-        0 0 30px rgba(240, 192, 64, 0.4);
+/* SVG треугольник с "A" внутри */
+.logo-svg {
+    width: 52px;
+    height: 46px;
+    filter: drop-shadow(0 0 6px rgba(116, 192, 252, 0.7));
+    flex-shrink: 0;
 }
 
-.logo-ee {
-    font-size: 0.65rem;
-    letter-spacing: 0.35em;
-    color: var(--clr-red-glow);
-    text-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
-}
-
-/* Навигация */
-.header-nav {
+.logo-text-block {
     display: flex;
-    gap: 2rem; /* gap — отступ между элементами flex/grid */
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1;
 }
 
-.header-nav a {
+.logo-blazblue {
+    font-family: var(--font-logo);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--clr-white);
+    text-shadow:
+        0 0 8px rgba(116, 192, 252, 0.9),
+        0 0 20px rgba(116, 192, 252, 0.5);
+}
+
+/* "ENTROPY EFFECT" — шрифт как на скриншоте */
+.logo-entropy {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    color: var(--clr-white);
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow:
+        0 0 15px rgba(116, 192, 252, 0.6),
+        0 0 40px rgba(21, 101, 192, 0.4);
+}
+
+/* ═══════════════════════════════════════════
+   ВКЛАДКИ (TABS) В ШАПКЕ
+   ═══════════════════════════════════════════ */
+.tab-nav {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    height: 100%;
+}
+
+.tab-btn {
+    position: relative;
+    padding: 0 1.6rem;
+    height: 100%;
+    font-family: var(--font-display);
     font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    font-weight: 800;
+    letter-spacing: 0.18em;
     color: var(--clr-text-dim);
     text-transform: uppercase;
-    padding: 0.5rem 0;
-    position: relative;
+    background: none;
+    cursor: pointer;
+    border: none;
     transition: color var(--transition);
+    /* Нижняя линия-индикатор */
+    border-bottom: 3px solid transparent;
 }
 
-/* Псевдоэлемент ::after — декоративная линия под ссылкой */
-.header-nav a::after {
-    content: '';             /* обязательно для псевдоэлементов */
+.tab-btn::after {
+    content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -3px;
     left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--clr-red-glow);
-    transition: width var(--transition);
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--clr-blue), var(--clr-blue-glow));
+    box-shadow: 0 0 12px var(--clr-blue-light);
+    transform: scaleX(0);
+    transition: transform var(--transition);
 }
 
-/* :hover — стиль при наведении мыши */
-.header-nav a:hover {
-    color: var(--clr-text);
+.tab-btn:hover { color: var(--clr-white); }
+
+.tab-btn.active {
+    color: var(--clr-gold);
 }
 
-.header-nav a:hover::after {
-    width: 100%;             /* линия "выезжает" слева направо */
+.tab-btn.active::after {
+    transform: scaleX(1);
 }
 
+/* ═══════════════════════════════════════════
+   СОДЕРЖИМОЕ ВКЛАДОК
+   ═══════════════════════════════════════════ */
+.tab-pane {
+    display: none;
+    animation: fadeTab 0.35s ease;
+}
 
-/* ════════════════════════════════════════════════════════════
-   6. HERO СЕКЦИЯ
-   
-   position: relative — позволяет дочерним элементам с
-   position: absolute позиционироваться относительно неё.
-   
-   min-height: 100vh — минимум на весь экран (100% высоты
-   viewport).
-   ════════════════════════════════════════════════════════════ */
+.tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeTab {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   HERO СЕКЦИЯ (вкладка "Главная")
+   ═══════════════════════════════════════════ */
 .hero {
     position: relative;
     z-index: 1;
-    min-height: 100vh;
+    min-height: calc(100vh - 80px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6rem 2rem;
+    padding: 5rem 2rem;
     overflow: hidden;
-
-    /* Многослойный фон:
-       1й слой — радиальный градиент (красное свечение)
-       2й слой — линейный градиент (затемнение)
-       3й слой — сетка (CSS паттерн) */
     background:
-        radial-gradient(ellipse 60% 80% at 70% 50%,
-                        rgba(192, 57, 43, 0.15) 0%,
+        radial-gradient(ellipse 70% 80% at 65% 50%,
+                        rgba(21, 101, 192, 0.18) 0%,
                         transparent 70%),
-        linear-gradient(135deg,
-                        rgba(10, 10, 15, 0.95) 0%,
-                        rgba(15, 10, 20, 0.9) 100%),
-        repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 50px,
-            rgba(255,255,255,0.015) 50px,
-            rgba(255,255,255,0.015) 51px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 50px,
-            rgba(255,255,255,0.015) 50px,
-            rgba(255,255,255,0.015) 51px
-        );
+        radial-gradient(ellipse 40% 60% at 30% 60%,
+                        rgba(13, 148, 136, 0.1) 0%,
+                        transparent 60%),
+        linear-gradient(165deg, #070b17 0%, #0b1528 50%, #08101f 100%),
+        repeating-linear-gradient(0deg, transparent, transparent 60px,
+            rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px,
+            rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px);
 }
 
-/* Текстовая часть hero */
 .hero-text {
     position: relative;
     z-index: 2;
     text-align: center;
-    max-width: 700px;
+    max-width: 750px;
 }
 
 .hero-label {
-    font-size: 0.8rem;
-    letter-spacing: 0.4em;
-    color: var(--clr-red-glow);
+    font-family: var(--font-logo);
+    font-size: 0.72rem;
+    letter-spacing: 0.5em;
+    color: var(--clr-blue-light);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(116, 192, 252, 0.5);
+}
+
+/* Заголовок — стиль как "ENTROPY EFFECT" со скриншота */
+.hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: 0.02em;
+    color: var(--clr-white);
+    text-shadow:
+        0 0 40px rgba(21, 101, 192, 0.5),
+        0 4px 20px rgba(0,0,0,0.8);
     margin-bottom: 1.5rem;
     text-transform: uppercase;
 }
 
-/* Заголовок H1 */
-.hero-title {
-    font-size: clamp(3rem, 8vw, 7rem);
-    /* clamp(min, preferred, max) — адаптивный размер шрифта.
-       Не меньше 3rem, не больше 7rem, предпочтительно 8% от
-       ширины окна. */
-    font-weight: 900;
-    line-height: 0.9;
-    letter-spacing: -0.02em;
-    color: var(--clr-text);
-    text-shadow: 0 0 60px rgba(192, 57, 43, 0.4);
-    margin-bottom: 1.5rem;
-}
-
-/* Слово EFFECT — выделяем красным */
-.hero-title span {
-    color: var(--clr-red-glow);
+.hero-title .accent {
+    color: var(--clr-gold);
     text-shadow:
-        0 0 20px rgba(231, 76, 60, 0.9),
-        0 0 60px rgba(231, 76, 60, 0.5);
+        0 0 20px rgba(56, 189, 248, 0.9),
+        0 0 60px rgba(56, 189, 248, 0.5),
+        0 4px 20px rgba(0,0,0,0.8);
 }
 
 .hero-sub {
+    font-family: var(--font-main);
     font-size: 1rem;
+    font-weight: 500;
     color: var(--clr-text-dim);
     line-height: 1.7;
     margin-bottom: 2.5rem;
+    letter-spacing: 0.05em;
 }
 
-/* Кнопка CTA */
 .btn-primary {
     display: inline-block;
-    padding: 1rem 2.5rem;
-    background: var(--clr-red);
+    padding: 0.9rem 2.5rem;
+    background: linear-gradient(135deg, var(--clr-blue) 0%, #0d47a1 100%);
     color: #fff;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-weight: 800;
     font-size: 0.9rem;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    border: 2px solid var(--clr-red);
+    border: 2px solid var(--clr-blue-light);
     border-radius: var(--radius-sm);
     transition: all var(--transition);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 20px rgba(21, 101, 192, 0.4);
 }
 
-/* Блик на кнопке — псевдоэлемент ::before */
 .btn-primary::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-
-    /* Диагональный блик */
-    background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255,255,255,0.1) 50%,
-        transparent 70%
-    );
-
-    /* translateX(-100%) — спрятан за левым краем кнопки */
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
     transform: translateX(-100%);
     transition: transform 0.5s ease;
 }
 
-.btn-primary:hover::before {
-    transform: translateX(100%); /* блик "проезжает" по кнопке */
-}
+.btn-primary:hover::before { transform: translateX(100%); }
 
 .btn-primary:hover {
     background: transparent;
-    color: var(--clr-red-glow);
-    box-shadow:
-        0 0 20px rgba(231, 76, 60, 0.5),
-        inset 0 0 20px rgba(231, 76, 60, 0.1);
-    transform: translateY(-3px); /* кнопка "приподнимается" */
+    color: var(--clr-blue-glow);
+    box-shadow: 0 0 30px rgba(66, 165, 245, 0.5), inset 0 0 20px rgba(66, 165, 245, 0.1);
+    transform: translateY(-3px);
 }
 
-/* Декоративные кольца */
+/* Декор */
 .hero-deco {
     position: absolute;
-    right: 8%;
+    right: 7%;
     top: 50%;
     transform: translateY(-50%);
-    width: 400px;
-    height: 400px;
+    width: 380px;
+    height: 380px;
     pointer-events: none;
 }
 
 .hero-ring {
     position: absolute;
     border-radius: 50%;
-    border: 1px solid rgba(192, 57, 43, 0.3);
+    border: 1px solid rgba(21, 101, 192, 0.3);
     animation: spinRing linear infinite;
 }
 
-/* inset — задаём все 4 стороны одновременно:
-   inset: 10px = top:10px; right:10px; bottom:10px; left:10px */
-.r1 { inset: 0;    animation-duration: 20s; }
-.r2 { inset: 40px; animation-duration: 15s; animation-direction: reverse; border-color: rgba(231, 76, 60, 0.2); }
-.r3 { inset: 80px; animation-duration: 10s; border-color: rgba(240, 192, 64, 0.2); }
+.r1 { inset: 0;    animation-duration: 22s; }
+.r2 { inset: 45px; animation-duration: 16s; animation-direction: reverse; border-color: rgba(66, 165, 245, 0.2); }
+.r3 { inset: 90px; animation-duration: 11s; border-color: rgba(56, 189, 248, 0.25); }
 
 @keyframes spinRing {
     from { transform: rotate(0deg); }
@@ -448,32 +389,34 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 5rem;
-    filter: drop-shadow(0 0 30px var(--clr-red-glow));
     animation: pulse 3s ease-in-out infinite;
+}
+
+.hero-center img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 25px var(--clr-blue-glow));
+    opacity: 0.9;
 }
 
 @keyframes pulse {
     0%, 100% { transform: scale(1); opacity: 0.8; }
-    50%       { transform: scale(1.1); opacity: 1; }
+    50%       { transform: scale(1.08); opacity: 1; }
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   7. СЕКЦИЯ ПЕРСОНАЖЕЙ
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   СЕКЦИЯ ПЕРСОНАЖЕЙ
+   ═══════════════════════════════════════════ */
 .char-section {
     position: relative;
     z-index: 1;
-    padding: 6rem 0;
+    padding: 5rem 0;
     background: var(--clr-bg2);
-
-    /* Горизонтальная красная линия сверху */
-    border-top: 2px solid var(--clr-red);
-    box-shadow: 0 -10px 40px rgba(192, 57, 43, 0.2);
+    border-top: 2px solid var(--clr-blue);
+    box-shadow: 0 -8px 40px rgba(21, 101, 192, 0.2);
 }
 
-/* Обёртка заголовка секции */
 .section-title-wrap {
     display: flex;
     align-items: center;
@@ -483,43 +426,35 @@ button {
     padding: 0 2rem;
 }
 
-/* Декоративные горизонтальные линии по бокам от заголовка */
 .title-line {
-    flex: 1;         /* растягивается, занимая доступное место */
+    flex: 1;
     max-width: 200px;
     height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--clr-red)
-    );
+    background: linear-gradient(90deg, transparent, var(--clr-blue-light));
 }
 
-/* Вторая линия — зеркальный градиент */
 .title-line:last-child {
-    background: linear-gradient(
-        90deg,
-        var(--clr-red),
-        transparent
-    );
+    background: linear-gradient(90deg, var(--clr-blue-light), transparent);
 }
 
+/* Заголовки секций — стиль как на скриншоте */
 .section-title {
-    font-size: 1.6rem;
+    font-family: var(--font-display);
+    font-size: 1.8rem;
     font-weight: 900;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
     color: var(--clr-gold);
-    text-shadow: 0 0 20px rgba(240, 192, 64, 0.4);
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
     white-space: nowrap;
+    text-transform: uppercase;
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   8. ФИЛЬТРЫ
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   ФИЛЬТРЫ
+   ═══════════════════════════════════════════ */
 .filter-bar {
     display: flex;
-    flex-wrap: wrap;    /* перенос на новую строку при нехватке места */
+    flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: center;
     padding: 0 2rem;
@@ -527,10 +462,11 @@ button {
 }
 
 .filter {
-    padding: 0.5rem 1.2rem;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    padding: 0.45rem 1.2rem;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
     color: var(--clr-text-dim);
     border: 1px solid var(--clr-border);
     border-radius: var(--radius-sm);
@@ -540,26 +476,21 @@ button {
 }
 
 .filter:hover {
-    color: var(--clr-text);
-    border-color: var(--clr-red);
-    background: rgba(192, 57, 43, 0.1);
+    color: var(--clr-white);
+    border-color: var(--clr-blue-light);
+    background: rgba(21, 101, 192, 0.12);
 }
 
-/* Активный фильтр */
 .filter.active {
-    background: var(--clr-red);
-    border-color: var(--clr-red);
+    background: linear-gradient(135deg, var(--clr-blue), #0d47a1);
+    border-color: var(--clr-blue-light);
     color: #fff;
-    box-shadow: 0 0 15px rgba(192, 57, 43, 0.5);
+    box-shadow: 0 0 15px rgba(21, 101, 192, 0.5);
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   9. КАРУСЕЛЬ ПЕРСОНАЖЕЙ
-   
-   Имитирует экран выбора персонажа из игры:
-   центральный персонаж крупный и яркий, боковые — меньше.
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   КАРУСЕЛЬ
+   ═══════════════════════════════════════════ */
 .carousel-wrap {
     position: relative;
     display: flex;
@@ -572,10 +503,9 @@ button {
     overflow: hidden;
 }
 
-/* Сцена — контейнер панелей */
 .carousel-stage {
     display: flex;
-    align-items: flex-end;  /* выравнивание по низу (как в игре) */
+    align-items: flex-end;
     justify-content: center;
     gap: 6px;
     width: 100%;
@@ -583,47 +513,29 @@ button {
     position: relative;
 }
 
-/* ── БАЗОВЫЕ СТИЛИ ОДНОЙ ПАНЕЛИ ── */
 .c-panel {
     position: relative;
     border-radius: 3px;
     overflow: hidden;
     cursor: pointer;
-
-    /* display: flex — чтобы центрировать содержимое */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
     padding-bottom: 1.2rem;
-
-    /* CSS-переменные --cc и --cg задаются через JavaScript:
-       panel.style.setProperty('--cc', char.color) */
-    background: linear-gradient(
-        180deg,
-        transparent 0%,
-        var(--cc, #333) 60%,
-        rgba(0,0,0,0.8) 100%
-    );
-    border: 1px solid rgba(255,255,255,0.05);
-
+    background: linear-gradient(180deg, transparent 0%, var(--cc, #1565c0) 60%, rgba(0,0,0,0.85) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
 }
 
-/* Псевдоэлемент-фон панели */
 .panel-bg-grad {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        0deg,
-        rgba(0,0,0,0.7) 0%,
-        transparent 50%
-    );
+    background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 50%);
     z-index: 0;
 }
 
-/* Вертикальная светящаяся линия (как в игре) */
 .panel-glow-line {
     position: absolute;
     top: 0;
@@ -631,187 +543,162 @@ button {
     transform: translateX(-50%);
     width: 2px;
     height: 0;
-    background: var(--cg, #fff);
-    box-shadow: 0 0 10px var(--cg, #fff);
+    background: var(--cg, #42a5f5);
+    box-shadow: 0 0 10px var(--cg, #42a5f5);
     transition: height 0.4s ease;
     z-index: 1;
 }
 
-/* Иконка персонажа */
-.panel-icon-big {
+/* Изображение персонажа в панели карусели */
+.panel-char-img {
     position: relative;
     z-index: 2;
-    font-size: 3rem;
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px var(--cg, #42a5f5));
     transition: all 0.4s ease;
-    filter: drop-shadow(0 0 10px var(--cg, #fff));
 }
 
-/* Имя персонажа */
 .panel-char-name {
     position: relative;
     z-index: 2;
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 800;
     letter-spacing: 0.1em;
     color: #fff;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     margin-top: 0.5rem;
+    text-transform: uppercase;
 }
 
 .panel-char-role {
     position: relative;
     z-index: 2;
-    font-size: 0.6rem;
-    color: var(--cg, #aaa);
-    letter-spacing: 0.08em;
+    font-family: var(--font-main);
+    font-size: 0.58rem;
+    color: var(--cg, #74c0fc);
+    letter-spacing: 0.06em;
     margin-top: 0.2rem;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
-/* ── ПОЗИЦИОНИРОВАНИЕ ПАНЕЛЕЙ ── */
-
-/* Центральная — самая большая */
+/* Позиции панелей */
 .c-panel.center {
-    width: 160px;
+    width: 165px;
     height: 400px;
     z-index: 5;
-    background:
-        linear-gradient(180deg,
-            var(--cc, #333) 0%,
-            rgba(0,0,0,0.6) 100%);
-
-    /* Рамка с красным свечением */
-    border: 2px solid var(--cg, red);
+    background: linear-gradient(180deg, var(--cc, #1565c0) 0%, rgba(0,0,0,0.65) 100%);
+    border: 2px solid var(--cg, #42a5f5);
     box-shadow:
-        0 0 30px var(--cg, red),
-        0 0 60px rgba(0,0,0,0.8),
+        0 0 30px var(--cg, #42a5f5),
+        0 0 70px rgba(0,0,0,0.8),
         inset 0 0 30px rgba(0,0,0,0.4);
 }
 
-/* Активная панель — светящаяся линия сверху */
-.c-panel.center .panel-glow-line {
-    height: 100%;
-    opacity: 0.6;
-}
+.c-panel.center .panel-glow-line { height: 100%; opacity: 0.55; }
 
-.c-panel.center .panel-icon-big {
-    font-size: 5rem;
-    filter: drop-shadow(0 0 25px var(--cg, #fff));
-}
-
-.c-panel.center .panel-char-role {
-    opacity: 1;
-}
-
-/* Ближние боковые панели */
-.c-panel.left-1,
-.c-panel.right-1 {
-    width: 120px;
-    height: 320px;
-    z-index: 4;
-    opacity: 0.75;
-    filter: brightness(0.7);
-}
-
-/* Дальние боковые панели */
-.c-panel.left-2,
-.c-panel.right-2 {
+.c-panel.center .panel-char-img {
     width: 90px;
-    height: 250px;
-    z-index: 3;
-    opacity: 0.5;
-    filter: brightness(0.5);
+    height: 90px;
+    filter: drop-shadow(0 0 25px var(--cg, #42a5f5));
 }
 
-/* Наведение на любую панель */
+.c-panel.center .panel-char-role { opacity: 1; }
+
+.c-panel.left-1,
+.c-panel.right-1 { width: 120px; height: 320px; z-index: 4; opacity: 0.72; filter: brightness(0.65); }
+
+.c-panel.left-2,
+.c-panel.right-2 { width: 88px; height: 250px; z-index: 3; opacity: 0.48; filter: brightness(0.45); }
+
 .c-panel:not(.center):hover {
-    filter: brightness(0.9);
-    opacity: 0.9;
+    filter: brightness(0.88);
+    opacity: 0.88;
     transform: scaleY(1.03);
 }
 
-/* ── КНОПКИ НАВИГАЦИИ ── */
+/* Кнопки навигации */
 .nav-btn {
     position: relative;
     z-index: 10;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--clr-red);
-    color: var(--clr-red-glow);
+    border: 2px solid var(--clr-blue-light);
+    color: var(--clr-blue-glow);
     font-size: 1rem;
-    background: rgba(10, 10, 15, 0.8);
+    background: rgba(7, 11, 23, 0.85);
     transition: all var(--transition);
     flex-shrink: 0;
+    font-family: var(--font-main);
 }
 
 .nav-btn:hover {
-    background: var(--clr-red);
+    background: var(--clr-blue);
     color: #fff;
-    box-shadow: 0 0 20px rgba(192, 57, 43, 0.6);
+    box-shadow: 0 0 20px rgba(21, 101, 192, 0.6);
     transform: scale(1.1);
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   10. ДЕТАЛЬНАЯ ПАНЕЛЬ ВЫБРАННОГО ПЕРСОНАЖА
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   ДЕТАЛЬНАЯ ПАНЕЛЬ ПЕРСОНАЖА
+   ═══════════════════════════════════════════ */
 .detail-panel {
     max-width: 1100px;
     margin: 0 auto 5rem;
     padding: 2.5rem;
     display: grid;
-
-    /* grid-template-columns — две колонки:
-       1fr = 1 доля свободного пространства
-       Левая занимает 2/3, правая 1/3 */
     grid-template-columns: 2fr 1fr;
     gap: 3rem;
     align-items: center;
-
-    background: rgba(15, 15, 25, 0.8);
+    background: rgba(11, 18, 37, 0.9);
     border: 1px solid var(--clr-border);
     border-radius: var(--radius-lg);
     backdrop-filter: blur(10px);
     box-shadow:
         0 0 1px rgba(255,255,255,0.05),
-        0 20px 60px rgba(0,0,0,0.5);
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 40px rgba(21, 101, 192, 0.1);
 }
 
-/* Метка персонажа (PROTOTYPE, GUNSLINGER, ...) */
 .dp-tag {
     display: inline-block;
     padding: 0.25rem 0.8rem;
+    font-family: var(--font-display);
     font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
+    font-weight: 800;
+    letter-spacing: 0.22em;
     color: #fff;
     border-radius: var(--radius-sm);
     margin-bottom: 0.8rem;
     text-transform: uppercase;
-    transition: background var(--transition);
 }
 
 .dp-name {
-    font-size: 2.2rem;
+    font-family: var(--font-display);
+    font-size: 2.4rem;
     font-weight: 900;
-    color: var(--clr-text);
-    letter-spacing: 0.03em;
-    line-height: 1.1;
+    color: var(--clr-white);
+    letter-spacing: 0.02em;
+    line-height: 1;
     margin-bottom: 0.4rem;
-    transition: color var(--transition);
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(116, 192, 252, 0.3);
 }
 
 .dp-role {
+    font-family: var(--font-main);
     font-size: 0.8rem;
+    font-weight: 600;
     color: var(--clr-text-dim);
-    letter-spacing: 0.15em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     margin-bottom: 1.8rem;
 }
 
-/* Строка характеристики */
 .stat-row {
     display: flex;
     align-items: center;
@@ -820,65 +707,68 @@ button {
 }
 
 .stat-label {
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 800;
     letter-spacing: 0.1em;
     color: var(--clr-text-dim);
-    width: 30px;
+    width: 32px;
     text-align: right;
 }
 
-/* Фоновая полоска */
 .stat-bar {
     flex: 1;
     height: 6px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.07);
     border-radius: 3px;
     overflow: hidden;
 }
 
-/* Заполненная часть полоски */
 .stat-fill {
     height: 100%;
     border-radius: 3px;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stat-val {
+    font-family: var(--font-main);
     font-size: 0.75rem;
     font-weight: 700;
-    width: 25px;
+    width: 28px;
     color: var(--clr-text-dim);
 }
 
-/* Описание */
 .dp-desc {
-    font-size: 0.9rem;
+    font-family: var(--font-main);
+    font-size: 0.92rem;
+    font-weight: 500;
     color: var(--clr-text-dim);
-    line-height: 1.7;
+    line-height: 1.75;
     margin: 1.5rem 0;
-    border-left: 2px solid var(--clr-red);
+    border-left: 2px solid var(--clr-blue-light);
     padding-left: 1rem;
 }
 
-/* Сложность */
 .diff-row {
-    font-size: 0.75rem;
+    font-family: var(--font-main);
+    font-size: 0.78rem;
     color: var(--clr-text-dim);
     margin-bottom: 0.8rem;
     letter-spacing: 0.05em;
 }
 
-/* Теги способностей */
 .ab-tag {
     display: inline-block;
     padding: 0.3rem 0.8rem;
-    font-size: 0.7rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 800;
     border: 1px solid;
     border-radius: var(--radius-sm);
     margin: 0.2rem;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     transition: all var(--transition);
+    text-transform: uppercase;
 }
 
 .ab-tag:hover {
@@ -886,7 +776,6 @@ button {
     transform: translateY(-1px);
 }
 
-/* Правая сторона — иконка персонажа со спотлайтом */
 .dp-right {
     display: flex;
     justify-content: center;
@@ -903,27 +792,28 @@ button {
     justify-content: center;
 }
 
-/* Радиальное свечение (меняется цвет под персонажа) */
 .dp-glow {
     position: absolute;
     inset: -30px;
     border-radius: 50%;
-    transition: background 0.5s ease;
     animation: glowPulse 3s ease-in-out infinite;
 }
 
 @keyframes glowPulse {
-    0%, 100% { transform: scale(1); opacity: 0.7; }
+    0%, 100% { transform: scale(1);   opacity: 0.65; }
     50%       { transform: scale(1.1); opacity: 1; }
 }
 
-/* Большой эмодзи-иконка персонажа */
-.dp-char-icon {
+/* Большое изображение персонажа */
+.dp-char-img {
     position: relative;
     z-index: 2;
-    font-size: 7rem;
-    transition: all 0.4s ease;
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
     animation: iconFloat 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px var(--clr-blue-glow));
+    transition: filter 0.4s ease;
 }
 
 @keyframes iconFloat {
@@ -931,177 +821,21 @@ button {
     50%       { transform: translateY(-12px); }
 }
 
-/* Платформа под иконкой */
 .dp-platform {
     position: relative;
     z-index: 2;
     width: 120px;
     height: 8px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--clr-red),
-        transparent
-    );
+    background: linear-gradient(90deg, transparent, var(--clr-blue-light), transparent);
     border-radius: 50%;
     margin-top: 1rem;
-    opacity: 0.6;
+    opacity: 0.5;
     filter: blur(3px);
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   11. СЕТКА КАРТОЧЕК ПЕРСОНАЖЕЙ
-   
-   CSS Grid — создаёт таблично-сеточный макет.
-   repeat(auto-fill, minmax(200px, 1fr)) означает:
-   - заполнить ряд как можно большим количеством колонок
-   - каждая колонка — минимум 200px, максимум 1fr (равные доли)
-   Это делает сетку АВТОМАТИЧЕСКИ адаптивной!
-   ════════════════════════════════════════════════════════════ */
-.char-grid {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.2rem;
-}
-
-/* Карточка персонажа */
-.char-card {
-    position: relative;
-    background: rgba(15, 15, 25, 0.9);
-    border: 1px solid var(--clr-border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    cursor: pointer;
-
-    /* Плавные переходы для transform и box-shadow */
-    transition: all var(--transition);
-
-    /* Подключаем CSS-переменные персонажа (задаются в JS) */
-    /* --cc = основной цвет, --cg = цвет свечения */
-}
-
-/* Цветная полоска сверху карточки */
-.card-top-glow {
-    height: 3px;
-    background: linear-gradient(
-        90deg,
-        var(--cc, #333),
-        var(--cg, #666),
-        var(--cc, #333)
-    );
-    transition: height var(--transition);
-}
-
-.char-card:hover .card-top-glow {
-    height: 5px;
-}
-
-/* Иконка */
-.card-icon-wrap {
-    padding: 1.5rem 1.5rem 0.5rem;
-    text-align: center;
-}
-
-.card-icon {
-    font-size: 2.5rem;
-    filter: drop-shadow(0 0 10px var(--cg, #fff));
-    transition: filter var(--transition);
-}
-
-/* Содержимое карточки */
-.card-body {
-    padding: 0 1.2rem 0.8rem;
-    text-align: center;
-}
-
-.card-tag {
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    color: var(--cg, var(--clr-red));
-    text-transform: uppercase;
-    margin-bottom: 0.3rem;
-    transition: color var(--transition);
-}
-
-.card-name {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--clr-text);
-    margin-bottom: 0.2rem;
-    transition: color var(--transition);
-}
-
-.card-role {
-    font-size: 0.7rem;
-    color: var(--clr-text-dim);
-    margin-bottom: 0.4rem;
-}
-
-.card-diff {
-    font-size: 0.75rem;
-    color: var(--clr-gold);
-}
-
-/* Кнопка выбора */
-.card-select-btn {
-    display: block;
-    text-align: center;
-    padding: 0.5rem;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    color: var(--clr-text-dim);
-    border-top: 1px solid var(--clr-border);
-    transition: all var(--transition);
-    text-transform: uppercase;
-}
-
-/* ── HOVER-СОСТОЯНИЕ КАРТОЧКИ ── */
-.char-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--cg, var(--clr-red));
-    box-shadow:
-        0 10px 30px rgba(0,0,0,0.4),
-        0 0 0 1px var(--cg, var(--clr-red)),
-        0 0 25px rgba(0,0,0,0.3);
-}
-
-.char-card:hover .card-icon {
-    filter: drop-shadow(0 0 20px var(--cg, #fff));
-}
-
-.char-card:hover .card-select-btn {
-    color: var(--cg, var(--clr-red));
-    border-color: var(--cg, var(--clr-red));
-}
-
-/* ── ВЫБРАННАЯ КАРТОЧКА ── */
-.char-card.is-selected {
-    border-color: var(--cg, var(--clr-red));
-    background: rgba(25, 15, 15, 0.95);
-    box-shadow:
-        0 0 20px var(--cg, var(--clr-red)),
-        0 0 40px rgba(0,0,0,0.5);
-}
-
-.char-card.is-selected .card-top-glow {
-    height: 4px;
-}
-
-.char-card.is-selected .card-select-btn {
-    color: #fff;
-    background: var(--cc, var(--clr-red));
-    border-color: transparent;
-}
-
-
-/* ════════════════════════════════════════════════════════════
-   12. СЕКЦИЯ "ОБ ИГРЕ"
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   СЕКЦИЯ ОБ ИГРЕ
+   ═══════════════════════════════════════════ */
 .about-section {
     position: relative;
     z-index: 1;
@@ -1119,21 +853,21 @@ button {
 .about-text {
     max-width: 700px;
     margin: 1.5rem auto 4rem;
+    font-family: var(--font-main);
     font-size: 1rem;
+    font-weight: 500;
     color: var(--clr-text-dim);
-    line-height: 1.8;
+    line-height: 1.85;
+    letter-spacing: 0.03em;
 }
 
-/* Сетка особенностей игры */
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    /* auto-fit похож на auto-fill, но "схлопывает" пустые колонки */
     gap: 1.5rem;
     margin-top: 2rem;
 }
 
-/* Карточка особенности */
 .feature-card {
     padding: 2rem 1.5rem;
     background: rgba(255,255,255,0.02);
@@ -1144,53 +878,64 @@ button {
 }
 
 .feature-card:hover {
-    background: rgba(192, 57, 43, 0.08);
-    border-color: var(--clr-red);
+    background: rgba(21, 101, 192, 0.08);
+    border-color: var(--clr-blue-light);
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
 .feature-icon {
-    font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
+.feature-icon img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px var(--clr-blue-light));
+}
+
 .feature-card h3 {
+    font-family: var(--font-display);
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--clr-gold);
     margin-bottom: 0.8rem;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .feature-card p {
-    font-size: 0.85rem;
+    font-family: var(--font-main);
+    font-size: 0.88rem;
+    font-weight: 500;
     color: var(--clr-text-dim);
-    line-height: 1.6;
+    line-height: 1.65;
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   13. ФУТЕР
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   ФУТЕР
+   ═══════════════════════════════════════════ */
 .site-footer {
     position: relative;
     z-index: 1;
     text-align: center;
     padding: 3rem 2rem;
-    background: rgba(5, 5, 10, 0.95);
+    background: rgba(4, 6, 14, 0.97);
     border-top: 1px solid var(--clr-border);
 }
 
 .site-footer p {
+    font-family: var(--font-main);
     font-size: 0.8rem;
+    font-weight: 500;
     color: var(--clr-text-dim);
     letter-spacing: 0.05em;
     margin-bottom: 0.3rem;
 }
 
 .footer-note {
-    color: rgba(136, 136, 153, 0.5) !important;
+    color: rgba(136, 146, 176, 0.45) !important;
     font-size: 0.7rem !important;
 }
 
@@ -1200,59 +945,45 @@ button {
     padding: 0.5rem 1.5rem;
     border: 1px solid var(--clr-border);
     border-radius: var(--radius-sm);
+    font-family: var(--font-display);
     font-size: 0.75rem;
+    font-weight: 800;
     color: var(--clr-text-dim);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     transition: all var(--transition);
 }
 
 .back-to-top:hover {
-    border-color: var(--clr-red);
-    color: var(--clr-red-glow);
-    box-shadow: 0 0 10px rgba(192, 57, 43, 0.3);
+    border-color: var(--clr-blue-light);
+    color: var(--clr-gold);
+    box-shadow: 0 0 10px rgba(21, 101, 192, 0.35);
 }
 
+/* ═══════════════════════════════════════════
+   АДАПТИВНОСТЬ
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .logo-entropy { font-size: 1rem; }
+    .tab-btn { padding: 0 1rem; font-size: 0.75rem; letter-spacing: 0.1em; }
+}
 
-/* ════════════════════════════════════════════════════════════
-   14. АДАПТИВНОСТЬ (Responsive Design)
-   
-   @media — медиазапрос. Код внутри применяется только при
-   выполнении условия (обычно ширина экрана).
-   
-   max-width: 768px означает: "если экран ≤ 768px (телефон)"
-   ════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-    /* Прячем декоративные кольца на мобильном */
     .hero-deco { display: none; }
-
-    /* Детальная панель — меняем на одну колонку */
-    .detail-panel {
-        grid-template-columns: 1fr;
-        padding: 1.5rem;
-    }
-
-    /* Правая часть (иконка) идёт выше на мобильном */
+    .detail-panel { grid-template-columns: 1fr; padding: 1.5rem; }
     .dp-right { order: -1; }
-
-    /* Уменьшаем иконку */
-    .dp-char-icon { font-size: 5rem; }
-
-    /* Карусель — уменьшаем высоту */
+    .dp-char-img { width: 110px; height: 110px; }
     .carousel-wrap { height: 320px; }
     .c-panel.center { width: 120px; height: 300px; }
-    .c-panel.left-1,
-    .c-panel.right-1 { width: 90px; height: 240px; }
-    .c-panel.left-2,
-    .c-panel.right-2 { width: 65px; height: 190px; }
-
-    /* Заголовок сайта */
-    .header-nav { display: none; } /* убираем навигацию */
+    .c-panel.left-1, .c-panel.right-1 { width: 88px; height: 235px; }
+    .c-panel.left-2, .c-panel.right-2 { width: 62px; height: 180px; }
+    .logo-blazblue { font-size: 0.65rem; }
+    .logo-entropy { font-size: 0.85rem; }
+    .logo-svg { width: 40px; height: 36px; }
 }
 
 @media (max-width: 480px) {
-    .hero-title { font-size: clamp(2.5rem, 10vw, 4rem); }
-
-    /* Прячем дальние панели на маленьком экране */
-    .c-panel.left-2,
-    .c-panel.right-2 { display: none; }
+    .c-panel.left-2, .c-panel.right-2 { display: none; }
+    .tab-btn { padding: 0 0.7rem; font-size: 0.68rem; }
+    .header-inner { padding: 0 1rem; }
 }

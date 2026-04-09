@@ -5,8 +5,427 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlazBlue: Entropy Effect</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       INTRO SCREEN
+       ══════════════════════════════════════════ */
+    .intro-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #070b17;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0;
+        transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .intro-screen.intro-exit {
+        opacity: 0;
+        transform: scale(1.04);
+        pointer-events: none;
+    }
+    .intro-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    .intro-svg {
+        width: 90px;
+        height: 80px;
+        filter: drop-shadow(0 0 18px rgba(116,192,252,0.9));
+        animation: introLogoSpin 2s ease-in-out forwards;
+    }
+    @keyframes introLogoSpin {
+        0%   { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+        60%  { opacity: 1; transform: scale(1.08) rotate(2deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    .intro-blazblue {
+        font-family: 'Orbitron', monospace, sans-serif;
+        font-size: 0.8rem;
+        letter-spacing: 0.45em;
+        color: rgba(226,232,240,0.85);
+        text-shadow: 0 0 12px rgba(116,192,252,0.8);
+        text-transform: uppercase;
+        animation: introFadeUp 0.6s 0.4s both;
+    }
+    .intro-entropy {
+        font-family: 'Big Shoulders Display', sans-serif;
+        font-size: 2.6rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        color: #e2e8f0;
+        text-transform: uppercase;
+        text-shadow: 0 0 30px rgba(116,192,252,0.6);
+        animation: introFadeUp 0.6s 0.6s both;
+        line-height: 1;
+    }
+    @keyframes introFadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .intro-divider {
+        width: 260px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(116,192,252,0.5), transparent);
+        margin: 0.5rem 0;
+        animation: introFadeUp 0.4s 0.8s both;
+    }
+    .intro-bar-wrap {
+        width: 260px;
+        height: 3px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 2px;
+        overflow: hidden;
+        animation: introFadeUp 0.4s 0.9s both;
+    }
+    .intro-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #1565c0, #74c0fc);
+        border-radius: 2px;
+        transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: 0 0 10px rgba(116,192,252,0.7);
+    }
+    .intro-status {
+        font-family: 'Courier New', monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        color: rgba(116,192,252,0.7);
+        min-height: 1.2em;
+        animation: introFadeUp 0.4s 1s both;
+    }
+    .intro-skip {
+        position: absolute;
+        bottom: 2rem;
+        right: 2rem;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        color: rgba(136,146,176,0.4);
+        cursor: pointer;
+        border: 1px solid rgba(136,146,176,0.15);
+        padding: 0.35rem 0.9rem;
+        border-radius: 3px;
+        transition: all 0.3s;
+        animation: introFadeUp 0.4s 1.5s both;
+    }
+    .intro-skip:hover { color: rgba(116,192,252,0.7); border-color: rgba(116,192,252,0.3); }
+
+    /* ══════════════════════════════════════════
+       TOAST УВЕДОМЛЕНИЯ
+       ══════════════════════════════════════════ */
+    .toast-container {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9990;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+        align-items: center;
+        pointer-events: none;
+    }
+    .toast {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: #e2e8f0;
+        background: rgba(11,18,37,0.95);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-left: 3px solid #74c0fc;
+        border-radius: 4px;
+        padding: 0.55rem 1.2rem 0.55rem 0.9rem;
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateY(12px) scale(0.95);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        pointer-events: none;
+    }
+    .toast.toast-show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    .toast.toast-hide {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.95);
+    }
+    .toast-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       ПОИСК ПЕРСОНАЖЕЙ
+       ══════════════════════════════════════════ */
+    .search-wrap {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.2rem;
+        padding: 0 2rem;
+    }
+    .char-search {
+        width: 100%;
+        max-width: 340px;
+        padding: 0.55rem 1rem 0.55rem 2.4rem;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #ccd6f6;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid #1e3461;
+        border-radius: 4px;
+        outline: none;
+        transition: all 0.3s ease;
+        caret-color: #74c0fc;
+    }
+    .char-search::placeholder { color: rgba(136,146,176,0.4); }
+    .char-search:focus {
+        border-color: #42a5f5;
+        background: rgba(21,101,192,0.08);
+        box-shadow: 0 0 15px rgba(21,101,192,0.25);
+    }
+    .search-icon {
+        position: absolute;
+        left: calc(50% - 155px);
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1rem;
+        color: rgba(116,192,252,0.5);
+        pointer-events: none;
+    }
+    .search-no-result {
+        text-align: center;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.15em;
+        color: rgba(136,146,176,0.4);
+        padding: 0.3rem 0;
+        min-height: 1.4em;
+    }
+
+    /* ══════════════════════════════════════════
+       КНОПКА СЛУЧАЙНОГО ПЕРСОНАЖА
+       ══════════════════════════════════════════ */
+    .filter.random-btn {
+        background: linear-gradient(135deg, rgba(21,101,192,0.15), rgba(13,148,136,0.12));
+        border-color: rgba(116,192,252,0.35);
+        color: #74c0fc;
+        position: relative;
+        overflow: hidden;
+    }
+    .filter.random-btn:hover {
+        border-color: #74c0fc;
+        background: rgba(21,101,192,0.2);
+        color: #fff;
+        box-shadow: 0 0 18px rgba(116,192,252,0.35);
+    }
+    .filter.random-btn .dice-icon {
+        display: inline-block;
+        animation: diceSpin 0.4s ease;
+    }
+    @keyframes diceSpin {
+        0%   { transform: rotate(0deg) scale(1); }
+        50%  { transform: rotate(180deg) scale(1.3); }
+        100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* ══════════════════════════════════════════
+       СЧЁТЧИКИ НА ГЛАВНОЙ
+       ══════════════════════════════════════════ */
+    .hero-counters {
+        display: flex;
+        gap: 2.5rem;
+        justify-content: center;
+        margin-top: 2.5rem;
+        flex-wrap: wrap;
+    }
+    .hc-item {
+        text-align: center;
+        position: relative;
+    }
+    .hc-item::after {
+        content: '';
+        position: absolute;
+        right: -1.25rem;
+        top: 20%;
+        height: 60%;
+        width: 1px;
+        background: rgba(116,192,252,0.2);
+    }
+    .hc-item:last-child::after { display: none; }
+    .hc-num {
+        font-family: 'Big Shoulders Display', sans-serif;
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #38bdf8;
+        line-height: 1;
+        text-shadow: 0 0 20px rgba(56,189,248,0.5);
+        letter-spacing: 0.02em;
+    }
+    .hc-label {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        color: rgba(136,146,176,0.65);
+        text-transform: uppercase;
+        margin-top: 0.2rem;
+    }
+
+    /* ══════════════════════════════════════════
+       ИНДИКАТОР РЕЖИМА ФОНА
+       ══════════════════════════════════════════ */
+    .bg-mode-indicator {
+        position: fixed;
+        bottom: 1.2rem;
+        right: 1.4rem;
+        z-index: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(7,11,23,0.75);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 0.35rem 0.8rem;
+        backdrop-filter: blur(10px);
+        transition: opacity 0.3s;
+    }
+    .bg-mode-indicator:hover { opacity: 0.95; }
+    .bmi-label {
+        font-family: 'Courier New', monospace;
+        font-size: 0.58rem;
+        letter-spacing: 0.15em;
+        color: rgba(136,146,176,0.45);
+        text-transform: uppercase;
+    }
+    .bmi-dots {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+    .bmi-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(136,146,176,0.22);
+        transition: all 0.5s ease;
+        cursor: default;
+    }
+    .bmi-dot.active {
+        background: #74c0fc;
+        box-shadow: 0 0 6px rgba(116,192,252,0.8);
+        transform: scale(1.25);
+    }
+    .bmi-mode-name {
+        font-family: 'Courier New', monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.12em;
+        color: rgba(116,192,252,0.55);
+        min-width: 24px;
+        text-align: left;
+    }
+
+    /* ══════════════════════════════════════════
+       КЛАВИАТУРНАЯ ПОДСКАЗКА
+       ══════════════════════════════════════════ */
+    .keyboard-hint {
+        text-align: center;
+        font-family: 'Courier New', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: rgba(136,146,176,0.3);
+        margin-top: -2rem;
+        margin-bottom: 2rem;
+    }
+    .kbd {
+        display: inline-block;
+        border: 1px solid rgba(136,146,176,0.2);
+        border-radius: 3px;
+        padding: 0.05rem 0.35rem;
+        font-size: 0.62rem;
+        margin: 0 2px;
+        color: rgba(136,146,176,0.4);
+    }
+
+    /* END-тема адаптации */
+    :root.theme-end .intro-bar {
+        background: linear-gradient(90deg, #8b0000, #ff3300);
+        box-shadow: 0 0 10px rgba(255,50,0,0.7);
+    }
+    :root.theme-end .toast {
+        background: rgba(13,0,0,0.95);
+        border-left-color: #ff3300;
+    }
+    :root.theme-end .bmi-dot.active {
+        background: #ff4400;
+        box-shadow: 0 0 6px rgba(255,60,0,0.8);
+    }
+    :root.theme-end .hc-num {
+        color: #ff7722;
+        text-shadow: 0 0 20px rgba(255,80,0,0.5);
+    }
+    :root.theme-end .char-search:focus {
+        border-color: #cc1500;
+        box-shadow: 0 0 15px rgba(200,0,0,0.25);
+    }
+    </style>
 </head>
 <body>
+
+<!-- ════════ INTRO SCREEN ════════ -->
+<div class="intro-screen" id="introScreen">
+    <div class="intro-inner">
+        <svg class="intro-svg" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,4 96,82 4,82" fill="none"
+                stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linejoin="round"/>
+            <line x1="4" y1="82" x2="96" y2="82"
+                stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
+            <polyline points="50,22 68,64 32,64" fill="none"
+                stroke="rgba(255,255,255,0.88)" stroke-width="2" stroke-linejoin="round"/>
+            <line x1="38" y1="53" x2="62" y2="53"
+                stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
+        </svg>
+        <div class="intro-blazblue">─ BLAZBLUE ─</div>
+        <div class="intro-entropy">ENTROPY EFFECT</div>
+        <div class="intro-divider"></div>
+        <div class="intro-bar-wrap">
+            <div class="intro-bar" id="introBar"></div>
+        </div>
+        <div class="intro-status" id="introStatus">INITIALIZING...</div>
+    </div>
+    <button class="intro-skip" id="introSkip">ПРОПУСТИТЬ</button>
+</div>
+
+<!-- ════════ TOAST CONTAINER ════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ════════ BG MODE INDICATOR ════════ -->
+<div class="bg-mode-indicator" id="bgModeIndicator">
+    <span class="bmi-label">BG</span>
+    <div class="bmi-dots">
+        <span class="bmi-dot active" data-mode="0" title="Digital Rain"></span>
+        <span class="bmi-dot" data-mode="1" title="Hex Grid"></span>
+        <span class="bmi-dot" data-mode="2" title="Void Rings"></span>
+        <span class="bmi-dot" data-mode="3" title="Neural Web"></span>
+    </div>
+    <span class="bmi-mode-name" id="bmiModeName">RAIN</span>
+</div>
 
 <canvas id="bgCanvasA"></canvas>
 <canvas id="bgCanvasB"></canvas>
@@ -50,6 +469,7 @@
 
 <main>
 
+    <!-- ════════ ГЛАВНАЯ ════════ -->
     <div class="tab-pane active" id="tab-home" role="tabpanel">
         <section class="hero">
             <div class="hero-text">
@@ -62,6 +482,26 @@
                     в процедурно генерируемых уровнях
                 </p>
                 <button class="btn-primary" id="goToChars">⚔ ВЫБРАТЬ ПЕРСОНАЖА</button>
+
+                <!-- НОВОЕ: анимированные счётчики -->
+                <div class="hero-counters" id="heroCounters">
+                    <div class="hc-item">
+                        <div class="hc-num" data-target="13" id="cntChars">0</div>
+                        <div class="hc-label">Персонажей</div>
+                    </div>
+                    <div class="hc-item">
+                        <div class="hc-num" data-target="5" id="cntTypes">0</div>
+                        <div class="hc-label">Стилей боя</div>
+                    </div>
+                    <div class="hc-item">
+                        <div class="hc-num" data-target="2" id="cntGuest">0</div>
+                        <div class="hc-label">Гостевых</div>
+                    </div>
+                    <div class="hc-item">
+                        <div class="hc-num" data-target="4" id="cntBg">0</div>
+                        <div class="hc-label">Режима фона</div>
+                    </div>
+                </div>
             </div>
 
             <div class="hero-deco">
@@ -93,6 +533,7 @@
         </section>
     </div>
 
+    <!-- ════════ ПЕРСОНАЖИ ════════ -->
     <div class="tab-pane" id="tab-characters" role="tabpanel">
         <section class="char-section">
             <div class="section-title-wrap">
@@ -100,6 +541,16 @@
                 <h2 class="section-title">ВЫБОР ПЕРСОНАЖА</h2>
                 <span class="title-line"></span>
             </div>
+
+            <!-- НОВОЕ: поиск -->
+            <div class="search-wrap">
+                <span class="search-icon">⌕</span>
+                <input type="text" class="char-search" id="charSearch"
+                       placeholder="ПОИСК: ИМЯ / РОЛЬ / ТЕГ..."
+                       autocomplete="off" spellcheck="false">
+            </div>
+            <div class="search-no-result" id="searchNoResult"></div>
+
             <div class="filter-bar">
                 <button class="filter active" data-filter="all">ВСЕ</button>
                 <button class="filter" data-filter="melee">БЛИЖНИЙ БОЙ</button>
@@ -107,12 +558,24 @@
                 <button class="filter" data-filter="tank">ТАНК</button>
                 <button class="filter" data-filter="control">КОНТРОЛЬ</button>
                 <button class="filter" data-filter="guest">ГОСТЕВЫЕ</button>
+                <!-- НОВОЕ: случайный -->
+                <button class="filter random-btn" id="randomChar">
+                    <span class="dice-icon" id="diceIcon">⚄</span> СЛУЧАЙНЫЙ
+                </button>
             </div>
+
             <div class="carousel-wrap">
                 <button class="nav-btn" id="navPrev">&#9664;</button>
                 <div class="carousel-stage" id="carouselStage"></div>
                 <button class="nav-btn" id="navNext">&#9654;</button>
             </div>
+
+            <!-- НОВОЕ: подсказка клавиатурной навигации -->
+            <div class="keyboard-hint">
+                <span class="kbd">←</span> <span class="kbd">→</span>
+                &nbsp;навигация клавиатурой
+            </div>
+
             <div class="detail-panel" id="detailPanel">
                 <div class="dp-left">
                     <div class="dp-tag" id="dpTag">—</div>
@@ -133,6 +596,7 @@
         </section>
     </div>
 
+    <!-- ════════ ОБ ИГРЕ ════════ -->
     <div class="tab-pane" id="tab-about" role="tabpanel">
         <section class="about-section">
             <div class="about-inner">
@@ -180,21 +644,7 @@
 <script>
 
 /* ═══════════════════════════════════════════
-   ДАННЫЕ ПЕРСОНАЖЕЙ — РАСШИРЕННЫЕ КАРТОЧКИ
-   Стиль описания соответствует характеру:
-   • Рагна     — агрессивный жирный шрифт, красные акценты
-   • Джин      — холодный моноширинный, синие тона
-   • Ноэль     — мягкий курсив, зелёные пастельные тона
-   • Таокака   — хаотичный, жёлтые всплески
-   • Рэйчел    — аристократический Georgia/serif, фиолетовый
-   • Хакумэн   — тяжёлый капслок, стальной серый
-   • Эс        — техничный моноширинный, бирюза
-   • Коконоэ   — псевдокод, оранжевый
-   • Май       — тёплый курсив, розовый
-   • Хибики    — тихий, тёмно-серый
-   • Лямбда    — фрагментированный лог, холодная бирюза
-   • ICEY      — энергичный, золотой
-   • Узник     — адаптивный, серебристый
+   ДАННЫЕ ПЕРСОНАЖЕЙ
    ═══════════════════════════════════════════ */
 const characters = [
     {
@@ -212,30 +662,16 @@ const characters = [
       text-shadow:0 0 12px #e74c3c88;">
   УНИЧТОЖИТЬ ВСЕХ. ТОЧКА.
 </span><br><br>
-
-Ragnaмашет двуручным тесаком и использует
+Ragna машет двуручным тесаком и использует
 <strong style="color:#e74c3c;">Azure Grimoire</strong> —
 проклятую правую руку, пожирающую душу врагов.
 Каждый удар активирует пассивный
-<span style="font-family:'Courier New',monospace;
-             font-size:0.88em;color:#ff8888;">Soul&nbsp;Eater</span>:
-часть нанесённого урона возвращается к нему как
-<em>восстановление HP</em>.<br><br>
-
-Ключевая черта: чем <strong style="color:#ff4444;">ниже полоса здоровья</strong>,
-тем <em>разрушительнее</em> становятся его атаки.
+<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#ff8888;">Soul&nbsp;Eater</span>:
+часть нанесённого урона возвращается как <em>восстановление HP</em>.<br><br>
+Чем <strong style="color:#ff4444;">ниже полоса здоровья</strong>,
+тем <em>разрушительнее</em> его атаки.
 При критически низком HP активируется режим
-<span style="font-weight:900;font-size:1.05em;color:#ff2222;
-             text-shadow:0 0 10px #ff000099;">BERSERKER</span> —
-урон и скорость атаки резко возрастают.<br><br>
-
-Сигнатурные приёмы: <strong>Inferno&nbsp;Divider</strong>
-<em style="color:#aaa;font-size:0.9em;">(огненный апперкот)</em>,
-<strong>Dead&nbsp;Spike</strong>
-<em style="color:#aaa;font-size:0.9em;">(тёмная волна из земли)</em>,
-<strong>Gauntlet&nbsp;Hades</strong>
-<em style="color:#aaa;font-size:0.9em;">(таранный рывок)</em>.<br><br>
-
+<span style="font-weight:900;font-size:1.05em;color:#ff2222;text-shadow:0 0 10px #ff000099;">BERSERKER</span>.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
   «Заткнись и дерись. Мне некогда с тобой разговаривать.»
 </span>`,
@@ -248,7 +684,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'jin',
         name: 'Jin Kisaragi',
@@ -259,35 +694,16 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#5dade2',
         stats: { atk: 80, def: 60, spd: 75, hp: 70 },
         desc: `
-<span style="font-family:'Courier New',monospace;
-      font-size:0.9em;letter-spacing:2px;color:#5dade2;">
+<span style="font-family:'Courier New',monospace;font-size:0.9em;letter-spacing:2px;color:#5dade2;">
 [ ИНИЦИАЛИЗАЦИЯ — ПЕРВЫЙ ЛЕЙТЕНАНТ НОЛ ]<br>
 [ СТАТУС: БОЕВАЯ ГОТОВНОСТЬ ]
 </span><br><br>
-
-Холодный. Расчётливый.
-<strong style="color:#aed6f1;">Абсолютно контролируемый.</strong><br><br>
-
 Меч <em>Yukianesa</em> — реликвия, реагирующая на
-<span style="color:#85c1e9;">ледяные Ars Magus</span>
-и <em>психологическое состояние владельца</em>.
+<span style="color:#85c1e9;">ледяные Ars Magus</span>.
 При контакте с врагом накладывает
-<strong style="color:#5dade2;">статус заморозки</strong>,
-многократно сковывая движение.<br><br>
-
-<span style="font-family:'Courier New',monospace;
-      font-size:0.85em;color:#5dade2;">
-Техника Hyōga&nbsp;no&nbsp;Kamosu:<br>
-каждый шаг оставляет ледяной след на полу.<br>
-Враги, наступившие на него → заморожены.
-</span><br><br>
-
-Правильное исполнение комбо-последовательностей
-даёт <strong>нарастающий бонус ATK</strong>.
-Точность здесь важнее скорости.<br>
-Сигнатура: <strong>Musō&nbsp;Battōjin</strong>
-<em style="color:#aaa;font-size:0.9em;">(вакуумный порезающий слэш)</em>.<br><br>
-
+<strong style="color:#5dade2;">статус заморозки</strong>.<br><br>
+Правильное исполнение комбо даёт <strong>нарастающий бонус ATK</strong>.
+Точность важнее скорости.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
   «Ты недостоин даже скрестить клинки со мной.»
 </span>`,
@@ -300,7 +716,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'noel',
         name: 'Noel Vermillion',
@@ -314,27 +729,11 @@ Ragnaмашет двуручным тесаком и использует
 <em style="color:#2ecc71;font-size:1.0em;">
   Нежная внешность, стальная воля — и два пистолета.
 </em><br><br>
-
 Ноэль управляет двойными пистолетами
-<strong style="color:#58d68d;">Bolverk</strong> —
-реликвией Кодекса, усиливающей её Drive-атаки.
-<em>Они не просто оружие</em> — часть её самой.<br><br>
-
+<strong style="color:#58d68d;">Bolverk</strong>.
 Уникальная механика
-<span style="font-family:'Courier New',monospace;
-             font-size:0.88em;color:#abebc6;">Over-Exhaust</span>:
-позволяет применять навыки <strong>даже при нулевом MP</strong>
-— в обмен на часть HP.
-Рискованно, но позволяет <em>не останавливаться</em>.<br><br>
-
-Драйв <strong>Chain&nbsp;Drive</strong> запускает
-серию стремительных выстрелов, каждый из которых
-<em>снижает время перезарядки</em> следующего навыка.
-Цикл почти непрерывен при правильном ритме.<br><br>
-
-Рекомендуется новичкам:
-<em style="color:#82e0aa;">прощающий стиль с высокой мобильностью.</em><br><br>
-
+<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#abebc6;">Over-Exhaust</span>:
+навыки <strong>даже при нулевом MP</strong> — в обмен на HP.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
   «Я постараюсь! Я… обязательно справлюсь.»
 </span>`,
@@ -347,7 +746,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★☆☆'
     },
-
     {
         id: 'taokaka',
         name: 'Taokaka',
@@ -358,31 +756,12 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#f1c40f',
         stats: { atk: 70, def: 35, spd: 95, hp: 60 },
         desc: `
-<span style="font-size:1.18em;font-weight:900;color:#f1c40f;">
-  НЯА~! ВАУ ВАУ ВАУ!!!
-</span>
+<span style="font-size:1.18em;font-weight:900;color:#f1c40f;">НЯА~! ВАУ ВАУ ВАУ!!!</span>
 <span style="font-size:0.78em;color:#f39c12;"> ...тао хочет кушать.</span><br><br>
-
-Таокака — <strong style="font-size:1.06em;color:#f4d03f;">САМЫЙ БЫСТРЫЙ</strong>
-персонаж в игре. Скорость <em>95/100</em>.
-Её траектория движения настолько хаотична,
-что <em>враги буквально не успевают</em> следить
-за позицией.<br><br>
-
-Создаёт <span style="color:#f1c40f;font-weight:700;">теневые клоны</span>
-клана Кака — двойники атакуют со всех направлений
-<strong>одновременно</strong>, нарушая любую оборону.<br><br>
-
-<em>Тройной рывок</em> позволяет мгновенно
-менять дистанцию. Никаких паттернов —
-<strong>чистый звериный инстинкт.</strong><br><br>
-
-<span style="font-size:0.82em;color:#aaa;font-style:italic;">
-  Примечание: По мнению Тао, все незнакомцы —
-  либо «вкусняшки», либо «добряки».
-  Иногда сразу оба.
-</span><br><br>
-
+<strong style="font-size:1.06em;color:#f4d03f;">САМЫЙ БЫСТРЫЙ</strong> персонаж.
+Скорость <em>95/100</em>. Создаёт
+<span style="color:#f1c40f;font-weight:700;">теневые клоны</span>
+клана Кака.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
   «Тао поймает тебя! Обязательно! Ня~»
 </span>`,
@@ -395,7 +774,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★★'
     },
-
     {
         id: 'rachel',
         name: 'Rachel Alucard',
@@ -406,39 +784,15 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#a569bd',
         stats: { atk: 85, def: 50, spd: 60, hp: 70 },
         desc: `
-<span style="font-family:Georgia,'Times New Roman',serif;
-      font-size:1.05em;font-style:italic;
-      color:#c39bd3;letter-spacing:1px;">
+<span style="font-family:Georgia,serif;font-size:1.05em;font-style:italic;color:#c39bd3;">
   Как невыносимо утомительно…
 </span><br><br>
-
-<span style="font-family:Georgia,serif;">
-Рэйчел Алукард — вампирская аристократка высшего порядка,
-наблюдатель от Тёмной Стороны. Её фамильяры
-<strong style="color:#a569bd;">Наго</strong>
-<em>(чёрный кот)</em> и
-<strong style="color:#bb8fce;">Гии</strong>
-<em>(летучая мышь)</em> служат одновременно
+Вампирская аристократка. Фамильяры
+<strong style="color:#a569bd;">Наго</strong> и
+<strong style="color:#bb8fce;">Гии</strong> служат
 оружием, щитом и платформой.<br><br>
-
-Лягушка <em>Джордж&nbsp;XIII</em> генерирует
-<span style="color:#d7bde2;">молниевые разряды</span> —
-самое элегантное средство для борьбы с
-<em>чернью</em>, посмевшей приблизиться.<br><br>
-
-Управляет <strong>ветром и молнией</strong>,
-высасывает жизненную силу из врагов пассивным
-<span style="font-family:'Courier New',monospace;
-             font-size:0.87em;color:#d7bde2;">Silpheed</span>.
-Идеальна для тех, кто предпочитает
-<em style="color:#c39bd3;">дирижировать боем</em>,
-а не участвовать в нём напрямую.
-</span><br><br>
-
-<span style="font-style:italic;font-family:Georgia,serif;
-      color:#777;font-size:0.87em;">
-  «Ты думаешь, что можешь меня остановить?
-   Мне смешно. По-настоящему смешно.»
+<span style="font-style:italic;font-family:Georgia,serif;color:#777;font-size:0.87em;">
+  «Мне смешно. По-настоящему смешно.»
 </span>`,
         abilities: [
             '<strong>Наго & Гии</strong> — фамильяры-щит/атака',
@@ -449,7 +803,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'hakumen',
         name: 'Hakumen',
@@ -460,36 +813,14 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#bdc3c7',
         stats: { atk: 85, def: 95, spd: 45, hp: 95 },
         desc: `
-<span style="font-size:1.1em;font-weight:900;
-      letter-spacing:4px;color:#ecf0f1;
-      text-transform:uppercase;
-      font-family:'Courier New',monospace;
-      text-shadow:0 0 10px #bdc3c766;">
+<span style="font-size:1.1em;font-weight:900;letter-spacing:4px;color:#ecf0f1;
+      font-family:'Courier New',monospace;text-shadow:0 0 10px #bdc3c766;">
   Я — БЕЛАЯ ПУСТОТА. Я — МЕЧ ПРАВОСУДИЯ.
 </span><br><br>
-
-<strong style="color:#bdc3c7;">Хакумэн</strong> —
-воплощение самого Нуля. Облачён в
-<em>Susano'o Unit</em> — доспехи, дарующие почти
-абсолютную неуязвимость. Несёт меч
-<span style="font-weight:900;color:#ecf0f1;">Ōkami</span>,
-разрывающий ткань реальности одним ударом.<br><br>
-
-Обладает <strong style="font-size:1.05em;">
-абсолютной суперброней</strong>:
-большинство вражеских атак
-<em>не прерывают его движений</em>.
-Использует магатамы
-<span style="font-family:'Courier New',monospace;
-             font-size:0.88em;color:#a9cce3;">Magatama</span>
-как ресурс для усиленных контратак —
-<em>каждый принятый удар заряжает следующий.</em><br><br>
-
-<strong style="color:#ecf0f1;letter-spacing:2px;">
-Медленный. Непреклонный. Неостановимый.</strong><br><br>
-
+Облачён в <em>Susano'o Unit</em>. Использует магатамы — каждый принятый удар заряжает контратаку.
+<strong style="color:#ecf0f1;letter-spacing:2px;">Медленный. Непреклонный. Неостановимый.</strong><br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Правосудие не знает пощады. И я — тоже.»
+  «Правосудие не знает пощады.»
 </span>`,
         abilities: [
             '<strong>Susano\'o Unit</strong> — доспехи суперброни',
@@ -500,7 +831,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'es',
         name: 'Es',
@@ -511,37 +841,15 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#1abc9c',
         stats: { atk: 80, def: 65, spd: 65, hp: 75 },
         desc: `
-<span style="font-family:'Courier New',monospace;
-      font-size:0.88em;color:#1abc9c;letter-spacing:1px;">
+<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#1abc9c;letter-spacing:1px;">
   [ CODENAME: ES ]<br>
   [ ROLE: AZURE SHRINE MAIDEN ]<br>
   [ MISSION STATUS: ACTIVE ]
 </span><br><br>
-
-Эс — страж Лазурного Святилища, связанная с
-<strong style="color:#1abc9c;">Code: Embryo</strong>.
-Её бой строится на
-<em>геометрической точности</em>:
-мечи и кресты размещаются в пространстве,
-создавая предопределённые зоны поражения.<br><br>
-
-Система
-<span style="font-family:'Courier New',monospace;
-             font-size:0.88em;color:#76d7c4;">
-  Cross&nbsp;Combination
-</span>:
-каждый размещённый крест должен быть
-<strong>активирован в строгий временной интервал</strong>.
-Промах — цепочка прерывается.
-Попадание — урон и скорость резко растут.<br><br>
-
-Несёт в себе фрагмент
-<em style="color:#76d7c4;">Лазурного кристалла</em>
-— отсюда её <strong>нечеловеческое спокойствие</strong>
-в бою и абсолютная сосредоточенность.<br><br>
-
-<span style="font-style:italic;color:#777;font-size:0.87em;
-      font-family:'Courier New',monospace;">
+Бой строится на <em>геометрической точности</em>:
+система <span style="font-family:'Courier New',monospace;color:#76d7c4;">Cross&nbsp;Combination</span>
+требует активации крестов в строгий временной интервал.<br><br>
+<span style="font-style:italic;color:#777;font-size:0.87em;font-family:'Courier New',monospace;">
   «Я выполняю свою миссию. Этого достаточно.»
 </span>`,
         abilities: [
@@ -553,7 +861,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★★'
     },
-
     {
         id: 'kokonoe',
         name: 'Kokonoe',
@@ -564,37 +871,14 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#e67e22',
         stats: { atk: 90, def: 40, spd: 55, hp: 60 },
         desc: `
-<span style="font-family:'Courier New',monospace;
-      font-size:0.92em;color:#e67e22;">
+<span style="font-family:'Courier New',monospace;font-size:0.92em;color:#e67e22;">
   // PROFESSOR_MERCURY.EXE — ЗАПУЩЕНО<br>
   // Терпение к союзникам : NULL<br>
   // Сарказм              : ПЕРЕПОЛНЕНИЕ
 </span><br><br>
-
-<strong style="color:#e67e22;">Коконоэ Меркури</strong> —
-дочь легендарных Шести Героев,
-гений-учёный категории
-<em>«сделаю быстрее сама, без этих идиотов»</em>.<br><br>
-
-Управляет полем боя через систему
-<span style="font-family:'Courier New',monospace;
-             color:#fad7a0;">Grimalkin</span>:
-наводимые ракеты, лазерные столбы,
-орбитальные турели. Её
-<strong>зона контроля — вся карта.</strong><br><br>
-
-<span style="font-family:'Courier New',monospace;
-      font-size:0.85em;color:#f0a500;">
-  // Kill&nbsp;Streak&nbsp;Bonus:<br>
-  // +15% урон за каждое убийство<br>
-  // Накапливается до ×4.0
-</span><br><br>
-
-Хрупка физически — ей лучше <em>не подпускать
-врагов ближе</em>, чем на дальность ракеты.<br><br>
-
-<span style="font-style:italic;color:#777;font-size:0.87em;
-      font-family:'Courier New',monospace;">
+Управляет полем через систему <span style="font-family:'Courier New',monospace;color:#fad7a0;">Grimalkin</span>:
+наводимые ракеты, лазерные столбы, орбитальные турели.<br><br>
+<span style="font-style:italic;color:#777;font-size:0.87em;font-family:'Courier New',monospace;">
   // «Тупицы. Я окружена тупицами. Дайте кофе.»
 </span>`,
         abilities: [
@@ -606,7 +890,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'mai',
         name: 'Mai Natsume',
@@ -617,27 +900,10 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#e84393',
         stats: { atk: 75, def: 60, spd: 70, hp: 70 },
         desc: `
-<em style="color:#e84393;font-size:1.0em;">
-  Мягкость снаружи — и совсем другое внутри.
-</em><br><br>
-
-Май владеет магическим копьём
-<strong style="color:#f1948a;">Gallia Sphyra: Outseal</strong>,
-способным генерировать
-<span style="color:#e84393;">торнадо, ударные волны</span>
-и силовые поля. В толпе — настоящее стихийное бедствие.<br><br>
-
-Её стиль сочетает <em>плавные широкие замахи</em>
-с <strong>жёсткими зональными AoE</strong>.
-Торнадо удерживает врагов в воздухе
-<em>(stunlock)</em>, пока прямые выпады копья
-наносят <strong>основной урон по всей области</strong>.<br><br>
-
-Чем <em style="color:#f8c471;">больше врагов в зоне</em> —
-тем <strong>эффективнее</strong> каждая её атака.
-Против одиночных боссов — средняя.
-Против орды — незаменима.<br><br>
-
+<em style="color:#e84393;font-size:1.0em;">Мягкость снаружи — и совсем другое внутри.</em><br><br>
+Магическое копьё <strong style="color:#f1948a;">Gallia Sphyra: Outseal</strong> генерирует
+<span style="color:#e84393;">торнадо и ударные волны</span>.
+Чем <em style="color:#f8c471;">больше врагов в зоне</em> — тем <strong>эффективнее</strong> каждая атака.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
   «Я защищу тех, кто мне дорог. Любой ценой.»
 </span>`,
@@ -650,7 +916,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'hibiki',
         name: 'Hibiki Kohaku',
@@ -661,32 +926,14 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#5d6d7e',
         stats: { atk: 85, def: 50, spd: 85, hp: 65 },
         desc: `
-<span style="color:#85929e;font-size:0.9em;
-      letter-spacing:3px;font-family:'Courier New',monospace;">
+<span style="color:#85929e;font-size:0.9em;letter-spacing:3px;font-family:'Courier New',monospace;">
   ...он уже рядом. Вы просто ещё не знаете.
 </span><br><br>
-
-<strong style="color:#85929e;">Хибики Кохаку</strong> —
-дворецкий лорда Нэйтса и мастер
-<em>асассинских техник</em>.
-Его существование замечают <em>только в момент удара.</em><br><br>
-
-Создаёт
-<span style="color:#7f8c8d;font-weight:700;">теневые клоны</span>:
-двойники повторяют те же атаки с задержкой,
-формируя <strong>кольцо поражения</strong>
-вокруг жертвы. Правильная расстановка —
-и враг атакован со всех сторон одновременно.<br><br>
-
-Внезапные удары из невидимости дают
-<strong>критический бонус</strong> к урону.
-Стиль требует <em style="color:#aab7b8;">терпения</em>:
-сначала расставить клонов, затем нанести удар.<br><br>
-
-<span style="font-style:italic;color:#666;font-size:0.87em;
-      font-family:'Courier New',monospace;">
-  «Лорд Нэйтс не должен был это видеть.
-   Теперь — никто не должен.»
+Создаёт <span style="color:#7f8c8d;font-weight:700;">теневые клоны</span>:
+двойники атакуют с задержкой, формируя кольцо поражения.
+Внезапный удар из тени — <strong>критический бонус</strong>.<br><br>
+<span style="font-style:italic;color:#666;font-size:0.87em;font-family:'Courier New',monospace;">
+  «Теперь — никто не должен.»
 </span>`,
         abilities: [
             '<strong>Shadow Clone</strong> — двойники с задержкой',
@@ -697,7 +944,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★★'
     },
-
     {
         id: 'lambda',
         name: 'Lambda-11',
@@ -708,36 +954,14 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#17a589',
         stats: { atk: 80, def: 45, spd: 70, hp: 65 },
         desc: `
-<span style="font-family:'Courier New',monospace;
-      font-size:0.86em;color:#17a589;letter-spacing:1px;">
+<span style="font-family:'Courier New',monospace;font-size:0.86em;color:#17a589;letter-spacing:1px;">
   PRIME FIELD DEVICE Λ-11<br>
   STATUS ............. OPERATIONAL<br>
-  EMOTION MODULE ..... ——<br>
   MEMORY CORE ........ FRAGMENTED
 </span><br><br>
-
-Лямбда — клон серии Prime Field,
-созданный для… <em style="color:#76d7c4;">
-она сама не помнит, для чего.</em><br><br>
-
-Призывает
-<strong style="color:#17a589;">нематериальные клинки</strong>,
-парящие в пространстве вокруг неё.
-Расставляет их как <em>минное поле</em>,
-формируя зоны
-<span style="color:#76d7c4;">гарантированного поражения</span>.<br><br>
-
-В отличие от
-<span style="color:#aaa;font-size:0.9em;">Nu-13</span>,
-она выбрала <strong>другой путь</strong>.
-Холодная. Точная. Без лишних слов.<br><br>
-
-<em>Phantom Edge</em> — массовый залп
-всех призванных лезвий одновременно.
-Враги в зоне — <strong>уничтожены.</strong><br><br>
-
-<span style="font-style:italic;color:#666;font-size:0.87em;
-      font-family:'Courier New',monospace;">
+Призывает <strong style="color:#17a589;">нематериальные клинки</strong>.
+<em>Phantom Edge</em> — массовый залп всех лезвий одновременно.<br><br>
+<span style="font-style:italic;color:#666;font-size:0.87em;font-family:'Courier New',monospace;">
   «…тепло. Что это такое?»
 </span>`,
         abilities: [
@@ -749,7 +973,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★★☆'
     },
-
     {
         id: 'icey',
         name: 'ICEY',
@@ -760,36 +983,13 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#f4d03f',
         stats: { atk: 85, def: 55, spd: 95, hp: 70 },
         desc: `
-<span style="font-size:1.1em;font-weight:900;
-      color:#f4d03f;letter-spacing:2px;
+<span style="font-size:1.1em;font-weight:900;color:#f4d03f;letter-spacing:2px;
       text-shadow:0 0 10px #f4d03f66;">
   ★ ГОСТЕВОЙ ПЕРСОНАЖ — ВСЕЛЕННАЯ ICEY ★
 </span><br><br>
-
-Айси врывается в мир BlazBlue с
-<strong style="color:#f9e79f;">непоколебимой решимостью</strong>
-и <em>бесконечной энергией</em>.
-Её фирменный
-<span style="color:#f4d03f;font-weight:700;">Infinite Dash</span>
-позволяет рывок в
-<strong>абсолютно любом направлении</strong>
-без кулдауна — снова и снова.<br><br>
-
-Специализируется на
-<em>сломе вражеской брони</em>:
-атаки <strong>игнорируют защитные слои</strong>
-и выводят боссов из режима щита,
-открывая для союзников окно для атаки.<br><br>
-
-<span style="font-size:0.85em;color:#f0e68c;">
-  Сопровождается голосом <strong>SAI</strong> —
-  её неизменного спутника из родной вселенной.
-</span><br><br>
-
-Рекомендована новичкам:
-<em style="color:#f9e79f;">прощающая механика,
-высокая мобильность, низкий порог входа.</em><br><br>
-
+Фирменный <span style="color:#f4d03f;font-weight:700;">Infinite Dash</span> —
+рывок в любом направлении без кулдауна.
+Специализируется на <em>сломе вражеской брони</em>.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
   «SAI, следующая цель — там! Не отставай!»
 </span>`,
@@ -802,7 +1002,6 @@ Ragnaмашет двуручным тесаком и использует
         ],
         diff: '★☆☆'
     },
-
     {
         id: 'prisoner',
         name: 'The Prisoner',
@@ -813,37 +1012,15 @@ Ragnaмашет двуручным тесаком и использует
         glow: '#aab7b8',
         stats: { atk: 80, def: 60, spd: 75, hp: 80 },
         desc: `
-<span style="font-weight:700;color:#bdc3c7;
-      letter-spacing:2px;font-size:0.95em;">
+<span style="font-weight:700;color:#bdc3c7;letter-spacing:2px;font-size:0.95em;">
   ★ ГОСТЕВОЙ ПЕРСОНАЖ — DEAD CELLS
 </span><br><br>
-
-Узник — воплощение
-<strong style="color:#bdc3c7;">адаптации</strong>.
-Не имея постоянного облика, он несёт с собой
-<em>три сменных набора снаряжения</em>,
-переключаясь между стилями боя
-<strong>прямо в разгаре сражения</strong>.<br><br>
-
-Наборы:
-<span style="color:#e74c3c;font-weight:700;">Ближний</span>
-— меч и щит,
-<span style="color:#5dade2;font-weight:700;">Дальний</span>
-— лук и арбалет,
-<span style="color:#a569bd;font-weight:700;">Ловушечный</span>
-— капканы и яды.
-Каждый открывает <em>уникальные атаки</em>.<br><br>
-
-Тайминговое парирование даёт
-<strong>критический удар ×2</strong>.
-<em style="color:#aab7b8;">Смерть для него —
-лишь временное неудобство.</em>
-После каждого падения он возвращается —
-немного другим, но готовым к следующей попытке.<br><br>
-
+Три набора снаряжения: <span style="color:#e74c3c;font-weight:700;">Ближний</span>,
+<span style="color:#5dade2;font-weight:700;">Дальний</span>,
+<span style="color:#a569bd;font-weight:700;">Ловушечный</span>.
+Тайминговое парирование — <strong>крит ×2</strong>.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Ещё одна ячейка. Ещё одна попытка.
-   Конец всегда один — но я выберу его сам.»
+  «Ещё одна ячейка. Ещё одна попытка.»
 </span>`,
         abilities: [
             '<strong>3 набора</strong> — ближний / дальний / ловушки',
@@ -864,6 +1041,35 @@ let currentFilter  = 'all';
 let activeTheme    = 'new';
 
 /* ═══════════════════════════════════════════
+   TOAST-УВЕДОМЛЕНИЯ
+   ═══════════════════════════════════════════ */
+function showToast(msg, color, duration) {
+    color    = color    || '#74c0fc';
+    duration = duration || 2500;
+
+    const container = document.getElementById('toastContainer');
+    const toast     = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.borderLeftColor = color;
+    toast.innerHTML = `<span class="toast-dot" style="background:${color}"></span>${msg}`;
+    container.appendChild(toast);
+
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            toast.classList.add('toast-show');
+        });
+    });
+
+    setTimeout(function() {
+        toast.classList.remove('toast-show');
+        toast.classList.add('toast-hide');
+        setTimeout(function() {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 400);
+    }, duration);
+}
+
+/* ═══════════════════════════════════════════
    ПЕРЕКЛЮЧЕНИЕ ТЕМЫ
    ═══════════════════════════════════════════ */
 const themeToggleBtn = document.getElementById('themeToggle');
@@ -876,12 +1082,14 @@ function toggleTheme() {
         themeToggleBtn.querySelector('.theme-label-full').textContent = 'END STORY';
         themeToggleBtn.querySelector('.theme-label-short').textContent = '✕';
         startGlitchBars();
+        showToast('⚠ END STORY режим активирован', '#ff3300', 2000);
     } else {
         activeTheme = 'new';
         document.documentElement.classList.remove('theme-end');
         themeToggleBtn.querySelector('.theme-label-full').textContent = 'NEW STORY';
         themeToggleBtn.querySelector('.theme-label-short').textContent = '◈';
         stopGlitchBars();
+        showToast('◈ NEW STORY режим восстановлен', '#74c0fc', 2000);
     }
 }
 themeToggleBtn.addEventListener('click', toggleTheme);
@@ -892,28 +1100,28 @@ function startGlitchBars() { scheduleGlitchBar(); }
 
 function scheduleGlitchBar() {
     if (activeTheme !== 'end') return;
-    const delay = 1200 + Math.random() * 3000;
-    glitchBarInterval = setTimeout(() => {
+    var delay = 1200 + Math.random() * 3000;
+    glitchBarInterval = setTimeout(function() {
         showGlitchBar();
         scheduleGlitchBar();
     }, delay);
 }
 
 function showGlitchBar() {
-    const y = Math.random() * window.innerHeight;
-    const h = 1 + Math.random() * 4;
-    const r = Math.floor(150 + Math.random() * 105);
-    glitchBar.style.top    = `${y}px`;
-    glitchBar.style.height = `${h}px`;
+    var y = Math.random() * window.innerHeight;
+    var h = 1 + Math.random() * 4;
+    var r = Math.floor(150 + Math.random() * 105);
+    glitchBar.style.top    = y + 'px';
+    glitchBar.style.height = h + 'px';
     glitchBar.style.background =
-        `linear-gradient(90deg, transparent, rgba(${r},0,0,0.85) 20%, rgba(${r},30,0,0.9) 50%, transparent)`;
+        'linear-gradient(90deg, transparent, rgba(' + r + ',0,0,0.85) 20%, rgba(' + r + ',30,0,0.9) 50%, transparent)';
     glitchBar.style.opacity = '1';
     if (Math.random() > 0.6) {
-        glitchBar.style.transform = `scaleX(${0.3 + Math.random() * 0.7}) translateX(${(Math.random()-0.5)*40}%)`;
+        glitchBar.style.transform = 'scaleX(' + (0.3 + Math.random() * 0.7) + ') translateX(' + ((Math.random()-0.5)*40) + '%)';
     } else {
         glitchBar.style.transform = 'none';
     }
-    setTimeout(() => { glitchBar.style.opacity = '0'; }, 80 + Math.random() * 120);
+    setTimeout(function() { glitchBar.style.opacity = '0'; }, 80 + Math.random() * 120);
 }
 
 function stopGlitchBars() {
@@ -926,33 +1134,27 @@ function stopGlitchBars() {
    УТИЛИТЫ
    ═══════════════════════════════════════════ */
 function makeStatBar(label, value, glowColor) {
-    return `
-        <div class="stat-row">
-            <span class="stat-label">${label}</span>
-            <div class="stat-bar">
-                <div class="stat-fill"
-                     style="width:${value}%;
-                            background:linear-gradient(90deg,${glowColor}77,${glowColor});">
-                </div>
-            </div>
-            <span class="stat-val">${value}</span>
-        </div>`;
+    return '<div class="stat-row">' +
+        '<span class="stat-label">' + label + '</span>' +
+        '<div class="stat-bar"><div class="stat-fill" style="width:' + value + '%;background:linear-gradient(90deg,' + glowColor + '77,' + glowColor + ');"></div></div>' +
+        '<span class="stat-val">' + value + '</span>' +
+        '</div>';
 }
 
 /* ═══════════════════════════════════════════
    PARALLAX HELPER
    ═══════════════════════════════════════════ */
 function addParallax(panel, strength) {
-    const img = panel.querySelector('.panel-char-img');
+    var img = panel.querySelector('.panel-char-img');
     if (!img) return;
-    panel.addEventListener('mousemove', (e) => {
-        const rect = panel.getBoundingClientRect();
-        const xRel = (e.clientX - rect.left) / rect.width  - 0.5;
-        const yRel = (e.clientY - rect.top)  / rect.height - 0.5;
-        img.style.transform = `translate(${xRel*strength}px,${yRel*strength*0.6}px) scale(1.04)`;
+    panel.addEventListener('mousemove', function(e) {
+        var rect = panel.getBoundingClientRect();
+        var xRel = (e.clientX - rect.left) / rect.width  - 0.5;
+        var yRel = (e.clientY - rect.top)  / rect.height - 0.5;
+        img.style.transform = 'translate(' + (xRel*strength) + 'px,' + (yRel*strength*0.6) + 'px) scale(1.04)';
         img.style.transitionDuration = '0.08s';
     });
-    panel.addEventListener('mouseleave', () => {
+    panel.addEventListener('mouseleave', function() {
         img.style.transform = '';
         img.style.transitionDuration = '0.4s';
     });
@@ -961,47 +1163,48 @@ function addParallax(panel, strength) {
 /* ═══════════════════════════════════════════
    КАРУСЕЛЬ
    ═══════════════════════════════════════════ */
-function renderCarousel(animate = false) {
-    const stage = document.getElementById('carouselStage');
+function renderCarousel(animate) {
+    animate = animate || false;
+    var stage = document.getElementById('carouselStage');
     stage.innerHTML = '';
 
-    for (let offset = -2; offset <= 2; offset++) {
-        const idx = (selectedIndex + offset + characters.length) % characters.length;
-        const c   = characters[idx];
-        const panel = document.createElement('div');
+    for (var offset = -2; offset <= 2; offset++) {
+        var idx = (selectedIndex + offset + characters.length) % characters.length;
+        var c   = characters[idx];
+        var panel = document.createElement('div');
 
-        const posMap = { '-2':'left-2','-1':'left-1','0':'center','1':'right-1','2':'right-2' };
-        const posClass = posMap[String(offset)];
-        panel.className = `c-panel ${posClass}`;
+        var posMap = { '-2':'left-2','-1':'left-1','0':'center','1':'right-1','2':'right-2' };
+        var posClass = posMap[String(offset)];
+        panel.className = 'c-panel ' + posClass;
         panel.style.setProperty('--cc', c.color);
         panel.style.setProperty('--cg', c.glow);
 
-        const isCenter = offset === 0;
-        panel.innerHTML = `
-            <div class="panel-bg-grad"></div>
-            <div class="panel-glow-line"></div>
-            <img src="es.jpg"
-                 class="panel-char-img${isCenter && animate ? ' entering' : ''}"
-                 alt="${c.name}"
-                 draggable="false">
-            <div class="panel-info">
-                <div class="panel-char-name">${c.name.split(' ')[0].toUpperCase()}</div>
-                <div class="panel-char-role">${c.role}</div>
-            </div>
-        `;
+        var isCenter = offset === 0;
+        panel.innerHTML =
+            '<div class="panel-bg-grad"></div>' +
+            '<div class="panel-glow-line"></div>' +
+            '<img src="es.jpg" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
+            '<div class="panel-info">' +
+                '<div class="panel-char-name">' + c.name.split(' ')[0].toUpperCase() + '</div>' +
+                '<div class="panel-char-role">' + c.role + '</div>' +
+            '</div>';
 
         if (isCenter && animate) {
             panel.classList.add('flash');
-            panel.addEventListener('animationend',
-                () => panel.classList.remove('flash'), { once: true });
+            panel.addEventListener('animationend', function() {
+                this.classList.remove('flash');
+            }.bind(panel), { once: true });
         }
 
         addParallax(panel, isCenter ? 10 : 5);
-        panel.addEventListener('click', () => {
-            selectedIndex = idx;
-            renderCarousel(true);
-            renderDetail();
-        });
+
+        (function(capturedIdx) {
+            panel.addEventListener('click', function() {
+                selectedIndex = capturedIdx;
+                renderCarousel(true);
+                renderDetail();
+            });
+        })(idx);
 
         stage.appendChild(panel);
     }
@@ -1009,28 +1212,21 @@ function renderCarousel(animate = false) {
 
 /* ═══════════════════════════════════════════
    ДЕТАЛЬНАЯ ПАНЕЛЬ
-   ─────────────────────────────────────────
-   ИЗМЕНЕНИЕ: dpDesc использует innerHTML
-   вместо textContent — чтобы отображать
-   HTML-разметку внутри описания персонажа
-   (теги <strong>, <em>, <span style=...> и т.д.)
    ═══════════════════════════════════════════ */
 function renderDetail() {
-    const c = characters[selectedIndex];
+    var c = characters[selectedIndex];
     document.getElementById('dpTag').textContent   = c.tag;
     document.getElementById('dpTag').style.background = c.glow;
     document.getElementById('dpName').textContent  = c.name.toUpperCase();
     document.getElementById('dpRole').textContent  = c.role;
-
-    /* ← КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: innerHTML вместо textContent */
     document.getElementById('dpDesc').innerHTML    = c.desc;
 
-    const icon = document.getElementById('dpIcon');
-    icon.style.filter = `drop-shadow(0 0 25px ${c.glow}) drop-shadow(0 0 55px ${c.glow})`;
+    var icon = document.getElementById('dpIcon');
+    icon.style.filter = 'drop-shadow(0 0 25px ' + c.glow + ') drop-shadow(0 0 55px ' + c.glow + ')';
 
-    const glow = document.getElementById('dpGlow');
+    var glow = document.getElementById('dpGlow');
     glow.style.background =
-        `radial-gradient(circle, ${c.glow}88 0%, ${c.color}44 45%, transparent 75%)`;
+        'radial-gradient(circle, ' + c.glow + '88 0%, ' + c.color + '44 45%, transparent 75%)';
 
     document.getElementById('dpStats').innerHTML =
         makeStatBar('ATK', c.stats.atk, c.glow) +
@@ -1039,59 +1235,163 @@ function renderDetail() {
         makeStatBar('HP',  c.stats.hp,  c.glow);
 
     document.getElementById('dpAbilities').innerHTML =
-        `<div class="diff-row">Сложность: <span style="color:${c.glow}">${c.diff}</span></div>` +
-        c.abilities.map(a =>
-            `<span class="ab-tag" style="border-color:${c.glow};color:${c.glow};">${a}</span>`
-        ).join('');
+        '<div class="diff-row">Сложность: <span style="color:' + c.glow + '">' + c.diff + '</span></div>' +
+        c.abilities.map(function(a) {
+            return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
+        }).join('');
 }
 
 /* ═══════════════════════════════════════════
    НАВИГАЦИЯ КАРУСЕЛИ
    ═══════════════════════════════════════════ */
-document.getElementById('navPrev').addEventListener('click', () => {
+document.getElementById('navPrev').addEventListener('click', function() {
     selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
     renderCarousel(true); renderDetail();
 });
-document.getElementById('navNext').addEventListener('click', () => {
+document.getElementById('navNext').addEventListener('click', function() {
     selectedIndex = (selectedIndex + 1) % characters.length;
     renderCarousel(true); renderDetail();
 });
 
 /* ═══════════════════════════════════════════
+   КЛАВИАТУРНАЯ НАВИГАЦИЯ ← →
+   ═══════════════════════════════════════════ */
+document.addEventListener('keydown', function(e) {
+    var activePane = document.querySelector('.tab-pane.active');
+    if (!activePane || activePane.id !== 'tab-characters') return;
+
+    /* Игнорируем, если фокус в поле ввода */
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+
+    if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
+        renderCarousel(true); renderDetail();
+    } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % characters.length;
+        renderCarousel(true); renderDetail();
+    }
+});
+
+/* ═══════════════════════════════════════════
    ФИЛЬТРЫ
    ═══════════════════════════════════════════ */
-document.querySelectorAll('.filter').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.filter:not(.random-btn)').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter:not(.random-btn)').forEach(function(b) {
+            b.classList.remove('active');
+        });
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
+
         if (currentFilter !== 'all') {
-            const idx = characters.findIndex(c => c.type === currentFilter);
-            if (idx !== -1) { selectedIndex = idx; renderCarousel(); renderDetail(); }
+            var idx = characters.findIndex(function(c) { return c.type === currentFilter; });
+            if (idx !== -1) {
+                selectedIndex = idx;
+                renderCarousel(true);
+                renderDetail();
+                var typeLabels = {
+                    melee:'ближний бой', ranged:'дальний бой',
+                    tank:'танк', control:'контроль', guest:'гостевые'
+                };
+                showToast('Фильтр: ' + (typeLabels[currentFilter] || currentFilter).toUpperCase(),
+                    '#74c0fc', 1800);
+            }
+        } else {
+            renderCarousel(true); renderDetail();
         }
     });
 });
 
 /* ═══════════════════════════════════════════
+   СЛУЧАЙНЫЙ ПЕРСОНАЖ
+   ═══════════════════════════════════════════ */
+document.getElementById('randomChar').addEventListener('click', function() {
+    /* Анимируем иконку кубика */
+    var dice = document.getElementById('diceIcon');
+    dice.style.animation = 'none';
+    void dice.offsetWidth;
+    dice.style.animation = 'diceSpin 0.4s ease';
+
+    var prev = selectedIndex;
+    var newIdx;
+    do { newIdx = Math.floor(Math.random() * characters.length); }
+    while (newIdx === prev && characters.length > 1);
+
+    selectedIndex = newIdx;
+    renderCarousel(true);
+    renderDetail();
+
+    var c = characters[newIdx];
+    showToast('⚄ Случайный выбор: ' + c.name.split(' ')[0], c.glow, 2200);
+});
+
+/* ═══════════════════════════════════════════
+   ПОИСК ПЕРСОНАЖЕЙ
+   ═══════════════════════════════════════════ */
+var searchTimeout = null;
+document.getElementById('charSearch').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    var el  = this;
+    var noR = document.getElementById('searchNoResult');
+    noR.textContent = '';
+
+    searchTimeout = setTimeout(function() {
+        var query = el.value.trim().toLowerCase();
+        if (!query) return;
+
+        var idx = characters.findIndex(function(c) {
+            return c.name.toLowerCase().includes(query) ||
+                   c.role.toLowerCase().includes(query) ||
+                   c.tag.toLowerCase().includes(query)  ||
+                   (c.id  && c.id.toLowerCase().includes(query));
+        });
+
+        if (idx !== -1) {
+            selectedIndex = idx;
+            renderCarousel(true);
+            renderDetail();
+            /* Сбрасываем активный фильтр на «все» */
+            document.querySelectorAll('.filter:not(.random-btn)').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            document.querySelector('.filter[data-filter="all"]').classList.add('active');
+            noR.textContent = '';
+        } else {
+            noR.textContent = '— персонаж «' + el.value.trim() + '» не найден —';
+        }
+    }, 300);
+});
+
+/* Очищаем сообщение при очистке поля */
+document.getElementById('charSearch').addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        this.value = '';
+        document.getElementById('searchNoResult').textContent = '';
+    }
+});
+
+/* ═══════════════════════════════════════════
    ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
    ═══════════════════════════════════════════ */
-const LEAVE_MS = 500;
-const ENTER_MS = 850;
-let   isTabSwitching = false;
+var LEAVE_MS = 500;
+var ENTER_MS = 850;
+var isTabSwitching = false;
 
 function switchTab(tabId) {
     if (isTabSwitching) return;
-    const currentPane = document.querySelector('.tab-pane.active');
-    const targetPane  = document.getElementById(`tab-${tabId}`);
+    var currentPane = document.querySelector('.tab-pane.active');
+    var targetPane  = document.getElementById('tab-' + tabId);
     if (!targetPane || currentPane === targetPane) return;
 
     isTabSwitching = true;
 
-    document.querySelectorAll('.tab-btn').forEach(b => {
+    document.querySelectorAll('.tab-btn').forEach(function(b) {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
     });
-    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    var activeBtn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
     if (activeBtn) {
         activeBtn.classList.add('active');
         activeBtn.setAttribute('aria-selected', 'true');
@@ -1099,15 +1399,21 @@ function switchTab(tabId) {
 
     currentPane.classList.add('tab-leave');
 
-    setTimeout(() => {
+    setTimeout(function() {
         currentPane.classList.remove('active', 'tab-leave');
         targetPane.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
                 targetPane.classList.add('tab-enter');
-                setTimeout(() => {
+
+                /* Запускаем счётчики при переходе на главную */
+                if (tabId === 'home') {
+                    setTimeout(runCounters, 200);
+                }
+
+                setTimeout(function() {
                     targetPane.classList.remove('tab-enter');
                     isTabSwitching = false;
                 }, ENTER_MS + 50);
@@ -1116,14 +1422,47 @@ function switchTab(tabId) {
     }, LEAVE_MS);
 }
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
 });
 
-document.getElementById('goToChars').addEventListener('click', () => switchTab('characters'));
-document.getElementById('backTop').addEventListener('click', () => {
+document.getElementById('goToChars').addEventListener('click', function() { switchTab('characters'); });
+document.getElementById('backTop').addEventListener('click', function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+/* ═══════════════════════════════════════════
+   АНИМИРОВАННЫЕ СЧЁТЧИКИ
+   ═══════════════════════════════════════════ */
+var countersRan = false;
+
+function animateCounter(el) {
+    var target   = parseInt(el.dataset.target, 10);
+    var duration = 1400;
+    var start    = performance.now();
+
+    function update(now) {
+        var elapsed  = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased    = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target;
+    }
+    requestAnimationFrame(update);
+}
+
+function runCounters() {
+    if (countersRan) return;
+    countersRan = true;
+    var nums = document.querySelectorAll('#heroCounters .hc-num');
+    nums.forEach(function(el, i) {
+        setTimeout(function() { animateCounter(el); }, i * 120);
+    });
+}
+
+/* Запускаем счётчики при первой загрузке (главная активна) */
+setTimeout(runCounters, 800);
 
 /* ═══════════════════════════════════════════
    ПЕРВИЧНЫЙ РЕНДЕР
@@ -1131,374 +1470,345 @@ document.getElementById('backTop').addEventListener('click', () => {
 renderCarousel(false);
 renderDetail();
 
+/* ═══════════════════════════════════════════
+   INTRO SCREEN
+   ═══════════════════════════════════════════ */
+(function initIntro() {
+    var screen = document.getElementById('introScreen');
+    var bar    = document.getElementById('introBar');
+    var status = document.getElementById('introStatus');
+    var skip   = document.getElementById('introSkip');
+
+    var steps = [
+        { pct: 12,  text: 'LOADING ASSETS...'        },
+        { pct: 30,  text: 'INITIALIZING ENTROPY...'  },
+        { pct: 55,  text: 'LOADING CHARACTERS...'    },
+        { pct: 78,  text: 'CALIBRATING SYSTEMS...'   },
+        { pct: 92,  text: 'AZURE LINK ESTABLISHED...' },
+        { pct: 100, text: 'READY'                    },
+    ];
+
+    var stepIdx = 0;
+
+    function closeIntro() {
+        screen.classList.add('intro-exit');
+        setTimeout(function() {
+            if (screen.parentNode) screen.parentNode.removeChild(screen);
+        }, 750);
+    }
+
+    function nextStep() {
+        if (stepIdx >= steps.length) {
+            setTimeout(closeIntro, 350);
+            return;
+        }
+        var s = steps[stepIdx++];
+        bar.style.width    = s.pct + '%';
+        status.textContent = s.text;
+        var delay = (stepIdx === steps.length) ? 500 : 280 + Math.random() * 180;
+        setTimeout(nextStep, delay);
+    }
+
+    skip.addEventListener('click', closeIntro);
+    setTimeout(nextStep, 450);
+})();
+
 /* ╔══════════════════════════════════════════════════════════╗
    ║  АНИМИРОВАННЫЙ ФОН — ЧЕТЫРЕ РЕЖИМА С CROSSFADE          ║
    ╚══════════════════════════════════════════════════════════╝ */
 (function initBackground() {
     'use strict';
 
-    const cvA  = document.getElementById('bgCanvasA');
-    const cvB  = document.getElementById('bgCanvasB');
-    const ctxA = cvA.getContext('2d');
-    const ctxB = cvB.getContext('2d');
+    var cvA  = document.getElementById('bgCanvasA');
+    var cvB  = document.getElementById('bgCanvasB');
+    var ctxA = cvA.getContext('2d');
+    var ctxB = cvB.getContext('2d');
+
+    /* глобальный указатель текущего режима для индикатора */
+    window.__bgCurrentMode = 0;
 
     function resize() {
         cvA.width  = cvB.width  = window.innerWidth;
         cvA.height = cvB.height = window.innerHeight;
     }
     resize();
-    window.addEventListener('resize', () => {
+    window.addEventListener('resize', function() {
         resize();
-        modes.forEach(m => m.resize && m.resize(cvA.width, cvA.height));
+        modes.forEach(function(m) { if (m.resize) m.resize(cvA.width, cvA.height); });
     });
 
     function getBgPalette() {
-        const isEnd = document.documentElement.classList.contains('theme-end');
-        if (isEnd) {
-            return [
-                [180,  10,   0],
-                [220,  60,   0],
-                [255, 100,  30],
-            ];
+        var isEnd = document.documentElement.classList.contains('theme-end');
+        if (isEnd) return [[180,10,0],[220,60,0],[255,100,30]];
+        return [[21,101,192],[13,148,136],[116,192,252]];
+    }
+
+    /* ── CalamityRain ── */
+    function CalamityRain(w, h) { this.resize(w, h); }
+    CalamityRain.prototype.resize = function(w, h) {
+        this.w = w; this.h = h;
+        this.chars = 'アイウエオカキクサシスΔΨΩ∞◈⬡01ABCDEF∇◆';
+        this.colW  = 22;
+        this.cols  = Math.floor(w / this.colW);
+        this.drops  = Array.from({length:this.cols}, function() { return Math.random() * -(h/22); });
+        this.speeds = Array.from({length:this.cols}, function() { return 0.25 + Math.random()*0.75; });
+        this.cidx   = Array.from({length:this.cols}, function() { return Math.floor(Math.random()*3); });
+    };
+    CalamityRain.prototype.draw = function(ctx) {
+        var palette = getBgPalette();
+        var bgAlpha = document.documentElement.classList.contains('theme-end')
+            ? 'rgba(13,0,0,0.16)' : 'rgba(7,11,23,0.16)';
+        ctx.fillStyle = bgAlpha;
+        ctx.fillRect(0,0,this.w,this.h);
+        ctx.font = 'bold 13px "Courier New", monospace';
+        for (var i=0; i<this.cols; i++) {
+            var x  = i*this.colW+2;
+            var yH = Math.floor(this.drops[i])*this.colW;
+            ctx.fillStyle = 'rgba(220,235,255,0.92)';
+            ctx.fillText(this.chars[Math.floor(Math.random()*this.chars.length)], x, yH);
+            var rgb = palette[this.cidx[i]];
+            var tailLen = 6 + Math.floor(Math.random()*4);
+            for (var t=1; t<=tailLen; t++) {
+                var a = (1-t/tailLen)*0.65;
+                ctx.fillStyle = 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')';
+                ctx.fillText(this.chars[Math.floor(Math.random()*this.chars.length)], x, yH-t*this.colW);
+            }
+            this.drops[i] += this.speeds[i];
+            if (yH > this.h+50 && Math.random()>0.975) this.drops[i] = Math.random()*-8;
         }
-        return [
-            [ 21, 101, 192],
-            [ 13, 148, 136],
-            [116, 192, 252],
+        var vign = ctx.createRadialGradient(this.w/2,this.h/2,this.h*0.3,this.w/2,this.h/2,this.h*0.85);
+        vign.addColorStop(0,'transparent');
+        vign.addColorStop(1,'rgba(4,7,16,0.55)');
+        ctx.fillStyle = vign;
+        ctx.fillRect(0,0,this.w,this.h);
+    };
+
+    /* ── HexGrid ── */
+    function HexGrid(w, h) { this.t=0; this.resize(w,h); }
+    HexGrid.prototype.resize = function(w, h) {
+        this.w=w; this.h=h; this.hexes=[];
+        var S=40, dx=S*1.73, dy=S*1.5;
+        for (var r=-1; r<=Math.ceil(h/dy)+1; r++) {
+            for (var c=-1; c<=Math.ceil(w/dx)+1; c++) {
+                this.hexes.push({
+                    x: c*dx+(r%2===0?0:dx/2), y: r*dy, s:S,
+                    phase: Math.random()*Math.PI*2
+                });
+            }
+        }
+    };
+    HexGrid.prototype.hexPath = function(ctx, x, y, s) {
+        ctx.beginPath();
+        for (var i=0; i<6; i++) {
+            var a = (Math.PI/3)*i - Math.PI/6;
+            i===0 ? ctx.moveTo(x+s*Math.cos(a),y+s*Math.sin(a))
+                  : ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));
+        }
+        ctx.closePath();
+    };
+    HexGrid.prototype.draw = function(ctx) {
+        var palette = getBgPalette();
+        var isEnd   = document.documentElement.classList.contains('theme-end');
+        ctx.clearRect(0,0,this.w,this.h);
+        ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+        ctx.fillRect(0,0,this.w,this.h);
+        var cx=this.w/2, cy=this.h/2, T=this.t*0.012;
+        for (var i=0; i<this.hexes.length; i++) {
+            var hex  = this.hexes[i];
+            var dist = Math.hypot(hex.x-cx, hex.y-cy);
+            var wave = Math.sin(dist*0.014 - T*2.8 + hex.phase*0.25);
+            var pulse = (wave+1)/2;
+            var p0=palette[0];
+            ctx.strokeStyle='rgba('+p0[0]+','+p0[1]+','+p0[2]+','+(0.06+pulse*0.20)+')';
+            ctx.lineWidth=0.8;
+            this.hexPath(ctx, hex.x, hex.y, hex.s-1);
+            ctx.stroke();
+            if (pulse>0.78) {
+                var t=(pulse-0.78)/0.22, p1=palette[1];
+                ctx.fillStyle='rgba('+p1[0]+','+p1[1]+','+p1[2]+','+(t*0.18)+')';
+                this.hexPath(ctx, hex.x, hex.y, hex.s-1); ctx.fill();
+            }
+            if (pulse>0.65) {
+                var t2=(pulse-0.65)/0.35, p2=palette[2];
+                ctx.fillStyle='rgba('+p2[0]+','+p2[1]+','+p2[2]+','+(t2*0.85)+')';
+                ctx.beginPath(); ctx.arc(hex.x,hex.y,1.5+t2*1.5,0,Math.PI*2); ctx.fill();
+            }
+        }
+        this.t++;
+    };
+
+    /* ── VoidRings ── */
+    function VoidRings(w, h) {
+        this.t=0; this.resize(w,h);
+        var self=this;
+        this.particles = Array.from({length:140}, function() { return self._mkParticle(); });
+    }
+    VoidRings.prototype._mkParticle = function() {
+        var orbitR=[110,165,230,310];
+        var radius = orbitR[Math.floor(Math.random()*orbitR.length)]+(Math.random()-0.5)*35;
+        return { angle:Math.random()*Math.PI*2, radius:radius,
+                 speed:(0.0018+Math.random()*0.0055)*(Math.random()>0.5?1:-1),
+                 size:0.8+Math.random()*2.2, alpha:0.15+Math.random()*0.65, ci:Math.floor(Math.random()*3) };
+    };
+    VoidRings.prototype.resize = function(w,h) { this.w=w; this.h=h; };
+    VoidRings.prototype.draw = function(ctx) {
+        var palette=getBgPalette(), isEnd=document.documentElement.classList.contains('theme-end');
+        ctx.clearRect(0,0,this.w,this.h);
+        ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+        ctx.fillRect(0,0,this.w,this.h);
+        var cx=this.w/2, cy=this.h/2, T=this.t, p0=palette[0];
+        var bg=ctx.createRadialGradient(cx,cy,0,cx,cy,380);
+        bg.addColorStop(0, isEnd?'rgba(22,0,0,0.8)':'rgba(11,18,37,0.8)');
+        bg.addColorStop(0.4,'rgba('+p0[0]+','+p0[1]+','+p0[2]+',0.06)');
+        bg.addColorStop(1,'transparent');
+        ctx.fillStyle=bg; ctx.fillRect(0,0,this.w,this.h);
+        var rings=[
+            {r:110,w:1.8,spd:0.0022,dir:1, ci:0,alpha:0.42,marks:12},
+            {r:165,w:1.2,spd:0.0015,dir:-1,ci:2,alpha:0.30,marks:18},
+            {r:230,w:2.2,spd:0.0009,dir:1, ci:1,alpha:0.22,marks:24},
+            {r:310,w:1.0,spd:0.0005,dir:-1,ci:0,alpha:0.13,marks:32},
         ];
-    }
+        for (var ri=0; ri<rings.length; ri++) {
+            var ring=rings[ri], rgb=palette[ring.ci];
+            var rot=T*ring.spd*ring.dir;
+            ctx.beginPath(); ctx.arc(cx,cy,ring.r,0,Math.PI*2);
+            ctx.strokeStyle='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+ring.alpha+')';
+            ctx.lineWidth=ring.w; ctx.stroke();
+            for (var m=0; m<ring.marks; m++) {
+                var ang=rot+(Math.PI*2/ring.marks)*m;
+                var mx=cx+Math.cos(ang)*ring.r, my=cy+Math.sin(ang)*ring.r;
+                var pulse2=(Math.sin(T*0.04+m*0.7+ri)+1)/2;
+                ctx.fillStyle='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+(ring.alpha+pulse2*0.45)+')';
+                ctx.beginPath(); ctx.arc(mx,my,1.5+pulse2*2.5,0,Math.PI*2); ctx.fill();
+            }
+        }
+        for (var pi=0; pi<this.particles.length; pi++) {
+            var p=this.particles[pi]; p.angle+=p.speed;
+            var px=cx+Math.cos(p.angle)*p.radius, py=cy+Math.sin(p.angle)*p.radius;
+            var rgb2=palette[p.ci];
+            ctx.fillStyle='rgba('+rgb2[0]+','+rgb2[1]+','+rgb2[2]+','+p.alpha+')';
+            ctx.beginPath(); ctx.arc(px,py,p.size,0,Math.PI*2); ctx.fill();
+        }
+        var pulse3=(Math.sin(T*0.048)+1)/2, orbR=55+pulse3*15;
+        var orb=ctx.createRadialGradient(cx,cy,0,cx,cy,orbR);
+        orb.addColorStop(0,'rgba(180,230,255,'+(0.18+pulse3*0.12)+')');
+        orb.addColorStop(0.4,'rgba('+p0[0]+','+p0[1]+','+p0[2]+','+(0.10+pulse3*0.08)+')');
+        orb.addColorStop(1,'transparent');
+        ctx.fillStyle=orb; ctx.beginPath(); ctx.arc(cx,cy,orbR,0,Math.PI*2); ctx.fill();
+        var coreR=5+pulse3*4, core=ctx.createRadialGradient(cx,cy,0,cx,cy,coreR);
+        core.addColorStop(0,'rgba(220,245,255,'+(0.7+pulse3*0.3)+')');
+        core.addColorStop(1,'transparent');
+        ctx.fillStyle=core; ctx.beginPath(); ctx.arc(cx,cy,coreR,0,Math.PI*2); ctx.fill();
+        this.t++;
+    };
 
-    class CalamityRain {
-        constructor(w, h) { this.resize(w, h); }
-        resize(w, h) {
-            this.w = w; this.h = h;
-            this.chars = 'アイウエオカキクサシスΔΨΩ∞◈⬡01ABCDEF∇◆';
-            this.colW  = 22;
-            this.cols  = Math.floor(w / this.colW);
-            this.drops  = Array.from({ length: this.cols }, () => Math.random() * -(h / this.colW));
-            this.speeds = Array.from({ length: this.cols }, () => 0.25 + Math.random() * 0.75);
-            this.cidx   = Array.from({ length: this.cols }, () => Math.floor(Math.random() * 3));
+    /* ── NeuralWeb ── */
+    function NeuralWeb(w, h) { this.t=0; this.NODE_COUNT=80; this.LINK_DIST=160; this.resize(w,h); }
+    NeuralWeb.prototype.resize = function(w, h) {
+        this.w=w; this.h=h;
+        this.nodes = Array.from({length:this.NODE_COUNT}, function() {
+            return { x:Math.random()*w, y:Math.random()*h,
+                     vx:(Math.random()-0.5)*0.55, vy:(Math.random()-0.5)*0.55,
+                     r:1.5+Math.random()*2.5, phase:Math.random()*Math.PI*2,
+                     ci:Math.floor(Math.random()*3) };
+        });
+    };
+    NeuralWeb.prototype.draw = function(ctx) {
+        var palette=getBgPalette(), isEnd=document.documentElement.classList.contains('theme-end'), T=this.t;
+        ctx.clearRect(0,0,this.w,this.h);
+        ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+        ctx.fillRect(0,0,this.w,this.h);
+        for (var ni=0; ni<this.nodes.length; ni++) {
+            var n=this.nodes[ni];
+            n.x+=n.vx; n.y+=n.vy;
+            if(n.x<0){n.x=0;n.vx*=-1;} if(n.x>this.w){n.x=this.w;n.vx*=-1;}
+            if(n.y<0){n.y=0;n.vy*=-1;} if(n.y>this.h){n.y=this.h;n.vy*=-1;}
         }
-        draw(ctx) {
-            const palette = getBgPalette();
-            const bgAlpha = document.documentElement.classList.contains('theme-end')
-                ? 'rgba(13,0,0,0.16)' : 'rgba(7,11,23,0.16)';
-            ctx.fillStyle = bgAlpha;
-            ctx.fillRect(0, 0, this.w, this.h);
-            ctx.font = 'bold 13px "Courier New", monospace';
-            for (let i = 0; i < this.cols; i++) {
-                const x  = i * this.colW + 2;
-                const yH = Math.floor(this.drops[i]) * this.colW;
-                ctx.fillStyle = 'rgba(220,235,255,0.92)';
-                ctx.fillText(this.chars[Math.floor(Math.random() * this.chars.length)], x, yH);
-                const [r, g, b] = palette[this.cidx[i]];
-                const tailLen = 6 + Math.floor(Math.random() * 4);
-                for (let t = 1; t <= tailLen; t++) {
-                    const a = (1 - t / tailLen) * 0.65;
-                    ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-                    ctx.fillText(this.chars[Math.floor(Math.random() * this.chars.length)], x, yH - t * this.colW);
-                }
-                this.drops[i] += this.speeds[i];
-                if (yH > this.h + 50 && Math.random() > 0.975) {
-                    this.drops[i] = Math.random() * -8;
+        for (var i=0; i<this.nodes.length; i++) {
+            for (var j=i+1; j<this.nodes.length; j++) {
+                var a=this.nodes[i], b=this.nodes[j];
+                var dist=Math.hypot(a.x-b.x, a.y-b.y);
+                if (dist<this.LINK_DIST) {
+                    var alpha=(1-dist/this.LINK_DIST)*0.35, rgb=palette[a.ci];
+                    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+                    ctx.strokeStyle='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
+                    ctx.lineWidth=(1-dist/this.LINK_DIST)*1.2; ctx.stroke();
                 }
             }
-            const vign = ctx.createRadialGradient(this.w/2, this.h/2, this.h*0.3, this.w/2, this.h/2, this.h*0.85);
-            vign.addColorStop(0, 'transparent');
-            vign.addColorStop(1, 'rgba(4,7,16,0.55)');
-            ctx.fillStyle = vign;
-            ctx.fillRect(0, 0, this.w, this.h);
         }
-    }
+        for (var ni2=0; ni2<this.nodes.length; ni2++) {
+            var nd=this.nodes[ni2];
+            var pulse4=(Math.sin(T*0.03+nd.phase)+1)/2, rgb3=palette[nd.ci];
+            var nodeR=nd.r+pulse4*1.5;
+            var grd=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,nodeR*3);
+            grd.addColorStop(0,'rgba('+rgb3[0]+','+rgb3[1]+','+rgb3[2]+','+(0.4+pulse4*0.35)+')');
+            grd.addColorStop(1,'rgba('+rgb3[0]+','+rgb3[1]+','+rgb3[2]+',0)');
+            ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(nd.x,nd.y,nodeR*3,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='rgba('+rgb3[0]+','+rgb3[1]+','+rgb3[2]+','+(0.7+pulse4*0.3)+')';
+            ctx.beginPath(); ctx.arc(nd.x,nd.y,nodeR,0,Math.PI*2); ctx.fill();
+        }
+        var cx=this.w/2, cy=this.h/2, p00=palette[0];
+        var radGl=ctx.createRadialGradient(cx,cy,0,cx,cy,350);
+        radGl.addColorStop(0,'rgba('+p00[0]+','+p00[1]+','+p00[2]+',0.07)');
+        radGl.addColorStop(1,'transparent');
+        ctx.fillStyle=radGl; ctx.fillRect(0,0,this.w,this.h);
+        this.t++;
+    };
 
-    class HexGrid {
-        constructor(w, h) { this.t = 0; this.resize(w, h); }
-        resize(w, h) {
-            this.w = w; this.h = h;
-            this.hexes = [];
-            const S = 40, dx = S * 1.73, dy = S * 1.50;
-            for (let r = -1; r <= Math.ceil(h / dy) + 1; r++) {
-                for (let c = -1; c <= Math.ceil(w / dx) + 1; c++) {
-                    this.hexes.push({
-                        x: c * dx + (r % 2 === 0 ? 0 : dx / 2),
-                        y: r * dy,
-                        s: S,
-                        phase: Math.random() * Math.PI * 2
-                    });
-                }
-            }
-        }
-        hexPath(ctx, x, y, s) {
-            ctx.beginPath();
-            for (let i = 0; i < 6; i++) {
-                const a = (Math.PI / 3) * i - Math.PI / 6;
-                i === 0 ? ctx.moveTo(x + s * Math.cos(a), y + s * Math.sin(a))
-                        : ctx.lineTo(x + s * Math.cos(a), y + s * Math.sin(a));
-            }
-            ctx.closePath();
-        }
-        draw(ctx) {
-            const palette = getBgPalette();
-            const [r0,g0,b0] = palette[0];
-            const [r1,g1,b1] = palette[1];
-            const [r2,g2,b2] = palette[2];
-            const isEnd = document.documentElement.classList.contains('theme-end');
-            ctx.clearRect(0, 0, this.w, this.h);
-            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
-            ctx.fillRect(0, 0, this.w, this.h);
-            const cx = this.w / 2, cy = this.h / 2;
-            const T  = this.t * 0.012;
-            for (const h of this.hexes) {
-                const dist  = Math.hypot(h.x - cx, h.y - cy);
-                const wave  = Math.sin(dist * 0.014 - T * 2.8 + h.phase * 0.25);
-                const pulse = (wave + 1) / 2;
-                ctx.strokeStyle = `rgba(${r0},${g0},${b0},${0.06 + pulse * 0.20})`;
-                ctx.lineWidth   = 0.8;
-                this.hexPath(ctx, h.x, h.y, h.s - 1);
-                ctx.stroke();
-                if (pulse > 0.78) {
-                    const t = (pulse - 0.78) / 0.22;
-                    ctx.fillStyle = `rgba(${r1},${g1},${b1},${t * 0.18})`;
-                    this.hexPath(ctx, h.x, h.y, h.s - 1);
-                    ctx.fill();
-                }
-                if (pulse > 0.65) {
-                    const t = (pulse - 0.65) / 0.35;
-                    ctx.fillStyle = `rgba(${r2},${g2},${b2},${t * 0.85})`;
-                    ctx.beginPath();
-                    ctx.arc(h.x, h.y, 1.5 + t * 1.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 320);
-            gl.addColorStop(0,   `rgba(${r0},${g0},${b0},0.14)`);
-            gl.addColorStop(0.5, `rgba(${r1},${g1},${b1},0.05)`);
-            gl.addColorStop(1,   'transparent');
-            ctx.fillStyle = gl;
-            ctx.fillRect(0, 0, this.w, this.h);
-            const vg = ctx.createRadialGradient(cx, cy, this.h * 0.28, cx, cy, this.h * 0.9);
-            vg.addColorStop(0, 'transparent');
-            vg.addColorStop(1, 'rgba(4,7,16,0.6)');
-            ctx.fillStyle = vg;
-            ctx.fillRect(0, 0, this.w, this.h);
-            this.t++;
-        }
-    }
-
-    class VoidRings {
-        constructor(w, h) {
-            this.t = 0;
-            this.resize(w, h);
-            this.particles = Array.from({ length: 140 }, () => this._mkParticle(w, h));
-        }
-        _mkParticle() {
-            const orbitR = [110, 165, 230, 310];
-            const radius = orbitR[Math.floor(Math.random() * orbitR.length)] + (Math.random()-0.5)*35;
-            return {
-                angle:  Math.random() * Math.PI * 2,
-                radius,
-                speed:  (0.0018 + Math.random() * 0.0055) * (Math.random() > 0.5 ? 1 : -1),
-                size:   0.8 + Math.random() * 2.2,
-                alpha:  0.15 + Math.random() * 0.65,
-                ci:     Math.floor(Math.random() * 3)
-            };
-        }
-        resize(w, h) { this.w = w; this.h = h; }
-        draw(ctx) {
-            const palette = getBgPalette();
-            const isEnd = document.documentElement.classList.contains('theme-end');
-            ctx.clearRect(0, 0, this.w, this.h);
-            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
-            ctx.fillRect(0, 0, this.w, this.h);
-            const cx = this.w / 2, cy = this.h / 2, T = this.t;
-            const [r0,g0,b0] = palette[0];
-            const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 380);
-            bg.addColorStop(0,   isEnd ? 'rgba(22,0,0,0.8)' : 'rgba(11,18,37,0.8)');
-            bg.addColorStop(0.4, `rgba(${r0},${g0},${b0},0.06)`);
-            bg.addColorStop(1,   'transparent');
-            ctx.fillStyle = bg;
-            ctx.fillRect(0, 0, this.w, this.h);
-            const rings = [
-                { r:110, w:1.8, spd:0.0022, dir: 1, ci:0, alpha:0.42, marks:12 },
-                { r:165, w:1.2, spd:0.0015, dir:-1, ci:2, alpha:0.30, marks:18 },
-                { r:230, w:2.2, spd:0.0009, dir: 1, ci:1, alpha:0.22, marks:24 },
-                { r:310, w:1.0, spd:0.0005, dir:-1, ci:0, alpha:0.13, marks:32 },
-            ];
-            rings.forEach((ring, ri) => {
-                const [r, g, b] = palette[ring.ci];
-                const rot = T * ring.spd * ring.dir;
-                ctx.beginPath();
-                ctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(${r},${g},${b},${ring.alpha})`;
-                ctx.lineWidth   = ring.w;
-                ctx.stroke();
-                for (let m = 0; m < ring.marks; m++) {
-                    const a     = rot + (Math.PI * 2 / ring.marks) * m;
-                    const mx    = cx + Math.cos(a) * ring.r;
-                    const my    = cy + Math.sin(a) * ring.r;
-                    const pulse = (Math.sin(T * 0.04 + m * 0.7 + ri) + 1) / 2;
-                    ctx.fillStyle = `rgba(${r},${g},${b},${ring.alpha + pulse * 0.45})`;
-                    ctx.beginPath();
-                    ctx.arc(mx, my, 1.5 + pulse * 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
-            this.particles.forEach(p => {
-                p.angle += p.speed;
-                const px = cx + Math.cos(p.angle) * p.radius;
-                const py = cy + Math.sin(p.angle) * p.radius;
-                const [r, g, b] = palette[p.ci];
-                ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha})`;
-                ctx.beginPath();
-                ctx.arc(px, py, p.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            const pulse = (Math.sin(T * 0.048) + 1) / 2;
-            const orbR  = 55 + pulse * 15;
-            const orb   = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
-            orb.addColorStop(0,   `rgba(180,230,255,${0.18 + pulse * 0.12})`);
-            orb.addColorStop(0.4, `rgba(${r0},${g0},${b0},${0.10 + pulse * 0.08})`);
-            orb.addColorStop(1,   'transparent');
-            ctx.fillStyle = orb;
-            ctx.beginPath();
-            ctx.arc(cx, cy, orbR, 0, Math.PI * 2);
-            ctx.fill();
-            const coreR = 5 + pulse * 4;
-            const core  = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-            core.addColorStop(0, `rgba(220,245,255,${0.7 + pulse * 0.3})`);
-            core.addColorStop(1, 'transparent');
-            ctx.fillStyle = core;
-            ctx.beginPath();
-            ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-            ctx.fill();
-            const vg = ctx.createRadialGradient(cx, cy, this.h * 0.25, cx, cy, this.h * 0.9);
-            vg.addColorStop(0, 'transparent');
-            vg.addColorStop(1, 'rgba(4,7,16,0.55)');
-            ctx.fillStyle = vg;
-            ctx.fillRect(0, 0, this.w, this.h);
-            this.t++;
-        }
-    }
-
-    class NeuralWeb {
-        constructor(w, h) {
-            this.t = 0;
-            this.NODE_COUNT = 80;
-            this.LINK_DIST  = 160;
-            this.resize(w, h);
-        }
-        resize(w, h) {
-            this.w = w; this.h = h;
-            this.nodes = Array.from({ length: this.NODE_COUNT }, () => ({
-                x:     Math.random() * w,
-                y:     Math.random() * h,
-                vx:    (Math.random() - 0.5) * 0.55,
-                vy:    (Math.random() - 0.5) * 0.55,
-                r:     1.5 + Math.random() * 2.5,
-                phase: Math.random() * Math.PI * 2,
-                ci:    Math.floor(Math.random() * 3)
-            }));
-        }
-        draw(ctx) {
-            const palette = getBgPalette();
-            const isEnd   = document.documentElement.classList.contains('theme-end');
-            const T       = this.t;
-            ctx.clearRect(0, 0, this.w, this.h);
-            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
-            ctx.fillRect(0, 0, this.w, this.h);
-            for (const n of this.nodes) {
-                n.x += n.vx; n.y += n.vy;
-                if (n.x < 0)      { n.x = 0;      n.vx *= -1; }
-                if (n.x > this.w) { n.x = this.w; n.vx *= -1; }
-                if (n.y < 0)      { n.y = 0;      n.vy *= -1; }
-                if (n.y > this.h) { n.y = this.h; n.vy *= -1; }
-            }
-            for (let i = 0; i < this.nodes.length; i++) {
-                for (let j = i + 1; j < this.nodes.length; j++) {
-                    const a = this.nodes[i];
-                    const b = this.nodes[j];
-                    const dist = Math.hypot(a.x - b.x, a.y - b.y);
-                    if (dist < this.LINK_DIST) {
-                        const alpha = (1 - dist / this.LINK_DIST) * 0.35;
-                        const [r, g, b_] = palette[a.ci];
-                        ctx.beginPath();
-                        ctx.moveTo(a.x, a.y);
-                        ctx.lineTo(b.x, b.y);
-                        ctx.strokeStyle = `rgba(${r},${g},${b_},${alpha})`;
-                        ctx.lineWidth   = (1 - dist / this.LINK_DIST) * 1.2;
-                        ctx.stroke();
-                    }
-                }
-            }
-            for (const n of this.nodes) {
-                const pulse = (Math.sin(T * 0.03 + n.phase) + 1) / 2;
-                const [r, g, b_] = palette[n.ci];
-                const nodeR = n.r + pulse * 1.5;
-                const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, nodeR * 3);
-                grd.addColorStop(0,   `rgba(${r},${g},${b_},${0.4 + pulse * 0.35})`);
-                grd.addColorStop(1,   `rgba(${r},${g},${b_},0)`);
-                ctx.fillStyle = grd;
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, nodeR * 3, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = `rgba(${r},${g},${b_},${0.7 + pulse * 0.3})`;
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, nodeR, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            const cx = this.w / 2, cy = this.h / 2;
-            const [r0,g0,b0] = palette[0];
-            const radGl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 350);
-            radGl.addColorStop(0,   `rgba(${r0},${g0},${b0},0.07)`);
-            radGl.addColorStop(1,   'transparent');
-            ctx.fillStyle = radGl;
-            ctx.fillRect(0, 0, this.w, this.h);
-            const vg = ctx.createRadialGradient(cx, cy, this.h * 0.3, cx, cy, this.h * 0.95);
-            vg.addColorStop(0, 'transparent');
-            vg.addColorStop(1, isEnd ? 'rgba(10,0,0,0.65)' : 'rgba(4,7,16,0.60)');
-            ctx.fillStyle = vg;
-            ctx.fillRect(0, 0, this.w, this.h);
-            this.t++;
-        }
-    }
-
-    const W = cvA.width, H = cvA.height;
-    const modes = [
-        new CalamityRain(W, H),
-        new HexGrid(W, H),
-        new VoidRings(W, H),
-        new NeuralWeb(W, H)
+    var W=cvA.width, H=cvA.height;
+    var modes = [
+        new CalamityRain(W,H),
+        new HexGrid(W,H),
+        new VoidRings(W,H),
+        new NeuralWeb(W,H)
     ];
 
-    let modeA           = 0;
-    let modeB           = 1;
-    let isTransitioning = false;
+    var modeNames       = ['RAIN','HEX','VOID','WEB'];
+    var modeA           = 0;
+    var modeB           = 1;
+    var isTransitioning = false;
 
-    const SWITCH_MS    = 10000;
-    const CROSSFADE_MS = 2500;
+    var SWITCH_MS    = 10000;
+    var CROSSFADE_MS = 2500;
 
     ctxA.fillStyle = '#070b17';
-    ctxA.fillRect(0, 0, cvA.width, cvA.height);
+    ctxA.fillRect(0,0,cvA.width,cvA.height);
+
+    /* Обновление индикатора режима фона */
+    function updateBgIndicator(idx) {
+        document.querySelectorAll('.bmi-dot').forEach(function(dot, i) {
+            dot.classList.toggle('active', i === idx);
+        });
+        var nameEl = document.getElementById('bmiModeName');
+        if (nameEl) nameEl.textContent = modeNames[idx] || '';
+        window.__bgCurrentMode = idx;
+    }
+
+    updateBgIndicator(0);
 
     function startTransition() {
         if (isTransitioning) return;
         isTransitioning = true;
-        modeB = (modeA + 1) % modes.length;
+        modeB = (modeA+1) % modes.length;
         cvB.style.transition = 'none';
         cvB.style.opacity    = '0';
-        requestAnimationFrame(() => {
-            cvB.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
-            cvA.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
+        requestAnimationFrame(function() {
+            cvB.style.transition = 'opacity '+CROSSFADE_MS+'ms ease-in-out';
+            cvA.style.transition = 'opacity '+CROSSFADE_MS+'ms ease-in-out';
             cvB.style.opacity    = '1';
             cvA.style.opacity    = '0';
         });
-        setTimeout(() => {
+        setTimeout(function() {
             modeA = modeB;
             cvA.style.transition = 'none';
             cvA.style.opacity    = '1';
             cvB.style.transition = 'none';
             cvB.style.opacity    = '0';
             isTransitioning      = false;
+
+            /* ← Обновляем индикатор после смены режима */
+            updateBgIndicator(modeA);
+
         }, CROSSFADE_MS + 80);
     }
 
@@ -1510,6 +1820,34 @@ renderDetail();
 
     animate();
     setInterval(startTransition, SWITCH_MS);
+
+    /* Клик по точке индикатора — ручное переключение режима */
+    document.querySelectorAll('.bmi-dot').forEach(function(dot) {
+        dot.addEventListener('click', function() {
+            var targetMode = parseInt(this.dataset.mode, 10);
+            if (targetMode === modeA || isTransitioning) return;
+            modeB = targetMode;
+            cvB.style.transition = 'none';
+            cvB.style.opacity    = '0';
+            isTransitioning = true;
+            requestAnimationFrame(function() {
+                cvB.style.transition = 'opacity 1200ms ease-in-out';
+                cvA.style.transition = 'opacity 1200ms ease-in-out';
+                cvB.style.opacity    = '1';
+                cvA.style.opacity    = '0';
+            });
+            setTimeout(function() {
+                modeA = modeB;
+                cvA.style.transition = 'none';
+                cvA.style.opacity    = '1';
+                cvB.style.transition = 'none';
+                cvB.style.opacity    = '0';
+                isTransitioning      = false;
+                updateBgIndicator(modeA);
+                showToast('Фон: ' + modeNames[modeA], '#74c0fc', 1500);
+            }, 1280);
+        });
+    });
 
 })();
 

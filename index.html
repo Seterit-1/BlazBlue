@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlazBlue: Entropy Effect — Персонажи</title>
+
+    <!--
+        ╔══════════════════════════════════════════════════════╗
+        ║  ПОДКЛЮЧЕНИЕ CSS-ФАЙЛА                               ║
+        ║  <link rel="stylesheet" href="style.css">            ║
+        ║                                                      ║
+        ║  rel="stylesheet" — говорит браузеру, что это таблица║
+        ║  стилей, а не другой тип ресурса.                    ║
+        ║  href="style.css"  — путь к файлу. Если style.css    ║
+        ║  лежит в той же папке — просто имя файла.            ║
+        ║  Если в папке css/ — пишешь href="css/style.css"     ║
+        ╚══════════════════════════════════════════════════════╝
+    -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Фоновые частицы (рендерятся через JS) -->
+<div class="particle-bg" id="particleBg"></div>
+
+<!-- ═══════════════════ ШАПКА ═══════════════════ -->
+<header class="site-header" id="top">
+    <div class="header-inner">
+        <div class="header-logo">
+            <span class="logo-bb">BLAZBLUE</span>
+            <span class="logo-ee">✦ ENTROPY EFFECT ✦</span>
+        </div>
+        <nav class="header-nav">
+            <a href="#top">Главная</a>
+            <a href="#characters">Персонажи</a>
+            <a href="#about">Об игре</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero" id="hero">
+    <div class="hero-text">
+        <div class="hero-label">— ROGUELITE ACTION —</div>
+        <h1 class="hero-title">ENTROPY<br><span>EFFECT</span></h1>
+        <p class="hero-sub">
+            Выбери персонажа, прокачай навыки и сражайся<br>
+            в процедурно генерируемых уровнях
+        </p>
+        <a href="#characters" class="btn-primary">⚔ ВЫБРАТЬ ПЕРСОНАЖА</a>
+    </div>
+    <div class="hero-deco">
+        <div class="hero-ring r1"></div>
+        <div class="hero-ring r2"></div>
+        <div class="hero-ring r3"></div>
+        <div class="hero-center">⚡</div>
+    </div>
+</section>
+
+<!-- ═══════════════════ СЕКЦИЯ ПЕРСОНАЖЕЙ ═══════════════════ -->
+<section class="char-section" id="characters">
+
+    <!-- Заголовок секции -->
+    <div class="section-title-wrap">
+        <span class="title-line"></span>
+        <h2 class="section-title">ВЫБОР ПЕРСОНАЖА</h2>
+        <span class="title-line"></span>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filter-bar">
+        <button class="filter active" data-filter="all">ВСЕ</button>
+        <button class="filter" data-filter="melee">БЛИЖНИЙ БОЙ</button>
+        <button class="filter" data-filter="ranged">ДАЛЬНИЙ БОЙ</button>
+        <button class="filter" data-filter="tank">ТАНК</button>
+        <button class="filter" data-filter="control">КОНТРОЛЬ</button>
+        <button class="filter" data-filter="guest">ГОСТЕВЫЕ</button>
+    </div>
+
+    <!-- Карусель (как в игре) -->
+    <div class="carousel-wrap">
+        <button class="nav-btn" id="navPrev">&#9664;</button>
+        <div class="carousel-stage" id="carouselStage">
+            <!-- Генерируется JavaScript -->
+        </div>
+        <button class="nav-btn" id="navNext">&#9654;</button>
+    </div>
+
+    <!-- Детальная панель выбранного персонажа -->
+    <div class="detail-panel" id="detailPanel">
+        <div class="dp-left">
+            <div class="dp-tag" id="dpTag">—</div>
+            <h2 class="dp-name" id="dpName">—</h2>
+            <div class="dp-role" id="dpRole">—</div>
+            <div class="dp-stats" id="dpStats"></div>
+            <p class="dp-desc" id="dpDesc">—</p>
+            <div class="dp-abilities" id="dpAbilities"></div>
+        </div>
+        <div class="dp-right">
+            <div class="dp-spotlight">
+                <div class="dp-glow" id="dpGlow"></div>
+                <div class="dp-char-icon" id="dpIcon">?</div>
+                <div class="dp-platform"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Полная сетка персонажей -->
+    <div class="char-grid" id="charGrid">
+        <!-- Генерируется JavaScript -->
+    </div>
+
+</section>
+
+<!-- ═══════════════════ ОБ ИГРЕ ═══════════════════ -->
+<section class="about-section" id="about">
+    <div class="about-inner">
+        <h2 class="section-title">ОБ ИГРЕ</h2>
+        <p class="about-text">
+            BlazBlue: Entropy Effect — это roguelite экшн с боковой прокруткой,
+            разработанный студией 91Act. Игра объединяет стремительный геймплей
+            серии BlazBlue с процедурно генерируемыми уровнями и глубокой
+            системой прокачки.
+        </p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚔️</div>
+                <h3>Динамичный бой</h3>
+                <p>Стремительные экшн-сражения с уникальными механиками каждого персонажа</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Roguelite механики</h3>
+                <p>Процедурная генерация уровней, случайные апгрейды, бесконечная реиграбельность</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌌</div>
+                <h3>Сюжет</h3>
+                <p>Оригинальная история с петлями времени и тайнами Entropy</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>13 персонажей</h3>
+                <p>Уникальные бойцы с разными стилями игры и механиками</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ ФУТЕР ═══════════════════ -->
+<footer class="site-footer">
+    <p>BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="footer-note">Фан-сайт создан в образовательных целях</p>
+    <a href="#top" class="back-to-top">↑ Наверх</a>
+</footer>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+
+/* =========================================================
+   ДАННЫЕ ПЕРСОНАЖЕЙ
+   Каждый объект = один персонаж.
+   Поля:
+     id       — уникальный ключ
+     name     — полное имя
+     role     — роль в игре
+     type     — категория для фильтра
+     tag      — короткая метка (как в игре "PROTOTYPE")
+     icon     — эмодзи-иконка (вместо отсутствующих спрайтов)
+     color    — основной цвет персонажа
+     glow     — цвет свечения
+     stats    — характеристики 0–100
+     desc     — описание
+     abilities— список способностей
+     diff     — сложность (звёзды)
+   ========================================================= */
+const characters = [
+    {
+        id: 'ragna',
+        name: 'Ragna the Bloodedge',
+        role: 'Ближний боец',
+        type: 'melee',
+        tag: 'BLOODEDGE',
+        icon: '⚔️',
+        color: '#c0392b',
+        glow: '#e74c3c',
+        stats: { atk: 90, def: 50, spd: 70, hp: 85 },
+        desc: 'Ближний боец, который усиливает атаки по мере снижения HP. Может восстанавливать здоровье за счёт урона, наносимого противникам.',
+        abilities: ['Берсерк при низком HP', 'Вампиризм урона', 'Мощные ближние атаки'],
+        diff: '★★☆'
+    },
+    {
+        id: 'jin',
+        name: 'Jin Kisaragi',
+        role: 'Ледяной мечник',
+        type: 'melee',
+        tag: 'FROST BLADE',
+        icon: '❄️',
+        color: '#2980b9',
+        glow: '#5dade2',
+        stats: { atk: 80, def: 60, spd: 75, hp: 70 },
+        desc: 'Мечник, специализирующийся на ледяных навыках. Умеет замораживать врагов и получать бонусы к силе при правильном выполнении комбо.',
+        abilities: ['Заморозка врагов', 'Бонусы за комбо', 'Ледяное оружие'],
+        diff: '★★☆'
+    },
+    {
+        id: 'noel',
+        name: 'Noel Vermillion',
+        role: 'Дальнобойный боец',
+        type: 'ranged',
+        tag: 'GUNSLINGER',
+        icon: '🔫',
+        color: '#27ae60',
+        glow: '#2ecc71',
+        stats: { atk: 75, def: 45, spd: 80, hp: 65 },
+        desc: 'Дальнобойный персонаж с ракетным вооружением. Сокращает время перезарядки и использует Over-Exhaust для каста навыков при нуле MP.',
+        abilities: ['Ракетное оружие', 'Over-Exhaust механика', 'Сокращение кулдауна'],
+        diff: '★☆☆'
+    },
+    {
+        id: 'taokaka',
+        name: 'Taokaka',
+        role: 'Мобильный боец',
+        type: 'melee',
+        tag: 'SHADOW CAT',
+        icon: '🐱',
+        color: '#d4ac0d',
+        glow: '#f1c40f',
+        stats: { atk: 70, def: 35, spd: 95, hp: 60 },
+        desc: 'Отличается высокой мобильностью и непредсказуемыми атаками, включая создание теневых клонов. Слаба против бронированных противников.',
+        abilities: ['Теневые клоны', 'Высокая мобильность', 'Непредсказуемые атаки'],
+        diff: '★★★'
+    },
+    {
+        id: 'rachel',
+        name: 'Rachel Alucard',
+        role: 'Маг / Контролёр',
+        type: 'control',
+        tag: 'MISTRESS',
+        icon: '⚡',
+        color: '#7d3c98',
+        glow: '#a569bd',
+        stats: { atk: 85, def: 50, spd: 60, hp: 70 },
+        desc: 'Управляет волнами врагов с помощью фамильяров и молниевых атак. Может истощать здоровье противников и отражать снаряды.',
+        abilities: ['Фамильяры', 'Молниевые атаки', 'Отражение снарядов'],
+        diff: '★★☆'
+    },
+    {
+        id: 'hakumen',
+        name: 'Hakumen',
+        role: 'Танк / Контратакер',
+        type: 'tank',
+        tag: 'VOID WARRIOR',
+        icon: '🛡️',
+        color: '#808b96',
+        glow: '#d0d3d4',
+        stats: { atk: 85, def: 95, spd: 45, hp: 95 },
+        desc: 'Танк с мощными контратаками и супербронёй. Подходит для изучения паттернов боссов. Непробиваемая защита.',
+        abilities: ['Суперброня', 'Мощные контратаки', 'Высокая живучесть'],
+        diff: '★★☆'
+    },
+    {
+        id: 'es',
+        name: 'Es',
+        role: 'Пространственный боец',
+        type: 'melee',
+        tag: 'AZURE SHRINE',
+        icon: '✝️',
+        color: '#0e6655',
+        glow: '#1abc9c',
+        stats: { atk: 80, def: 65, spd: 65, hp: 75 },
+        desc: 'Использует мечи и кресты для контроля пространства. Требует точного тайминга для поддержания комбо.',
+        abilities: ['Контроль пространства', 'Точный тайминг', 'Крест-атаки'],
+        diff: '★★★'
+    },
+    {
+        id: 'kokonoe',
+        name: 'Kokonoe',
+        role: 'Зональный контроль',
+        type: 'control',
+        tag: 'PROFESSOR',
+        icon: '🚀',
+        color: '#ba4a00',
+        glow: '#e67e22',
+        stats: { atk: 90, def: 40, spd: 55, hp: 60 },
+        desc: 'Специализируется на зональном контроле с помощью ракет и лазерных столбов. Усиливает урон за счёт серии убийств.',
+        abilities: ['Ракеты', 'Лазерные столбы', 'Бонус за серию убийств'],
+        diff: '★★☆'
+    },
+    {
+        id: 'mai',
+        name: 'Mai Natsume',
+        role: 'Контроль толпы',
+        type: 'control',
+        tag: 'SPEAR MAIDEN',
+        icon: '🌪️',
+        color: '#a93226',
+        glow: '#e84393',
+        stats: { atk: 75, def: 60, spd: 70, hp: 70 },
+        desc: 'Использует копьё и торнадо для контроля толпы. Крайне эффективна против больших групп врагов.',
+        abilities: ['Копейные атаки', 'Торнадо', 'Контроль толпы'],
+        diff: '★★☆'
+    },
+    {
+        id: 'hibiki',
+        name: 'Hibiki Kohaku',
+        role: 'Скрытный боец',
+        type: 'melee',
+        tag: 'PROTOTYPE',
+        icon: '🥷',
+        color: '#1a252f',
+        glow: '#5d6d7e',
+        stats: { atk: 85, def: 50, spd: 85, hp: 65 },
+        desc: 'Скрытный персонаж с возможностью создавать клонов и наносить внезапные удары. Мастер теней и обмана.',
+        abilities: ['Создание клонов', 'Внезапные удары', 'Скрытность'],
+        diff: '★★★'
+    },
+    {
+        id: 'lambda',
+        name: 'Lambda-11',
+        role: 'Зональный боец',
+        type: 'ranged',
+        tag: 'PRIME FIELD',
+        icon: '🔪',
+        color: '#0b5345',
+        glow: '#17a589',
+        stats: { atk: 80, def: 45, spd: 70, hp: 65 },
+        desc: 'Использует призываемые лезвия для зонального контроля. Создаёт зоны поражения и контролирует пространство боя.',
+        abilities: ['Призываемые лезвия', 'Зональный контроль', 'Дистанционные атаки'],
+        diff: '★★☆'
+    },
+    {
+        id: 'icey',
+        name: 'ICEY',
+        role: 'Гость: Стремительный боец',
+        type: 'guest',
+        tag: '★ GUEST',
+        icon: '⭐',
+        color: '#7d6608',
+        glow: '#f4d03f',
+        stats: { atk: 85, def: 55, spd: 95, hp: 70 },
+        desc: 'Гостевой персонаж из одноимённой серии. Обладает бесконечным рывком в любом направлении и механикой разрушения брони.',
+        abilities: ['Бесконечный рывок', 'Разрушение брони', 'Высокая скорость'],
+        diff: '★☆☆'
+    },
+    {
+        id: 'prisoner',
+        name: 'The Prisoner',
+        role: 'Гость: Dead Cells',
+        type: 'guest',
+        tag: '★ DEAD CELLS',
+        icon: '💀',
+        color: '#616a6b',
+        glow: '#aab7b8',
+        stats: { atk: 80, def: 60, spd: 75, hp: 80 },
+        desc: 'Гостевой персонаж из Dead Cells. Обладает тремя сменными наборами снаряжения и механикой критических ударов.',
+        abilities: ['3 набора снаряжения', 'Критические удары', 'Адаптивный стиль'],
+        diff: '★★☆'
+    }
+];
+
+/* =========================================================
+   СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+   ========================================================= */
+let selectedIndex = 9; // Hibiki по умолчанию (как на скриншоте)
+let currentFilter  = 'all';
+
+/* =========================================================
+   ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: создать полоску характеристики
+   ========================================================= */
+function makeStatBar(label, value, glowColor) {
+    return `
+        <div class="stat-row">
+            <span class="stat-label">${label}</span>
+            <div class="stat-bar">
+                <div class="stat-fill"
+                     style="width:${value}%;
+                            background: linear-gradient(90deg, ${glowColor}88, ${glowColor});">
+                </div>
+            </div>
+            <span class="stat-val">${value}</span>
+        </div>`;
+}
+
+/* =========================================================
+   РЕНДЕР КАРУСЕЛИ
+   Показываем 5 панелей: 2 слева, 1 центральная, 2 справа.
+   Позиционные классы: left-2, left-1, center, right-1, right-2
+   ========================================================= */
+function renderCarousel() {
+    const stage = document.getElementById('carouselStage');
+    stage.innerHTML = '';
+
+    // Позиции относительно выбранного (-2, -1, 0, 1, 2)
+    for (let offset = -2; offset <= 2; offset++) {
+        // Индекс с зацикливанием по массиву
+        const idx = (selectedIndex + offset + characters.length) % characters.length;
+        const c   = characters[idx];
+
+        const panel = document.createElement('div');
+
+        // Класс позиции
+        let posClass = 'center';
+        if (offset === -2) posClass = 'left-2';
+        if (offset === -1) posClass = 'left-1';
+        if (offset ===  1) posClass = 'right-1';
+        if (offset ===  2) posClass = 'right-2';
+
+        panel.className = `c-panel ${posClass}`;
+
+        // CSS-переменные для цвета (используются в style.css через var())
+        panel.style.setProperty('--cc', c.color);   // основной цвет
+        panel.style.setProperty('--cg', c.glow);    // цвет свечения
+
+        panel.innerHTML = `
+            <div class="panel-bg-grad"></div>
+            <div class="panel-glow-line"></div>
+            <div class="panel-icon-big">${c.icon}</div>
+            <div class="panel-char-name">${c.name.split(' ')[0]}</div>
+            <div class="panel-char-role">${c.role}</div>
+        `;
+
+        // Клик по боковой панели — выбирает её
+        panel.addEventListener('click', () => {
+            selectedIndex = idx;
+            renderCarousel();
+            renderDetail();
+            renderGrid();
+        });
+
+        stage.appendChild(panel);
+    }
+}
+
+/* =========================================================
+   РЕНДЕР ДЕТАЛЬНОЙ ПАНЕЛИ
+   ========================================================= */
+function renderDetail() {
+    const c = characters[selectedIndex];
+
+    // Простые текстовые поля
+    document.getElementById('dpTag').textContent  = c.tag;
+    document.getElementById('dpTag').style.background = c.glow;
+    document.getElementById('dpName').textContent = c.name;
+    document.getElementById('dpRole').textContent = c.role;
+    document.getElementById('dpDesc').textContent = c.desc;
+
+    // Большая иконка с цветным свечением
+    const icon = document.getElementById('dpIcon');
+    icon.textContent   = c.icon;
+    icon.style.filter  = `drop-shadow(0 0 30px ${c.glow}) drop-shadow(0 0 60px ${c.glow})`;
+
+    // Свечение под иконкой
+    const glow = document.getElementById('dpGlow');
+    glow.style.background =
+        `radial-gradient(circle, ${c.glow}99 0%, ${c.color}55 45%, transparent 75%)`;
+
+    // Характеристики
+    document.getElementById('dpStats').innerHTML =
+        makeStatBar('ATK', c.stats.atk, c.glow) +
+        makeStatBar('DEF', c.stats.def, c.glow) +
+        makeStatBar('SPD', c.stats.spd, c.glow) +
+        makeStatBar('HP',  c.stats.hp,  c.glow);
+
+    // Способности (теги)
+    document.getElementById('dpAbilities').innerHTML =
+        `<div class="diff-row">Сложность: <span style="color:${c.glow}">${c.diff}</span></div>` +
+        c.abilities.map(a =>
+            `<span class="ab-tag"
+                   style="border-color:${c.glow};color:${c.glow};">${a}</span>`
+        ).join('');
+}
+
+/* =========================================================
+   РЕНДЕР СЕТКИ КАРТОЧЕК (с учётом фильтра)
+   ========================================================= */
+function renderGrid() {
+    const grid = document.getElementById('charGrid');
+    grid.innerHTML = '';
+
+    const list = currentFilter === 'all'
+        ? characters
+        : characters.filter(c => c.type === currentFilter);
+
+    list.forEach((c, _) => {
+        const realIdx = characters.indexOf(c);
+        const card    = document.createElement('div');
+        const active  = realIdx === selectedIndex;
+
+        card.className = `char-card ${active ? 'is-selected' : ''}`;
+        card.style.setProperty('--cc', c.color);
+        card.style.setProperty('--cg', c.glow);
+
+        card.innerHTML = `
+            <div class="card-top-glow"></div>
+            <div class="card-icon-wrap">
+                <span class="card-icon">${c.icon}</span>
+            </div>
+            <div class="card-body">
+                <span class="card-tag">${c.tag}</span>
+                <div class="card-name">${c.name}</div>
+                <div class="card-role">${c.role}</div>
+                <div class="card-diff">${c.diff}</div>
+            </div>
+            <div class="card-select-btn">${active ? '✓ ВЫБРАН' : 'ВЫБРАТЬ'}</div>
+        `;
+
+        card.addEventListener('click', () => {
+            selectedIndex = realIdx;
+            renderCarousel();
+            renderDetail();
+            renderGrid();
+            // Плавный скролл к детальной панели
+            document.getElementById('detailPanel')
+                    .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        grid.appendChild(card);
+    });
+}
+
+/* =========================================================
+   ФИЛЬТРЫ
+   ========================================================= */
+document.querySelectorAll('.filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Снимаем active со всех, ставим на нажатую
+        document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderGrid();
+    });
+});
+
+/* =========================================================
+   КНОПКИ НАВИГАЦИИ КАРУСЕЛИ
+   ========================================================= */
+document.getElementById('navPrev').addEventListener('click', () => {
+    selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
+    renderCarousel();
+    renderDetail();
+    renderGrid();
+});
+
+document.getElementById('navNext').addEventListener('click', () => {
+    selectedIndex = (selectedIndex + 1) % characters.length;
+    renderCarousel();
+    renderDetail();
+    renderGrid();
+});
+
+/* =========================================================
+   ГЕНЕРАЦИЯ ФОНОВЫХ ЧАСТИЦ
+   ========================================================= */
+(function spawnParticles() {
+    const bg = document.getElementById('particleBg');
+    for (let i = 0; i < 60; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        // Случайное расположение
+        p.style.cssText = `
+            left: ${Math.random() * 100}vw;
+            top:  ${Math.random() * 100}vh;
+            width:  ${Math.random() * 3 + 1}px;
+            height: ${Math.random() * 3 + 1}px;
+            animation-delay:    ${Math.random() * 10}s;
+            animation-duration: ${Math.random() * 8 + 5}s;
+            opacity: ${Math.random() * 0.4 + 0.1};
+        `;
+        bg.appendChild(p);
+    }
+})();
+
+/* =========================================================
+   ПЕРВИЧНАЯ ОТРИСОВКА
+   ========================================================= */
+renderCarousel();
+renderDetail();
+renderGrid();
+
+</script>
+</body>
+</html>

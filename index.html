@@ -403,9 +403,9 @@ function makeStatBar(label, value, glowColor) {
 }
 
 /* ═══════════════════════════════════════════
-   КАРУСЕЛЬ
+   КАРУСЕЛЬ + ИДЕЯ 1 (Parallax) + ИДЕЯ 2 (Анимация входа)
    ═══════════════════════════════════════════ */
-function renderCarousel() {
+function renderCarousel(animate = false) {
     const stage = document.getElementById('carouselStage');
     stage.innerHTML = '';
 
@@ -425,23 +425,86 @@ function renderCarousel() {
         panel.style.setProperty('--cc', c.color);
         panel.style.setProperty('--cg', c.glow);
 
+        const isCenter = offset === 0;
+
         panel.innerHTML = `
             <div class="panel-bg-grad"></div>
             <div class="panel-glow-line"></div>
-            <img src="es.jpg" class="panel-char-img" alt="${c.name}">
+            <img src="es.jpg"
+                 class="panel-char-img${isCenter && animate ? ' entering' : ''}"
+                 alt="${c.name}"
+                 draggable="false">
             <div class="panel-char-name">${c.name.split(' ')[0].toUpperCase()}</div>
             <div class="panel-char-role">${c.role}</div>
         `;
 
+        /* ── Идея 2: flash на центральной при анимации ── */
+        if (isCenter && animate) {
+            panel.classList.add('flash');
+            panel.addEventListener('animationend',
+                () => panel.classList.remove('flash'),
+                { once: true }
+            );
+        }
+
+        /* ── Идея 1: Mouse Parallax (только для не-center) ── */
+        if (!isCenter) {
+            addParallax(panel, 6); // слабый parallax для боковых
+        } else {
+            addParallax(panel, 14); // сильнее для центральной
+        }
+
         panel.addEventListener('click', () => {
             selectedIndex = idx;
-            renderCarousel();
+            renderCarousel(true);  // animate = true при клике
             renderDetail();
         });
 
         stage.appendChild(panel);
     }
 }
+
+/* ── Идея 1: Parallax helper ── */
+function addParallax(panel, strength) {
+    const img = panel.querySelector('.panel-char-img');
+    if (!img) return;
+
+    panel.addEventListener('mousemove', (e) => {
+        const rect   = panel.getBoundingClientRect();
+        // Нормализуем позицию курсора от -1 до +1
+        const xRel   = (e.clientX - rect.left)  / rect.width  - 0.5;
+        const yRel   = (e.clientY - rect.top)   / rect.height - 0.5;
+
+        const tx = xRel * strength;
+        const ty = yRel * strength * 0.6;  // вертикаль чуть слабее
+
+        img.style.transform        = `translate(${tx}px, ${ty}px) scale(1.08)`;
+        img.style.transitionDuration = '0.08s'; // быстрый отклик
+    });
+
+    panel.addEventListener('mouseleave', () => {
+        img.style.transform        = 'translate(0, 0) scale(1)';
+        img.style.transitionDuration = '0.4s'; // плавный возврат
+    });
+}
+
+/* ─ Навигация с анимацией ─ */
+document.getElementById('navPrev').addEventListener('click', () => {
+    selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
+    renderCarousel(true);
+    renderDetail();
+});
+
+document.getElementById('navNext').addEventListener('click', () => {
+    selectedIndex = (selectedIndex + 1) % characters.length;
+    renderCarousel(true);
+    renderDetail();
+});
+
+/* ─ Первичный рендер (без анимации) ─ */
+renderCarousel(false);
+renderDetail();
+
 
 /* ═══════════════════════════════════════════
    ДЕТАЛЬНАЯ ПАНЕЛЬ

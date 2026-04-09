@@ -8,13 +8,17 @@
 </head>
 <body>
 
-<!-- ════ ФОН: два canvas для crossfade между тремя режимами ════ -->
+<!-- ════ ФОН: два canvas для crossfade между четырьмя режимами ════ -->
 <canvas id="bgCanvasA"></canvas>
 <canvas id="bgCanvasB"></canvas>
+
+<!-- Полоса глитча (END тема) -->
+<div class="glitch-bar" id="glitchBar"></div>
 
 <!-- ══════════════ ШАПКА ══════════════ -->
 <header class="site-header" id="top">
     <div class="header-inner">
+        <!-- Логотип -->
         <div class="header-logo">
             <svg class="logo-svg" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="50,4 96,82 4,82" fill="none"
@@ -31,6 +35,19 @@
                 <span class="logo-entropy">ENTROPY EFFECT</span>
             </div>
         </div>
+
+        <!--
+            НОВИНКА 5: Кнопка переключения темы.
+            Находится между логотипом и навигацией.
+            "NEW STORY" = синяя тема, "END STORY" = красная тема с глитчами.
+            data-theme хранит текущее состояние.
+        -->
+        <button class="theme-toggle-btn" id="themeToggle" data-theme="new"
+                aria-label="Переключить тему">
+            <span class="theme-label-full">NEW STORY</span>
+            <span class="theme-label-short" style="display:none">◈</span>
+        </button>
+
         <nav class="tab-nav" role="tablist">
             <button class="tab-btn active" data-tab="home"
                     role="tab" aria-selected="true">Главная</button>
@@ -50,19 +67,57 @@
         <section class="hero">
             <div class="hero-text">
                 <div class="hero-label">— Roguelite Action —</div>
-                <h1 class="hero-title">ENTROPY<br><span class="accent">EFFECT</span></h1>
+                <!--
+                    data-text нужен для CSS glitch ::before/::after
+                    в END теме (они читают текст через attr(data-text))
+                -->
+                <h1 class="hero-title" data-text="ENTROPY">
+                    ENTROPY<br><span class="accent">EFFECT</span>
+                </h1>
                 <p class="hero-sub">
                     Выбери персонажа, прокачай навыки и сражайся<br>
                     в процедурно генерируемых уровнях
                 </p>
                 <button class="btn-primary" id="goToChars">⚔ ВЫБРАТЬ ПЕРСОНАЖА</button>
             </div>
+
             <div class="hero-deco">
                 <div class="hero-ring r1"></div>
                 <div class="hero-ring r2"></div>
                 <div class="hero-ring r3"></div>
+
+                <!--
+                    НОВИНКА 1: Логотип игры вместо фото-заглушки.
+                    Воссоздан точно по скриншоту: SVG-треугольник + "BLAZBLUE" + "ENTROPY EFFECT".
+                    Обёрнут в .hero-logo-display для layout.
+                    Анимация pulse + drop-shadow из переменных темы.
+                    Никаких <img src="es.jpg"> — только векторная графика.
+                -->
                 <div class="hero-center">
-                    <img src="es.jpg" alt="BlazBlue character">
+                    <div class="hero-logo-display">
+                        <svg class="hero-logo-svg-large" viewBox="0 0 100 88"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <!-- Внешний треугольник -->
+                            <polygon points="50,4 96,82 4,82" fill="none"
+                                stroke="rgba(255,255,255,0.95)" stroke-width="2.5"
+                                stroke-linejoin="round"/>
+                            <!-- Нижняя горизонталь -->
+                            <line x1="4" y1="82" x2="96" y2="82"
+                                stroke="rgba(255,255,255,0.95)" stroke-width="2.5"/>
+                            <!-- Внутренний треугольник (литера A) -->
+                            <polyline points="50,20 70,66 30,66" fill="none"
+                                stroke="rgba(255,255,255,0.9)" stroke-width="2"
+                                stroke-linejoin="round"/>
+                            <!-- Перекладина A -->
+                            <line x1="36" y1="54" x2="64" y2="54"
+                                stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
+                            <!-- Внутреннее свечение — полупрозрачный заполнитель -->
+                            <polygon points="50,20 70,66 30,66"
+                                fill="rgba(116,192,252,0.06)"/>
+                        </svg>
+                        <span class="hero-logo-blazblue">─ BLAZBLUE ─</span>
+                        <span class="hero-logo-entropy">ENTROPY EFFECT</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -255,10 +310,87 @@ const characters = [
 ];
 
 /* ═══════════════════════════════════════════
-   СОСТОЯНИЕ
+   СОСТОЯНИЕ ПРИЛОЖЕНИЯ
    ═══════════════════════════════════════════ */
-let selectedIndex = 6;
-let currentFilter = 'all';
+let selectedIndex  = 6;
+let currentFilter  = 'all';
+let activeTheme    = 'new';  // 'new' | 'end'
+
+/* ═══════════════════════════════════════════
+   НОВИНКА 4+5: ПЕРЕКЛЮЧЕНИЕ ТЕМЫ
+   ─────────────────────────────────────────
+   toggleTheme() меняет класс theme-end на
+   корневом элементе <html>, обновляет текст
+   кнопки и запускает JS-анимации глитча
+   для END темы (случайные полосы помех).
+   ═══════════════════════════════════════════ */
+const themeToggleBtn = document.getElementById('themeToggle');
+const glitchBar      = document.getElementById('glitchBar');
+
+function toggleTheme() {
+    if (activeTheme === 'new') {
+        activeTheme = 'end';
+        document.documentElement.classList.add('theme-end');
+        themeToggleBtn.querySelector('.theme-label-full').textContent = 'END STORY';
+        themeToggleBtn.querySelector('.theme-label-short').textContent = '✕';
+        startGlitchBars();  // запускаем JS-полосы помех
+    } else {
+        activeTheme = 'new';
+        document.documentElement.classList.remove('theme-end');
+        themeToggleBtn.querySelector('.theme-label-full').textContent = 'NEW STORY';
+        themeToggleBtn.querySelector('.theme-label-short').textContent = '◈';
+        stopGlitchBars();
+    }
+}
+
+themeToggleBtn.addEventListener('click', toggleTheme);
+
+/* ─── Горизонтальные полосы-помехи (JS) ──────────────────
+   В END теме периодически показываем div.glitch-bar
+   в случайной вертикальной позиции — эффект артефактов.
+   ───────────────────────────────────────────────────────── */
+let glitchBarInterval = null;
+
+function startGlitchBars() {
+    // Первый показ быстрее
+    scheduleGlitchBar();
+}
+
+function scheduleGlitchBar() {
+    if (activeTheme !== 'end') return;
+    const delay = 1200 + Math.random() * 3000;  // случайный интервал 1.2–4.2 сек
+    glitchBarInterval = setTimeout(() => {
+        showGlitchBar();
+        scheduleGlitchBar();
+    }, delay);
+}
+
+function showGlitchBar() {
+    // Случайная высота и толщина полосы
+    const y = Math.random() * window.innerHeight;
+    const h = 1 + Math.random() * 4;
+    const r = Math.floor(150 + Math.random() * 105);  // оттенок красного
+    glitchBar.style.top    = `${y}px`;
+    glitchBar.style.height = `${h}px`;
+    glitchBar.style.background =
+        `linear-gradient(90deg, transparent, rgba(${r},0,0,0.85) 20%, rgba(${r},30,0,0.9) 50%, transparent)`;
+    glitchBar.style.opacity = '1';
+
+    // Иногда добавляем смещение (хаотичный глитч)
+    if (Math.random() > 0.6) {
+        glitchBar.style.transform = `scaleX(${0.3 + Math.random() * 0.7}) translateX(${(Math.random()-0.5)*40}%)`;
+    } else {
+        glitchBar.style.transform = 'none';
+    }
+
+    setTimeout(() => { glitchBar.style.opacity = '0'; }, 80 + Math.random() * 120);
+}
+
+function stopGlitchBars() {
+    clearTimeout(glitchBarInterval);
+    glitchBarInterval = null;
+    glitchBar.style.opacity = '0';
+}
 
 /* ═══════════════════════════════════════════
    УТИЛИТЫ
@@ -285,9 +417,9 @@ function addParallax(panel, strength) {
     if (!img) return;
     panel.addEventListener('mousemove', (e) => {
         const rect = panel.getBoundingClientRect();
-        const xRel = (e.clientX - rect.left)  / rect.width  - 0.5;
-        const yRel = (e.clientY - rect.top)   / rect.height - 0.5;
-        img.style.transform = `translate(${xRel * strength}px, ${yRel * strength * 0.6}px) scale(1.04)`;
+        const xRel = (e.clientX - rect.left) / rect.width  - 0.5;
+        const yRel = (e.clientY - rect.top)  / rect.height - 0.5;
+        img.style.transform = `translate(${xRel*strength}px,${yRel*strength*0.6}px) scale(1.04)`;
         img.style.transitionDuration = '0.08s';
     });
     panel.addEventListener('mouseleave', () => {
@@ -308,15 +440,13 @@ function renderCarousel(animate = false) {
         const c   = characters[idx];
         const panel = document.createElement('div');
 
-        const posMap = { '-2': 'left-2', '-1': 'left-1', '0': 'center', '1': 'right-1', '2': 'right-2' };
+        const posMap = { '-2':'left-2','-1':'left-1','0':'center','1':'right-1','2':'right-2' };
         const posClass = posMap[String(offset)];
-
         panel.className = `c-panel ${posClass}`;
         panel.style.setProperty('--cc', c.color);
         panel.style.setProperty('--cg', c.glow);
 
         const isCenter = offset === 0;
-
         panel.innerHTML = `
             <div class="panel-bg-grad"></div>
             <div class="panel-glow-line"></div>
@@ -337,7 +467,6 @@ function renderCarousel(animate = false) {
         }
 
         addParallax(panel, isCenter ? 10 : 5);
-
         panel.addEventListener('click', () => {
             selectedIndex = idx;
             renderCarousel(true);
@@ -353,7 +482,6 @@ function renderCarousel(animate = false) {
    ═══════════════════════════════════════════ */
 function renderDetail() {
     const c = characters[selectedIndex];
-
     document.getElementById('dpTag').textContent   = c.tag;
     document.getElementById('dpTag').style.background = c.glow;
     document.getElementById('dpName').textContent  = c.name.toUpperCase();
@@ -381,18 +509,15 @@ function renderDetail() {
 }
 
 /* ═══════════════════════════════════════════
-   НАВИГАЦИЯ КАРУСЕЛИ (единственные обработчики)
+   НАВИГАЦИЯ КАРУСЕЛИ
    ═══════════════════════════════════════════ */
 document.getElementById('navPrev').addEventListener('click', () => {
     selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
-    renderCarousel(true);
-    renderDetail();
+    renderCarousel(true); renderDetail();
 });
-
 document.getElementById('navNext').addEventListener('click', () => {
     selectedIndex = (selectedIndex + 1) % characters.length;
-    renderCarousel(true);
-    renderDetail();
+    renderCarousel(true); renderDetail();
 });
 
 /* ═══════════════════════════════════════════
@@ -405,30 +530,62 @@ document.querySelectorAll('.filter').forEach(btn => {
         currentFilter = btn.dataset.filter;
         if (currentFilter !== 'all') {
             const idx = characters.findIndex(c => c.type === currentFilter);
-            if (idx !== -1) {
-                selectedIndex = idx;
-                renderCarousel();
-                renderDetail();
-            }
+            if (idx !== -1) { selectedIndex = idx; renderCarousel(); renderDetail(); }
         }
     });
 });
 
 /* ═══════════════════════════════════════════
-   СИСТЕМА ВКЛАДОК
+   НОВИНКА 2: ДВУХФАЗНЫЙ ПЕРЕХОД ВКЛАДОК
+   ─────────────────────────────────────────
+   Фаза 1 (0.5s): текущая вкладка получает класс
+   tab-leave → fade-out + сдвиг вверх + blur.
+   Фаза 2 (0.85s): после завершения fade-out
+   новая вкладка получает класс tab-enter →
+   fade-in + сдвиг снизу + unblur.
+   Итого: ~1.35 сек полного перехода.
    ═══════════════════════════════════════════ */
+const LEAVE_MS = 500;   // длительность fade-out
+const ENTER_MS = 850;   // длительность fade-in
+let   isTabSwitching = false;
+
 function switchTab(tabId) {
+    if (isTabSwitching) return;
+
+    const currentPane = document.querySelector('.tab-pane.active');
+    const targetPane  = document.getElementById(`tab-${tabId}`);
+    if (!targetPane || currentPane === targetPane) return;
+
+    isTabSwitching = true;
+
+    /* Обновляем активную кнопку сразу */
     document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
     });
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.setAttribute('aria-selected', 'true');
+    }
 
-    const btn  = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-    const pane = document.getElementById(`tab-${tabId}`);
-    if (btn)  { btn.classList.add('active');  btn.setAttribute('aria-selected', 'true'); }
-    if (pane) { pane.classList.add('active'); }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    /* Фаза 1: fade-out текущей вкладки */
+    currentPane.classList.add('tab-leave');
+
+    setTimeout(() => {
+        /* Скрываем старую вкладку */
+        currentPane.classList.remove('active', 'tab-leave');
+
+        /* Фаза 2: fade-in новой вкладки */
+        targetPane.classList.add('active', 'tab-enter');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        targetPane.addEventListener('animationend', () => {
+            targetPane.classList.remove('tab-enter');
+            isTabSwitching = false;
+        }, { once: true });
+
+    }, LEAVE_MS);
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -447,23 +604,23 @@ renderCarousel(false);
 renderDetail();
 
 
-/* ╔═══════════════════════════════════════════════════════════╗
-   ║  АНИМИРОВАННЫЙ ФОН — ТРИ РЕЖИМА С ПЛАВНЫМ CROSSFADE      ║
-   ║                                                           ║
-   ║  Режим 0: CALAMITY RAIN — матрица из символов             ║
-   ║  Режим 1: HEX GRID     — шестиугольная энергосетка        ║
-   ║  Режим 2: VOID RINGS   — вращающиеся кольца / орбиты      ║
-   ║                                                           ║
-   ║  Два canvas (#bgCanvasA снизу, #bgCanvasB сверху).        ║
-   ║  При смене режима bgCanvasB плавно появляется             ║
-   ║  (opacity 0→1), затем bgCanvasA переключается на новый    ║
-   ║  режим, bgCanvasB уходит (opacity 1→0).                   ║
-   ╚═══════════════════════════════════════════════════════════╝ */
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  АНИМИРОВАННЫЙ ФОН — ЧЕТЫРЕ РЕЖИМА С ПЛАВНЫМ CROSSFADE      ║
+   ║                                                              ║
+   ║  НОВИНКА 3: Добавлен 4-й режим NEURAL WEB                   ║
+   ║  Режим 0: CALAMITY RAIN  — матрица символов                 ║
+   ║  Режим 1: HEX GRID       — шестиугольная сетка              ║
+   ║  Режим 2: VOID RINGS     — вращающиеся кольца               ║
+   ║  Режим 3: NEURAL WEB     — нейронная сеть (узлы + связи)    ║
+   ║                                                              ║
+   ║  НОВИНКА 4: Все режимы переключают палитру при END теме      ║
+   ║  через getBgPalette() — красные/оранжевые оттенки           ║
+   ╚══════════════════════════════════════════════════════════════╝ */
 (function initBackground() {
     'use strict';
 
-    const cvA = document.getElementById('bgCanvasA');
-    const cvB = document.getElementById('bgCanvasB');
+    const cvA  = document.getElementById('bgCanvasA');
+    const cvB  = document.getElementById('bgCanvasB');
     const ctxA = cvA.getContext('2d');
     const ctxB = cvB.getContext('2d');
 
@@ -475,81 +632,76 @@ renderDetail();
     resize();
     window.addEventListener('resize', () => {
         resize();
-        modes.forEach(m => m.resize(cvA.width, cvA.height));
+        modes.forEach(m => m.resize && m.resize(cvA.width, cvA.height));
     });
+
+    /* ── Геттер текущей палитры (реагирует на тему) ──────────────
+       NEW STORY: синий / бирюзовый / голубой
+       END STORY: тёмно-красный / оранжевый / ярко-красный
+    ───────────────────────────────────────────────────────────── */
+    function getBgPalette() {
+        const isEnd = document.documentElement.classList.contains('theme-end');
+        if (isEnd) {
+            return [
+                [180,  10,   0],   // тёмно-красный
+                [220,  60,   0],   // оранжево-красный
+                [255, 100,  30],   // яркий оранжевый
+            ];
+        }
+        return [
+            [ 21, 101, 192],   // синий
+            [ 13, 148, 136],   // бирюзовый
+            [116, 192, 252],   // голубой
+        ];
+    }
 
     /* ══════════════════════════════════════════
        РЕЖИМ 0: CALAMITY RAIN
-       Падающие столбцы символов (Matrix-style)
-       Символы: японские каны + руны + hex-цифры
        ══════════════════════════════════════════ */
     class CalamityRain {
-        constructor(w, h) {
-            this.resize(w, h);
-        }
+        constructor(w, h) { this.resize(w, h); }
 
         resize(w, h) {
             this.w = w; this.h = h;
-            this.chars = 'アイウエオカキクサシスセタチツナニΔΨΩ∞◈⬡01234567890ABCDEF';
+            this.chars = 'アイウエオカキクサシスΔΨΩ∞◈⬡01ABCDEF∇◆';
             this.colW  = 22;
             this.cols  = Math.floor(w / this.colW);
-            this.drops = Array.from({ length: this.cols },
-                () => Math.random() * -(h / this.colW));
-            this.speeds = Array.from({ length: this.cols },
-                () => 0.25 + Math.random() * 0.75);
-            /* У каждого столбца свой акцентный цвет */
-            this.colors = Array.from({ length: this.cols }, () => {
-                const palette = [
-                    [21, 101, 192],   // синий
-                    [13, 148, 136],   // бирюзовый
-                    [56, 189, 248],   // голубой
-                ];
-                return palette[Math.floor(Math.random() * palette.length)];
-            });
+            this.drops  = Array.from({ length: this.cols }, () => Math.random() * -(h / this.colW));
+            this.speeds = Array.from({ length: this.cols }, () => 0.25 + Math.random() * 0.75);
+            this.cidx   = Array.from({ length: this.cols }, () => Math.floor(Math.random() * 3));
         }
 
         draw(ctx) {
-            /* Полупрозрачный оверлей — создаёт «хвост» */
-            ctx.fillStyle = 'rgba(7,11,23,0.16)';
-            ctx.fillRect(0, 0, this.w, this.h);
+            const palette = getBgPalette();
+            const bgAlpha = document.documentElement.classList.contains('theme-end')
+                ? 'rgba(13,0,0,0.16)' : 'rgba(7,11,23,0.16)';
 
+            ctx.fillStyle = bgAlpha;
+            ctx.fillRect(0, 0, this.w, this.h);
             ctx.font = 'bold 13px "Courier New", monospace';
 
             for (let i = 0; i < this.cols; i++) {
                 const x  = i * this.colW + 2;
-                const yH = Math.floor(this.drops[i]) * this.colW; // голова
+                const yH = Math.floor(this.drops[i]) * this.colW;
 
-                /* Голова столбца — почти белая/яркая */
-                ctx.fillStyle = `rgba(200,235,255,0.95)`;
-                ctx.fillText(
-                    this.chars[Math.floor(Math.random() * this.chars.length)],
-                    x, yH
-                );
+                ctx.fillStyle = 'rgba(220,235,255,0.92)';
+                ctx.fillText(this.chars[Math.floor(Math.random() * this.chars.length)], x, yH);
 
-                /* Тело — затухающее свечение цвета столбца */
-                const [r, g, b] = this.colors[i];
+                const [r, g, b] = palette[this.cidx[i]];
                 const tailLen = 6 + Math.floor(Math.random() * 4);
                 for (let t = 1; t <= tailLen; t++) {
                     const a = (1 - t / tailLen) * 0.65;
                     ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-                    ctx.fillText(
-                        this.chars[Math.floor(Math.random() * this.chars.length)],
-                        x, yH - t * this.colW
-                    );
+                    ctx.fillText(this.chars[Math.floor(Math.random() * this.chars.length)], x, yH - t * this.colW);
                 }
 
-                /* Сброс капли */
                 this.drops[i] += this.speeds[i];
                 if (yH > this.h + 50 && Math.random() > 0.975) {
                     this.drops[i] = Math.random() * -8;
                 }
             }
 
-            /* Мягкое виньетирование по краям */
-            const vign = ctx.createRadialGradient(
-                this.w/2, this.h/2, this.h * 0.3,
-                this.w/2, this.h/2, this.h * 0.85
-            );
+            const vign = ctx.createRadialGradient(this.w/2, this.h/2, this.h*0.3, this.w/2, this.h/2, this.h*0.85);
             vign.addColorStop(0, 'transparent');
             vign.addColorStop(1, 'rgba(4,7,16,0.55)');
             ctx.fillStyle = vign;
@@ -559,27 +711,20 @@ renderDetail();
 
     /* ══════════════════════════════════════════
        РЕЖИМ 1: HEX GRID
-       Шестиугольная сетка с пульсирующими
-       энергетическими волнами от центра
        ══════════════════════════════════════════ */
     class HexGrid {
-        constructor(w, h) {
-            this.t = 0;
-            this.resize(w, h);
-        }
+        constructor(w, h) { this.t = 0; this.resize(w, h); }
 
         resize(w, h) {
             this.w = w; this.h = h;
             this.hexes = [];
-            const S  = 40;   // радиус шестиугольника
-            const dx = S * 1.73;
-            const dy = S * 1.50;
+            const S = 40, dx = S * 1.73, dy = S * 1.50;
             for (let r = -1; r <= Math.ceil(h / dy) + 1; r++) {
                 for (let c = -1; c <= Math.ceil(w / dx) + 1; c++) {
                     this.hexes.push({
-                        x:     c * dx + (r % 2 === 0 ? 0 : dx / 2),
-                        y:     r * dy,
-                        s:     S,
+                        x: c * dx + (r % 2 === 0 ? 0 : dx / 2),
+                        y: r * dy,
+                        s: S,
                         phase: Math.random() * Math.PI * 2
                     });
                 }
@@ -589,63 +734,60 @@ renderDetail();
         hexPath(ctx, x, y, s) {
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
-                const a  = (Math.PI / 3) * i - Math.PI / 6;
-                const px = x + s * Math.cos(a);
-                const py = y + s * Math.sin(a);
-                i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+                const a = (Math.PI / 3) * i - Math.PI / 6;
+                i === 0 ? ctx.moveTo(x + s * Math.cos(a), y + s * Math.sin(a))
+                        : ctx.lineTo(x + s * Math.cos(a), y + s * Math.sin(a));
             }
             ctx.closePath();
         }
 
         draw(ctx) {
-            ctx.clearRect(0, 0, this.w, this.h);
+            const palette = getBgPalette();
+            const [r0,g0,b0] = palette[0];
+            const [r1,g1,b1] = palette[1];
+            const [r2,g2,b2] = palette[2];
+            const isEnd = document.documentElement.classList.contains('theme-end');
 
-            /* Базовый фон */
-            ctx.fillStyle = '#070b17';
+            ctx.clearRect(0, 0, this.w, this.h);
+            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
             ctx.fillRect(0, 0, this.w, this.h);
 
-            const cx = this.w / 2;
-            const cy = this.h / 2;
+            const cx = this.w / 2, cy = this.h / 2;
             const T  = this.t * 0.012;
 
             for (const h of this.hexes) {
                 const dist  = Math.hypot(h.x - cx, h.y - cy);
                 const wave  = Math.sin(dist * 0.014 - T * 2.8 + h.phase * 0.25);
-                const pulse = (wave + 1) / 2; // 0..1
+                const pulse = (wave + 1) / 2;
 
-                /* Обводка сота */
-                ctx.strokeStyle = `rgba(21,101,192,${0.06 + pulse * 0.20})`;
+                ctx.strokeStyle = `rgba(${r0},${g0},${b0},${0.06 + pulse * 0.20})`;
                 ctx.lineWidth   = 0.8;
                 this.hexPath(ctx, h.x, h.y, h.s - 1);
                 ctx.stroke();
 
-                /* Заливка активных сот */
                 if (pulse > 0.78) {
                     const t = (pulse - 0.78) / 0.22;
-                    ctx.fillStyle = `rgba(13,148,136,${t * 0.18})`;
+                    ctx.fillStyle = `rgba(${r1},${g1},${b1},${t * 0.18})`;
                     this.hexPath(ctx, h.x, h.y, h.s - 1);
                     ctx.fill();
                 }
 
-                /* Центральная точка узла */
                 if (pulse > 0.65) {
                     const t = (pulse - 0.65) / 0.35;
-                    ctx.fillStyle = `rgba(116,192,252,${t * 0.85})`;
+                    ctx.fillStyle = `rgba(${r2},${g2},${b2},${t * 0.85})`;
                     ctx.beginPath();
                     ctx.arc(h.x, h.y, 1.5 + t * 1.5, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
 
-            /* Радиальное свечение в центре */
             const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 320);
-            gl.addColorStop(0,   'rgba(21,101,192,0.14)');
-            gl.addColorStop(0.5, 'rgba(13,148,136,0.05)');
+            gl.addColorStop(0,   `rgba(${r0},${g0},${b0},0.14)`);
+            gl.addColorStop(0.5, `rgba(${r1},${g1},${b1},0.05)`);
             gl.addColorStop(1,   'transparent');
             ctx.fillStyle = gl;
             ctx.fillRect(0, 0, this.w, this.h);
 
-            /* Виньет */
             const vg = ctx.createRadialGradient(cx, cy, this.h * 0.28, cx, cy, this.h * 0.9);
             vg.addColorStop(0, 'transparent');
             vg.addColorStop(1, 'rgba(4,7,16,0.6)');
@@ -658,8 +800,6 @@ renderDetail();
 
     /* ══════════════════════════════════════════
        РЕЖИМ 2: VOID RINGS
-       Концентрические вращающиеся кольца
-       с орбитальными частицами — стиль «портал»
        ══════════════════════════════════════════ */
     class VoidRings {
         constructor(w, h) {
@@ -668,82 +808,68 @@ renderDetail();
             this.particles = Array.from({ length: 140 }, () => this._mkParticle(w, h));
         }
 
-        _mkParticle(w, h) {
-            const orbitR  = [110, 165, 230, 310];
-            const radius  = orbitR[Math.floor(Math.random() * orbitR.length)]
-                          + (Math.random() - 0.5) * 35;
+        _mkParticle() {
+            const orbitR = [110, 165, 230, 310];
+            const radius = orbitR[Math.floor(Math.random() * orbitR.length)] + (Math.random()-0.5)*35;
             return {
                 angle:  Math.random() * Math.PI * 2,
                 radius,
                 speed:  (0.0018 + Math.random() * 0.0055) * (Math.random() > 0.5 ? 1 : -1),
                 size:   0.8 + Math.random() * 2.2,
                 alpha:  0.15 + Math.random() * 0.65,
-                ci:     Math.floor(Math.random() * 3)  // индекс цвета
+                ci:     Math.floor(Math.random() * 3)
             };
         }
 
-        resize(w, h) {
-            this.w = w; this.h = h;
-        }
+        resize(w, h) { this.w = w; this.h = h; }
 
         draw(ctx) {
+            const palette = getBgPalette();
+            const isEnd = document.documentElement.classList.contains('theme-end');
+
             ctx.clearRect(0, 0, this.w, this.h);
-            ctx.fillStyle = '#070b17';
+            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
             ctx.fillRect(0, 0, this.w, this.h);
 
-            const cx = this.w / 2;
-            const cy = this.h / 2;
-            const T  = this.t;
+            const cx = this.w / 2, cy = this.h / 2, T = this.t;
+            const [r0,g0,b0] = palette[0];
 
-            const palette = [
-                [21,  101, 192],  // синий
-                [13,  148, 136],  // бирюзовый
-                [116, 192, 252],  // голубой
-            ];
-
-            /* Фоновое свечение центра */
             const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 380);
-            bg.addColorStop(0,   'rgba(11,18,37,0.8)');
-            bg.addColorStop(0.4, 'rgba(21,101,192,0.06)');
+            bg.addColorStop(0,   isEnd ? 'rgba(22,0,0,0.8)' : 'rgba(11,18,37,0.8)');
+            bg.addColorStop(0.4, `rgba(${r0},${g0},${b0},0.06)`);
             bg.addColorStop(1,   'transparent');
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, this.w, this.h);
 
-            /* Кольца */
             const rings = [
-                { r: 110, w: 1.8, spd:  0.0022, dir:  1, ci: 0, alpha: 0.42, marks: 12 },
-                { r: 165, w: 1.2, spd:  0.0015, dir: -1, ci: 2, alpha: 0.30, marks: 18 },
-                { r: 230, w: 2.2, spd:  0.0009, dir:  1, ci: 1, alpha: 0.22, marks: 24 },
-                { r: 310, w: 1.0, spd:  0.0005, dir: -1, ci: 0, alpha: 0.13, marks: 32 },
+                { r:110, w:1.8, spd:0.0022, dir: 1, ci:0, alpha:0.42, marks:12 },
+                { r:165, w:1.2, spd:0.0015, dir:-1, ci:2, alpha:0.30, marks:18 },
+                { r:230, w:2.2, spd:0.0009, dir: 1, ci:1, alpha:0.22, marks:24 },
+                { r:310, w:1.0, spd:0.0005, dir:-1, ci:0, alpha:0.13, marks:32 },
             ];
 
             rings.forEach((ring, ri) => {
                 const [r, g, b] = palette[ring.ci];
                 const rot = T * ring.spd * ring.dir;
 
-                /* Основная окружность */
                 ctx.beginPath();
                 ctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
                 ctx.strokeStyle = `rgba(${r},${g},${b},${ring.alpha})`;
                 ctx.lineWidth   = ring.w;
                 ctx.stroke();
 
-                /* Отметки-точки на кольце */
                 for (let m = 0; m < ring.marks; m++) {
                     const a     = rot + (Math.PI * 2 / ring.marks) * m;
                     const mx    = cx + Math.cos(a) * ring.r;
                     const my    = cy + Math.sin(a) * ring.r;
                     const pulse = (Math.sin(T * 0.04 + m * 0.7 + ri) + 1) / 2;
-                    const ar    = ring.alpha + pulse * 0.45;
-
-                    ctx.fillStyle = `rgba(${r},${g},${b},${ar})`;
+                    ctx.fillStyle = `rgba(${r},${g},${b},${ring.alpha + pulse * 0.45})`;
                     ctx.beginPath();
                     ctx.arc(mx, my, 1.5 + pulse * 2.5, 0, Math.PI * 2);
                     ctx.fill();
                 }
             });
 
-            /* Орбитальные частицы */
             this.particles.forEach(p => {
                 p.angle += p.speed;
                 const px = cx + Math.cos(p.angle) * p.radius;
@@ -755,19 +881,17 @@ renderDetail();
                 ctx.fill();
             });
 
-            /* Центральный орб */
             const pulse = (Math.sin(T * 0.048) + 1) / 2;
             const orbR  = 55 + pulse * 15;
             const orb   = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
             orb.addColorStop(0,   `rgba(180,230,255,${0.18 + pulse * 0.12})`);
-            orb.addColorStop(0.4, `rgba(21,101,192,${0.10 + pulse * 0.08})`);
+            orb.addColorStop(0.4, `rgba(${r0},${g0},${b0},${0.10 + pulse * 0.08})`);
             orb.addColorStop(1,   'transparent');
             ctx.fillStyle = orb;
             ctx.beginPath();
             ctx.arc(cx, cy, orbR, 0, Math.PI * 2);
             ctx.fill();
 
-            /* Ядро */
             const coreR = 5 + pulse * 4;
             const core  = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
             core.addColorStop(0, `rgba(220,245,255,${0.7 + pulse * 0.3})`);
@@ -777,7 +901,6 @@ renderDetail();
             ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
             ctx.fill();
 
-            /* Виньет */
             const vg = ctx.createRadialGradient(cx, cy, this.h * 0.25, cx, cy, this.h * 0.9);
             vg.addColorStop(0, 'transparent');
             vg.addColorStop(1, 'rgba(4,7,16,0.55)');
@@ -789,23 +912,145 @@ renderDetail();
     }
 
     /* ══════════════════════════════════════════
-       СИСТЕМА УПРАВЛЕНИЯ СМЕНОЙ РЕЖИМОВ
+       НОВИНКА 3: РЕЖИМ 3 — NEURAL WEB
+       ─────────────────────────────────────────
+       Нейронная сеть: 80 узлов медленно дрейфуют
+       по экрану. Если расстояние между двумя
+       узлами < LINK_DIST — рисуем полупрозрачную
+       линию-связь. Узлы пульсируют и меняют яркость.
+       Алгоритм:
+         1. Каждый узел имеет позицию (x,y),
+            скорость (vx,vy) и фазу пульса.
+         2. На каждом кадре позиции обновляются,
+            узлы отражаются от краёв.
+         3. Для каждой пары узлов:
+            dist = Math.hypot(dx,dy)
+            если dist < 160 → рисуем линию
+            с opacity = (1 - dist/160) * 0.45
+         4. Цвет берётся из getBgPalette().
+       ══════════════════════════════════════════ */
+    class NeuralWeb {
+        constructor(w, h) {
+            this.t = 0;
+            this.NODE_COUNT = 80;
+            this.LINK_DIST  = 160;
+            this.resize(w, h);
+        }
+
+        resize(w, h) {
+            this.w = w; this.h = h;
+            /* При ресайзе пересоздаём узлы */
+            this.nodes = Array.from({ length: this.NODE_COUNT }, () => ({
+                x:     Math.random() * w,
+                y:     Math.random() * h,
+                vx:    (Math.random() - 0.5) * 0.55,
+                vy:    (Math.random() - 0.5) * 0.55,
+                r:     1.5 + Math.random() * 2.5,    // радиус узла
+                phase: Math.random() * Math.PI * 2,   // фаза пульса
+                ci:    Math.floor(Math.random() * 3)  // индекс цвета
+            }));
+        }
+
+        draw(ctx) {
+            const palette = getBgPalette();
+            const isEnd   = document.documentElement.classList.contains('theme-end');
+            const T       = this.t;
+
+            ctx.clearRect(0, 0, this.w, this.h);
+            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            /* Обновляем позиции узлов */
+            for (const n of this.nodes) {
+                n.x += n.vx;
+                n.y += n.vy;
+                /* Отражение от краёв с небольшим отступом */
+                if (n.x < 0)        { n.x = 0;       n.vx *= -1; }
+                if (n.x > this.w)   { n.x = this.w;  n.vx *= -1; }
+                if (n.y < 0)        { n.y = 0;        n.vy *= -1; }
+                if (n.y > this.h)   { n.y = this.h;   n.vy *= -1; }
+            }
+
+            /* Рисуем связи */
+            for (let i = 0; i < this.nodes.length; i++) {
+                for (let j = i + 1; j < this.nodes.length; j++) {
+                    const a = this.nodes[i];
+                    const b = this.nodes[j];
+                    const dist = Math.hypot(a.x - b.x, a.y - b.y);
+                    if (dist < this.LINK_DIST) {
+                        /* Более близкие узлы — более яркая линия */
+                        const alpha = (1 - dist / this.LINK_DIST) * 0.35;
+                        const [r, g, b_] = palette[a.ci];
+                        ctx.beginPath();
+                        ctx.moveTo(a.x, a.y);
+                        ctx.lineTo(b.x, b.y);
+                        ctx.strokeStyle = `rgba(${r},${g},${b_},${alpha})`;
+                        ctx.lineWidth   = (1 - dist / this.LINK_DIST) * 1.2;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            /* Рисуем узлы */
+            for (const n of this.nodes) {
+                const pulse = (Math.sin(T * 0.03 + n.phase) + 1) / 2;
+                const [r, g, b_] = palette[n.ci];
+                const nodeR = n.r + pulse * 1.5;
+
+                /* Свечение вокруг узла */
+                const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, nodeR * 3);
+                grd.addColorStop(0,   `rgba(${r},${g},${b_},${0.4 + pulse * 0.35})`);
+                grd.addColorStop(1,   `rgba(${r},${g},${b_},0)`);
+                ctx.fillStyle = grd;
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, nodeR * 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                /* Ядро узла */
+                ctx.fillStyle = `rgba(${r},${g},${b_},${0.7 + pulse * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, nodeR, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            /* Центральное свечение */
+            const cx = this.w / 2, cy = this.h / 2;
+            const [r0,g0,b0] = palette[0];
+            const radGl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 350);
+            radGl.addColorStop(0,   `rgba(${r0},${g0},${b0},0.07)`);
+            radGl.addColorStop(1,   'transparent');
+            ctx.fillStyle = radGl;
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            /* Виньет */
+            const vg = ctx.createRadialGradient(cx, cy, this.h * 0.3, cx, cy, this.h * 0.95);
+            vg.addColorStop(0, 'transparent');
+            vg.addColorStop(1, isEnd ? 'rgba(10,0,0,0.65)' : 'rgba(4,7,16,0.60)');
+            ctx.fillStyle = vg;
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            this.t++;
+        }
+    }
+
+    /* ══════════════════════════════════════════
+       УПРАВЛЕНИЕ СМЕНОЙ РЕЖИМОВ
        ══════════════════════════════════════════ */
     const W = cvA.width, H = cvA.height;
     const modes = [
         new CalamityRain(W, H),
         new HexGrid(W, H),
-        new VoidRings(W, H)
+        new VoidRings(W, H),
+        new NeuralWeb(W, H)    // НОВИНКА 3: 4-й режим
     ];
 
-    let modeA          = 0;    // текущий режим на cvA
-    let modeB          = 1;    // следующий режим (рисуется на cvB при переходе)
+    let modeA           = 0;
+    let modeB           = 1;
     let isTransitioning = false;
 
-    const SWITCH_MS     = 10000;  // 10 сек между сменами
-    const CROSSFADE_MS  = 2500;   // 2.5 сек crossfade
+    const SWITCH_MS    = 10000;   // 10 сек между сменами
+    const CROSSFADE_MS = 2500;    // 2.5 сек crossfade
 
-    /* Стартовый фон */
     ctxA.fillStyle = '#070b17';
     ctxA.fillRect(0, 0, cvA.width, cvA.height);
 
@@ -815,12 +1060,9 @@ renderDetail();
 
         modeB = (modeA + 1) % modes.length;
 
-        /* cvB готовим: без transition, прозрачный */
         cvB.style.transition = 'none';
         cvB.style.opacity    = '0';
 
-        /* Первый кадр нового режима уже нарисован в cvB (из animate()),
-           теперь запускаем crossfade */
         requestAnimationFrame(() => {
             cvB.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
             cvA.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
@@ -829,7 +1071,6 @@ renderDetail();
         });
 
         setTimeout(() => {
-            /* cvA переключается на новый режим, cvB скрывается */
             modeA = modeB;
             cvA.style.transition = 'none';
             cvA.style.opacity    = '1';
@@ -839,12 +1080,9 @@ renderDetail();
         }, CROSSFADE_MS + 80);
     }
 
-    /* Анимационный цикл */
     function animate() {
         modes[modeA].draw(ctxA);
-        if (isTransitioning) {
-            modes[modeB].draw(ctxB);
-        }
+        if (isTransitioning) modes[modeB].draw(ctxB);
         requestAnimationFrame(animate);
     }
 

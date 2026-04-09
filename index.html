@@ -8,63 +8,37 @@
 </head>
 <body>
 
-<!-- Фон -->
-<div class="particle-bg" id="particleBg"></div>
+<!-- ════ ФОН: два canvas для crossfade между тремя режимами ════ -->
+<canvas id="bgCanvasA"></canvas>
+<canvas id="bgCanvasB"></canvas>
 
 <!-- ══════════════ ШАПКА ══════════════ -->
 <header class="site-header" id="top">
     <div class="header-inner">
-
-        <!-- ЛОГОТИП — левый верхний угол, как на скриншоте -->
         <div class="header-logo">
-            <!-- SVG треугольник с "A" — воссоздаём логотип игры -->
             <svg class="logo-svg" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
-                <!-- Внешний треугольник -->
-                <polygon
-                    points="50,4 96,82 4,82"
-                    fill="none"
-                    stroke="rgba(255,255,255,0.92)"
-                    stroke-width="3"
-                    stroke-linejoin="round"/>
-                <!-- Горизонтальная линия основания (под треугольником) -->
+                <polygon points="50,4 96,82 4,82" fill="none"
+                    stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linejoin="round"/>
                 <line x1="4" y1="82" x2="96" y2="82"
-                      stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
-                <!-- Внутренняя фигура — пик/горы -->
-                <polyline
-                    points="50,22 68,64 32,64"
-                    fill="none"
-                    stroke="rgba(255,255,255,0.88)"
-                    stroke-width="2"
-                    stroke-linejoin="round"/>
-                <!-- Перекладина буквы A -->
+                    stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
+                <polyline points="50,22 68,64 32,64" fill="none"
+                    stroke="rgba(255,255,255,0.88)" stroke-width="2" stroke-linejoin="round"/>
                 <line x1="38" y1="53" x2="62" y2="53"
-                      stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
+                    stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
             </svg>
-
             <div class="logo-text-block">
-                <!-- "BLAZBLUE" в стиле Orbitron -->
                 <span class="logo-blazblue">─ BLAZBLUE ─</span>
-                <!-- "ENTROPY EFFECT" крупно — как на скриншоте -->
                 <span class="logo-entropy">ENTROPY EFFECT</span>
             </div>
         </div>
-
-        <!-- ВКЛАДКИ (tabs) -->
         <nav class="tab-nav" role="tablist">
-            <button class="tab-btn active"
-                    data-tab="home"
-                    role="tab"
-                    aria-selected="true">Главная</button>
-            <button class="tab-btn"
-                    data-tab="characters"
-                    role="tab"
-                    aria-selected="false">Персонажи</button>
-            <button class="tab-btn"
-                    data-tab="about"
-                    role="tab"
-                    aria-selected="false">Об игре</button>
+            <button class="tab-btn active" data-tab="home"
+                    role="tab" aria-selected="true">Главная</button>
+            <button class="tab-btn" data-tab="characters"
+                    role="tab" aria-selected="false">Персонажи</button>
+            <button class="tab-btn" data-tab="about"
+                    role="tab" aria-selected="false">Об игре</button>
         </nav>
-
     </div>
 </header>
 
@@ -76,14 +50,11 @@
         <section class="hero">
             <div class="hero-text">
                 <div class="hero-label">— Roguelite Action —</div>
-                <h1 class="hero-title">
-                    ENTROPY<br><span class="accent">EFFECT</span>
-                </h1>
+                <h1 class="hero-title">ENTROPY<br><span class="accent">EFFECT</span></h1>
                 <p class="hero-sub">
                     Выбери персонажа, прокачай навыки и сражайся<br>
                     в процедурно генерируемых уровнях
                 </p>
-                <!-- Переключаем на вкладку Персонажи по клику -->
                 <button class="btn-primary" id="goToChars">⚔ ВЫБРАТЬ ПЕРСОНАЖА</button>
             </div>
             <div class="hero-deco">
@@ -100,14 +71,11 @@
     <!-- ══ ВКЛАДКА: ПЕРСОНАЖИ ══ -->
     <div class="tab-pane" id="tab-characters" role="tabpanel">
         <section class="char-section">
-
             <div class="section-title-wrap">
                 <span class="title-line"></span>
                 <h2 class="section-title">ВЫБОР ПЕРСОНАЖА</h2>
                 <span class="title-line"></span>
             </div>
-
-            <!-- Фильтры -->
             <div class="filter-bar">
                 <button class="filter active" data-filter="all">ВСЕ</button>
                 <button class="filter" data-filter="melee">БЛИЖНИЙ БОЙ</button>
@@ -116,15 +84,11 @@
                 <button class="filter" data-filter="control">КОНТРОЛЬ</button>
                 <button class="filter" data-filter="guest">ГОСТЕВЫЕ</button>
             </div>
-
-            <!-- Карусель -->
             <div class="carousel-wrap">
                 <button class="nav-btn" id="navPrev">&#9664;</button>
                 <div class="carousel-stage" id="carouselStage"></div>
                 <button class="nav-btn" id="navNext">&#9654;</button>
             </div>
-
-            <!-- Детальная панель -->
             <div class="detail-panel" id="detailPanel">
                 <div class="dp-left">
                     <div class="dp-tag" id="dpTag">—</div>
@@ -142,7 +106,6 @@
                     </div>
                 </div>
             </div>
-
         </section>
     </div>
 
@@ -159,30 +122,22 @@
                 </p>
                 <div class="features-grid">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <img src="es.jpg" alt="Бой">
-                        </div>
+                        <div class="feature-icon"><img src="es.jpg" alt="Бой"></div>
                         <h3>Динамичный бой</h3>
                         <p>Стремительные экшн-сражения с уникальными механиками каждого персонажа</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <img src="es.jpg" alt="Roguelite">
-                        </div>
+                        <div class="feature-icon"><img src="es.jpg" alt="Roguelite"></div>
                         <h3>Roguelite механики</h3>
                         <p>Процедурная генерация уровней, случайные апгрейды, бесконечная реиграбельность</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <img src="es.jpg" alt="Сюжет">
-                        </div>
+                        <div class="feature-icon"><img src="es.jpg" alt="Сюжет"></div>
                         <h3>Сюжет</h3>
                         <p>Оригинальная история с петлями времени и тайнами Entropy</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <img src="es.jpg" alt="Персонажи">
-                        </div>
+                        <div class="feature-icon"><img src="es.jpg" alt="Персонажи"></div>
                         <h3>13 персонажей</h3>
                         <p>Уникальные бойцы с разными стилями игры и механиками</p>
                     </div>
@@ -193,7 +148,6 @@
 
 </main>
 
-<!-- ══════════════ ФУТЕР ══════════════ -->
 <footer class="site-footer">
     <p>BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
     <p class="footer-note">Фан-сайт создан в образовательных целях</p>
@@ -205,185 +159,106 @@
 
 /* ═══════════════════════════════════════════
    ДАННЫЕ ПЕРСОНАЖЕЙ
-   Все иконки заменены на es.jpg (временно)
    ═══════════════════════════════════════════ */
 const characters = [
     {
-        id: 'ragna',
-        name: 'Ragna the Bloodedge',
-        role: 'Ближний боец',
-        type: 'melee',
-        tag: 'BLOODEDGE',
-        color: '#8b1a1a',
-        glow: '#e74c3c',
+        id: 'ragna', name: 'Ragna the Bloodedge', role: 'Ближний боец',
+        type: 'melee', tag: 'BLOODEDGE', color: '#8b1a1a', glow: '#e74c3c',
         stats: { atk: 90, def: 50, spd: 70, hp: 85 },
         desc: 'Ближний боец, который усиливает атаки по мере снижения HP. Может восстанавливать здоровье за счёт урона, наносимого противникам.',
-        abilities: ['Берсерк при низком HP', 'Вампиризм урона', 'Мощные ближние атаки'],
-        diff: '★★☆'
+        abilities: ['Берсерк при низком HP', 'Вампиризм урона', 'Мощные ближние атаки'], diff: '★★☆'
     },
     {
-        id: 'jin',
-        name: 'Jin Kisaragi',
-        role: 'Ледяной мечник',
-        type: 'melee',
-        tag: 'FROST BLADE',
-        color: '#0d3b6e',
-        glow: '#5dade2',
+        id: 'jin', name: 'Jin Kisaragi', role: 'Ледяной мечник',
+        type: 'melee', tag: 'FROST BLADE', color: '#0d3b6e', glow: '#5dade2',
         stats: { atk: 80, def: 60, spd: 75, hp: 70 },
         desc: 'Мечник, специализирующийся на ледяных навыках. Умеет замораживать врагов и получать бонусы к силе при правильном выполнении комбо.',
-        abilities: ['Заморозка врагов', 'Бонусы за комбо', 'Ледяное оружие'],
-        diff: '★★☆'
+        abilities: ['Заморозка врагов', 'Бонусы за комбо', 'Ледяное оружие'], diff: '★★☆'
     },
     {
-        id: 'noel',
-        name: 'Noel Vermillion',
-        role: 'Дальнобойный боец',
-        type: 'ranged',
-        tag: 'GUNSLINGER',
-        color: '#1a4d2e',
-        glow: '#2ecc71',
+        id: 'noel', name: 'Noel Vermillion', role: 'Дальнобойный боец',
+        type: 'ranged', tag: 'GUNSLINGER', color: '#1a4d2e', glow: '#2ecc71',
         stats: { atk: 75, def: 45, spd: 80, hp: 65 },
         desc: 'Дальнобойный персонаж с ракетным вооружением. Сокращает время перезарядки и использует Over-Exhaust для каста навыков при нуле MP.',
-        abilities: ['Ракетное оружие', 'Over-Exhaust механика', 'Сокращение кулдауна'],
-        diff: '★☆☆'
+        abilities: ['Ракетное оружие', 'Over-Exhaust механика', 'Сокращение кулдауна'], diff: '★☆☆'
     },
     {
-        id: 'taokaka',
-        name: 'Taokaka',
-        role: 'Мобильный боец',
-        type: 'melee',
-        tag: 'SHADOW CAT',
-        color: '#5d4a00',
-        glow: '#f1c40f',
+        id: 'taokaka', name: 'Taokaka', role: 'Мобильный боец',
+        type: 'melee', tag: 'SHADOW CAT', color: '#5d4a00', glow: '#f1c40f',
         stats: { atk: 70, def: 35, spd: 95, hp: 60 },
-        desc: 'Отличается высокой мобильностью и непредсказуемыми атаками, включая создание теневых клонов. Слаба против бронированных противников.',
-        abilities: ['Теневые клоны', 'Высокая мобильность', 'Непредсказуемые атаки'],
-        diff: '★★★'
+        desc: 'Отличается высокой мобильностью и непредсказуемыми атаками, включая создание теневых клонов.',
+        abilities: ['Теневые клоны', 'Высокая мобильность', 'Непредсказуемые атаки'], diff: '★★★'
     },
     {
-        id: 'rachel',
-        name: 'Rachel Alucard',
-        role: 'Маг / Контролёр',
-        type: 'control',
-        tag: 'MISTRESS',
-        color: '#4a1e6e',
-        glow: '#a569bd',
+        id: 'rachel', name: 'Rachel Alucard', role: 'Маг / Контролёр',
+        type: 'control', tag: 'MISTRESS', color: '#4a1e6e', glow: '#a569bd',
         stats: { atk: 85, def: 50, spd: 60, hp: 70 },
-        desc: 'Управляет волнами врагов с помощью фамильяров и молниевых атак. Может истощать здоровье противников и отражать снаряды.',
-        abilities: ['Фамильяры', 'Молниевые атаки', 'Отражение снарядов'],
-        diff: '★★☆'
+        desc: 'Управляет волнами врагов с помощью фамильяров и молниевых атак. Может истощать здоровье противников.',
+        abilities: ['Фамильяры', 'Молниевые атаки', 'Отражение снарядов'], diff: '★★☆'
     },
     {
-        id: 'hakumen',
-        name: 'Hakumen',
-        role: 'Танк / Контратакер',
-        type: 'tank',
-        tag: 'VOID WARRIOR',
-        color: '#2c3e50',
-        glow: '#bdc3c7',
+        id: 'hakumen', name: 'Hakumen', role: 'Танк / Контратакер',
+        type: 'tank', tag: 'VOID WARRIOR', color: '#2c3e50', glow: '#bdc3c7',
         stats: { atk: 85, def: 95, spd: 45, hp: 95 },
-        desc: 'Танк с мощными контратаками и супербронёй. Подходит для изучения паттернов боссов. Непробиваемая защита.',
-        abilities: ['Суперброня', 'Мощные контратаки', 'Высокая живучесть'],
-        diff: '★★☆'
+        desc: 'Танк с мощными контратаками и супербронёй. Подходит для изучения паттернов боссов.',
+        abilities: ['Суперброня', 'Мощные контратаки', 'Высокая живучесть'], diff: '★★☆'
     },
     {
-        id: 'es',
-        name: 'Es',
-        role: 'Пространственный боец',
-        type: 'melee',
-        tag: 'AZURE SHRINE',
-        color: '#083d30',
-        glow: '#1abc9c',
+        id: 'es', name: 'Es', role: 'Пространственный боец',
+        type: 'melee', tag: 'AZURE SHRINE', color: '#083d30', glow: '#1abc9c',
         stats: { atk: 80, def: 65, spd: 65, hp: 75 },
         desc: 'Использует мечи и кресты для контроля пространства. Требует точного тайминга для поддержания комбо.',
-        abilities: ['Контроль пространства', 'Точный тайминг', 'Крест-атаки'],
-        diff: '★★★'
+        abilities: ['Контроль пространства', 'Точный тайминг', 'Крест-атаки'], diff: '★★★'
     },
     {
-        id: 'kokonoe',
-        name: 'Kokonoe',
-        role: 'Зональный контроль',
-        type: 'control',
-        tag: 'PROFESSOR',
-        color: '#6e2a00',
-        glow: '#e67e22',
+        id: 'kokonoe', name: 'Kokonoe', role: 'Зональный контроль',
+        type: 'control', tag: 'PROFESSOR', color: '#6e2a00', glow: '#e67e22',
         stats: { atk: 90, def: 40, spd: 55, hp: 60 },
-        desc: 'Специализируется на зональном контроле с помощью ракет и лазерных столбов. Усиливает урон за счёт серии убийств.',
-        abilities: ['Ракеты', 'Лазерные столбы', 'Бонус за серию убийств'],
-        diff: '★★☆'
+        desc: 'Специализируется на зональном контроле с помощью ракет и лазерных столбов.',
+        abilities: ['Ракеты', 'Лазерные столбы', 'Бонус за серию убийств'], diff: '★★☆'
     },
     {
-        id: 'mai',
-        name: 'Mai Natsume',
-        role: 'Контроль толпы',
-        type: 'control',
-        tag: 'SPEAR MAIDEN',
-        color: '#6e0028',
-        glow: '#e84393',
+        id: 'mai', name: 'Mai Natsume', role: 'Контроль толпы',
+        type: 'control', tag: 'SPEAR MAIDEN', color: '#6e0028', glow: '#e84393',
         stats: { atk: 75, def: 60, spd: 70, hp: 70 },
         desc: 'Использует копьё и торнадо для контроля толпы. Крайне эффективна против больших групп врагов.',
-        abilities: ['Копейные атаки', 'Торнадо', 'Контроль толпы'],
-        diff: '★★☆'
+        abilities: ['Копейные атаки', 'Торнадо', 'Контроль толпы'], diff: '★★☆'
     },
     {
-        id: 'hibiki',
-        name: 'Hibiki Kohaku',
-        role: 'Скрытный боец',
-        type: 'melee',
-        tag: 'PROTOTYPE',
-        color: '#0d1b2a',
-        glow: '#5d6d7e',
+        id: 'hibiki', name: 'Hibiki Kohaku', role: 'Скрытный боец',
+        type: 'melee', tag: 'PROTOTYPE', color: '#0d1b2a', glow: '#5d6d7e',
         stats: { atk: 85, def: 50, spd: 85, hp: 65 },
-        desc: 'Скрытный персонаж с возможностью создавать клонов и наносить внезапные удары. Мастер теней и обмана.',
-        abilities: ['Создание клонов', 'Внезапные удары', 'Скрытность'],
-        diff: '★★★'
+        desc: 'Скрытный персонаж с возможностью создавать клонов и наносить внезапные удары.',
+        abilities: ['Создание клонов', 'Внезапные удары', 'Скрытность'], diff: '★★★'
     },
     {
-        id: 'lambda',
-        name: 'Lambda-11',
-        role: 'Зональный боец',
-        type: 'ranged',
-        tag: 'PRIME FIELD',
-        color: '#063025',
-        glow: '#17a589',
+        id: 'lambda', name: 'Lambda-11', role: 'Зональный боец',
+        type: 'ranged', tag: 'PRIME FIELD', color: '#063025', glow: '#17a589',
         stats: { atk: 80, def: 45, spd: 70, hp: 65 },
-        desc: 'Использует призываемые лезвия для зонального контроля. Создаёт зоны поражения и контролирует пространство боя.',
-        abilities: ['Призываемые лезвия', 'Зональный контроль', 'Дистанционные атаки'],
-        diff: '★★☆'
+        desc: 'Использует призываемые лезвия для зонального контроля. Создаёт зоны поражения.',
+        abilities: ['Призываемые лезвия', 'Зональный контроль', 'Дистанционные атаки'], diff: '★★☆'
     },
     {
-        id: 'icey',
-        name: 'ICEY',
-        role: 'Гость: Стремительный боец',
-        type: 'guest',
-        tag: '★ GUEST',
-        color: '#4d3e00',
-        glow: '#f4d03f',
+        id: 'icey', name: 'ICEY', role: 'Гость: Стремительный боец',
+        type: 'guest', tag: '★ GUEST', color: '#4d3e00', glow: '#f4d03f',
         stats: { atk: 85, def: 55, spd: 95, hp: 70 },
-        desc: 'Гостевой персонаж из одноимённой серии. Обладает бесконечным рывком в любом направлении и механикой разрушения брони.',
-        abilities: ['Бесконечный рывок', 'Разрушение брони', 'Высокая скорость'],
-        diff: '★☆☆'
+        desc: 'Гостевой персонаж из одноимённой серии. Обладает бесконечным рывком в любом направлении.',
+        abilities: ['Бесконечный рывок', 'Разрушение брони', 'Высокая скорость'], diff: '★☆☆'
     },
     {
-        id: 'prisoner',
-        name: 'The Prisoner',
-        role: 'Гость: Dead Cells',
-        type: 'guest',
-        tag: '★ DEAD CELLS',
-        color: '#2c2c2c',
-        glow: '#aab7b8',
+        id: 'prisoner', name: 'The Prisoner', role: 'Гость: Dead Cells',
+        type: 'guest', tag: '★ DEAD CELLS', color: '#2c2c2c', glow: '#aab7b8',
         stats: { atk: 80, def: 60, spd: 75, hp: 80 },
-        desc: 'Гостевой персонаж из Dead Cells. Обладает тремя сменными наборами снаряжения и механикой критических ударов.',
-        abilities: ['3 набора снаряжения', 'Критические удары', 'Адаптивный стиль'],
-        diff: '★★☆'
+        desc: 'Гостевой персонаж из Dead Cells. Обладает тремя сменными наборами снаряжения.',
+        abilities: ['3 набора снаряжения', 'Критические удары', 'Адаптивный стиль'], diff: '★★☆'
     }
 ];
 
 /* ═══════════════════════════════════════════
    СОСТОЯНИЕ
    ═══════════════════════════════════════════ */
-let selectedIndex  = 6; // Es по умолчанию
-let currentFilter  = 'all';
+let selectedIndex = 6;
+let currentFilter = 'all';
 
 /* ═══════════════════════════════════════════
    УТИЛИТЫ
@@ -395,7 +270,7 @@ function makeStatBar(label, value, glowColor) {
             <div class="stat-bar">
                 <div class="stat-fill"
                      style="width:${value}%;
-                            background: linear-gradient(90deg, ${glowColor}77, ${glowColor});">
+                            background:linear-gradient(90deg,${glowColor}77,${glowColor});">
                 </div>
             </div>
             <span class="stat-val">${value}</span>
@@ -403,7 +278,26 @@ function makeStatBar(label, value, glowColor) {
 }
 
 /* ═══════════════════════════════════════════
-   КАРУСЕЛЬ + ИДЕЯ 1 (Parallax) + ИДЕЯ 2 (Анимация входа)
+   PARALLAX HELPER
+   ═══════════════════════════════════════════ */
+function addParallax(panel, strength) {
+    const img = panel.querySelector('.panel-char-img');
+    if (!img) return;
+    panel.addEventListener('mousemove', (e) => {
+        const rect = panel.getBoundingClientRect();
+        const xRel = (e.clientX - rect.left)  / rect.width  - 0.5;
+        const yRel = (e.clientY - rect.top)   / rect.height - 0.5;
+        img.style.transform = `translate(${xRel * strength}px, ${yRel * strength * 0.6}px) scale(1.04)`;
+        img.style.transitionDuration = '0.08s';
+    });
+    panel.addEventListener('mouseleave', () => {
+        img.style.transform = '';
+        img.style.transitionDuration = '0.4s';
+    });
+}
+
+/* ═══════════════════════════════════════════
+   КАРУСЕЛЬ
    ═══════════════════════════════════════════ */
 function renderCarousel(animate = false) {
     const stage = document.getElementById('carouselStage');
@@ -412,14 +306,10 @@ function renderCarousel(animate = false) {
     for (let offset = -2; offset <= 2; offset++) {
         const idx = (selectedIndex + offset + characters.length) % characters.length;
         const c   = characters[idx];
-
         const panel = document.createElement('div');
 
-        let posClass = 'center';
-        if (offset === -2) posClass = 'left-2';
-        if (offset === -1) posClass = 'left-1';
-        if (offset ===  1) posClass = 'right-1';
-        if (offset ===  2) posClass = 'right-2';
+        const posMap = { '-2': 'left-2', '-1': 'left-1', '0': 'center', '1': 'right-1', '2': 'right-2' };
+        const posClass = posMap[String(offset)];
 
         panel.className = `c-panel ${posClass}`;
         panel.style.setProperty('--cc', c.color);
@@ -434,29 +324,23 @@ function renderCarousel(animate = false) {
                  class="panel-char-img${isCenter && animate ? ' entering' : ''}"
                  alt="${c.name}"
                  draggable="false">
-            <div class="panel-char-name">${c.name.split(' ')[0].toUpperCase()}</div>
-            <div class="panel-char-role">${c.role}</div>
+            <div class="panel-info">
+                <div class="panel-char-name">${c.name.split(' ')[0].toUpperCase()}</div>
+                <div class="panel-char-role">${c.role}</div>
+            </div>
         `;
 
-        /* ── Идея 2: flash на центральной при анимации ── */
         if (isCenter && animate) {
             panel.classList.add('flash');
             panel.addEventListener('animationend',
-                () => panel.classList.remove('flash'),
-                { once: true }
-            );
+                () => panel.classList.remove('flash'), { once: true });
         }
 
-        /* ── Идея 1: Mouse Parallax (только для не-center) ── */
-        if (!isCenter) {
-            addParallax(panel, 6); // слабый parallax для боковых
-        } else {
-            addParallax(panel, 14); // сильнее для центральной
-        }
+        addParallax(panel, isCenter ? 10 : 5);
 
         panel.addEventListener('click', () => {
             selectedIndex = idx;
-            renderCarousel(true);  // animate = true при клике
+            renderCarousel(true);
             renderDetail();
         });
 
@@ -464,59 +348,17 @@ function renderCarousel(animate = false) {
     }
 }
 
-/* ── Идея 1: Parallax helper ── */
-function addParallax(panel, strength) {
-    const img = panel.querySelector('.panel-char-img');
-    if (!img) return;
-
-    panel.addEventListener('mousemove', (e) => {
-        const rect   = panel.getBoundingClientRect();
-        // Нормализуем позицию курсора от -1 до +1
-        const xRel   = (e.clientX - rect.left)  / rect.width  - 0.5;
-        const yRel   = (e.clientY - rect.top)   / rect.height - 0.5;
-
-        const tx = xRel * strength;
-        const ty = yRel * strength * 0.6;  // вертикаль чуть слабее
-
-        img.style.transform        = `translate(${tx}px, ${ty}px) scale(1.08)`;
-        img.style.transitionDuration = '0.08s'; // быстрый отклик
-    });
-
-    panel.addEventListener('mouseleave', () => {
-        img.style.transform        = 'translate(0, 0) scale(1)';
-        img.style.transitionDuration = '0.4s'; // плавный возврат
-    });
-}
-
-/* ─ Навигация с анимацией ─ */
-document.getElementById('navPrev').addEventListener('click', () => {
-    selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
-    renderCarousel(true);
-    renderDetail();
-});
-
-document.getElementById('navNext').addEventListener('click', () => {
-    selectedIndex = (selectedIndex + 1) % characters.length;
-    renderCarousel(true);
-    renderDetail();
-});
-
-/* ─ Первичный рендер (без анимации) ─ */
-renderCarousel(false);
-renderDetail();
-
-
 /* ═══════════════════════════════════════════
    ДЕТАЛЬНАЯ ПАНЕЛЬ
    ═══════════════════════════════════════════ */
 function renderDetail() {
     const c = characters[selectedIndex];
 
-    document.getElementById('dpTag').textContent    = c.tag;
+    document.getElementById('dpTag').textContent   = c.tag;
     document.getElementById('dpTag').style.background = c.glow;
-    document.getElementById('dpName').textContent   = c.name.toUpperCase();
-    document.getElementById('dpRole').textContent   = c.role;
-    document.getElementById('dpDesc').textContent   = c.desc;
+    document.getElementById('dpName').textContent  = c.name.toUpperCase();
+    document.getElementById('dpRole').textContent  = c.role;
+    document.getElementById('dpDesc').textContent  = c.desc;
 
     const icon = document.getElementById('dpIcon');
     icon.style.filter = `drop-shadow(0 0 25px ${c.glow}) drop-shadow(0 0 55px ${c.glow})`;
@@ -534,39 +376,33 @@ function renderDetail() {
     document.getElementById('dpAbilities').innerHTML =
         `<div class="diff-row">Сложность: <span style="color:${c.glow}">${c.diff}</span></div>` +
         c.abilities.map(a =>
-            `<span class="ab-tag"
-                   style="border-color:${c.glow};color:${c.glow};">${a}</span>`
+            `<span class="ab-tag" style="border-color:${c.glow};color:${c.glow};">${a}</span>`
         ).join('');
 }
 
 /* ═══════════════════════════════════════════
-   НАВИГАЦИЯ КАРУСЕЛИ
+   НАВИГАЦИЯ КАРУСЕЛИ (единственные обработчики)
    ═══════════════════════════════════════════ */
 document.getElementById('navPrev').addEventListener('click', () => {
     selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
-    renderCarousel();
+    renderCarousel(true);
     renderDetail();
 });
 
 document.getElementById('navNext').addEventListener('click', () => {
     selectedIndex = (selectedIndex + 1) % characters.length;
-    renderCarousel();
+    renderCarousel(true);
     renderDetail();
 });
 
 /* ═══════════════════════════════════════════
-   ФИЛЬТРЫ (влияют только на карусель —
-   при фильтрации меняем массив отображаемых,
-   но т.к. нет сетки — просто подсветка активного)
+   ФИЛЬТРЫ
    ═══════════════════════════════════════════ */
 document.querySelectorAll('.filter').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter')
-                .forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
-
-        // Находим первый персонаж по фильтру и выбираем его
         if (currentFilter !== 'all') {
             const idx = characters.findIndex(c => c.type === currentFilter);
             if (idx !== -1) {
@@ -582,19 +418,16 @@ document.querySelectorAll('.filter').forEach(btn => {
    СИСТЕМА ВКЛАДОК
    ═══════════════════════════════════════════ */
 function switchTab(tabId) {
-    // Деактивируем всё
-    document.querySelectorAll('.tab-btn')
-            .forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-    document.querySelectorAll('.tab-pane')
-            .forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
 
-    // Активируем нужную вкладку
-    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    const btn  = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
     const pane = document.getElementById(`tab-${tabId}`);
-    if (btn)  { btn.classList.add('active');  btn.setAttribute('aria-selected','true'); }
+    if (btn)  { btn.classList.add('active');  btn.setAttribute('aria-selected', 'true'); }
     if (pane) { pane.classList.add('active'); }
-
-    // Прокрутка наверх
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -602,42 +435,423 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 
-// Кнопка "Выбрать персонажа" переключает на вкладку Персонажи
-document.getElementById('goToChars').addEventListener('click', () => {
-    switchTab('characters');
-});
-
-// Кнопка "Наверх"
+document.getElementById('goToChars').addEventListener('click', () => switchTab('characters'));
 document.getElementById('backTop').addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /* ═══════════════════════════════════════════
-   ФОНОВЫЕ ЧАСТИЦЫ
-   ═══════════════════════════════════════════ */
-(function spawnParticles() {
-    const bg = document.getElementById('particleBg');
-    for (let i = 0; i < 55; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.cssText = `
-            left:               ${Math.random() * 100}vw;
-            top:                ${Math.random() * 100}vh;
-            width:              ${Math.random() * 2.5 + 0.5}px;
-            height:             ${Math.random() * 2.5 + 0.5}px;
-            animation-delay:    ${Math.random() * 12}s;
-            animation-duration: ${Math.random() * 9 + 5}s;
-            opacity:            ${Math.random() * 0.35 + 0.1};
-        `;
-        bg.appendChild(p);
-    }
-})();
-
-/* ═══════════════════════════════════════════
    ПЕРВИЧНЫЙ РЕНДЕР
    ═══════════════════════════════════════════ */
-renderCarousel();
+renderCarousel(false);
 renderDetail();
+
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  АНИМИРОВАННЫЙ ФОН — ТРИ РЕЖИМА С ПЛАВНЫМ CROSSFADE      ║
+   ║                                                           ║
+   ║  Режим 0: CALAMITY RAIN — матрица из символов             ║
+   ║  Режим 1: HEX GRID     — шестиугольная энергосетка        ║
+   ║  Режим 2: VOID RINGS   — вращающиеся кольца / орбиты      ║
+   ║                                                           ║
+   ║  Два canvas (#bgCanvasA снизу, #bgCanvasB сверху).        ║
+   ║  При смене режима bgCanvasB плавно появляется             ║
+   ║  (opacity 0→1), затем bgCanvasA переключается на новый    ║
+   ║  режим, bgCanvasB уходит (opacity 1→0).                   ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+(function initBackground() {
+    'use strict';
+
+    const cvA = document.getElementById('bgCanvasA');
+    const cvB = document.getElementById('bgCanvasB');
+    const ctxA = cvA.getContext('2d');
+    const ctxB = cvB.getContext('2d');
+
+    /* ── Размеры ── */
+    function resize() {
+        cvA.width  = cvB.width  = window.innerWidth;
+        cvA.height = cvB.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', () => {
+        resize();
+        modes.forEach(m => m.resize(cvA.width, cvA.height));
+    });
+
+    /* ══════════════════════════════════════════
+       РЕЖИМ 0: CALAMITY RAIN
+       Падающие столбцы символов (Matrix-style)
+       Символы: японские каны + руны + hex-цифры
+       ══════════════════════════════════════════ */
+    class CalamityRain {
+        constructor(w, h) {
+            this.resize(w, h);
+        }
+
+        resize(w, h) {
+            this.w = w; this.h = h;
+            this.chars = 'アイウエオカキクサシスセタチツナニΔΨΩ∞◈⬡01234567890ABCDEF';
+            this.colW  = 22;
+            this.cols  = Math.floor(w / this.colW);
+            this.drops = Array.from({ length: this.cols },
+                () => Math.random() * -(h / this.colW));
+            this.speeds = Array.from({ length: this.cols },
+                () => 0.25 + Math.random() * 0.75);
+            /* У каждого столбца свой акцентный цвет */
+            this.colors = Array.from({ length: this.cols }, () => {
+                const palette = [
+                    [21, 101, 192],   // синий
+                    [13, 148, 136],   // бирюзовый
+                    [56, 189, 248],   // голубой
+                ];
+                return palette[Math.floor(Math.random() * palette.length)];
+            });
+        }
+
+        draw(ctx) {
+            /* Полупрозрачный оверлей — создаёт «хвост» */
+            ctx.fillStyle = 'rgba(7,11,23,0.16)';
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            ctx.font = 'bold 13px "Courier New", monospace';
+
+            for (let i = 0; i < this.cols; i++) {
+                const x  = i * this.colW + 2;
+                const yH = Math.floor(this.drops[i]) * this.colW; // голова
+
+                /* Голова столбца — почти белая/яркая */
+                ctx.fillStyle = `rgba(200,235,255,0.95)`;
+                ctx.fillText(
+                    this.chars[Math.floor(Math.random() * this.chars.length)],
+                    x, yH
+                );
+
+                /* Тело — затухающее свечение цвета столбца */
+                const [r, g, b] = this.colors[i];
+                const tailLen = 6 + Math.floor(Math.random() * 4);
+                for (let t = 1; t <= tailLen; t++) {
+                    const a = (1 - t / tailLen) * 0.65;
+                    ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+                    ctx.fillText(
+                        this.chars[Math.floor(Math.random() * this.chars.length)],
+                        x, yH - t * this.colW
+                    );
+                }
+
+                /* Сброс капли */
+                this.drops[i] += this.speeds[i];
+                if (yH > this.h + 50 && Math.random() > 0.975) {
+                    this.drops[i] = Math.random() * -8;
+                }
+            }
+
+            /* Мягкое виньетирование по краям */
+            const vign = ctx.createRadialGradient(
+                this.w/2, this.h/2, this.h * 0.3,
+                this.w/2, this.h/2, this.h * 0.85
+            );
+            vign.addColorStop(0, 'transparent');
+            vign.addColorStop(1, 'rgba(4,7,16,0.55)');
+            ctx.fillStyle = vign;
+            ctx.fillRect(0, 0, this.w, this.h);
+        }
+    }
+
+    /* ══════════════════════════════════════════
+       РЕЖИМ 1: HEX GRID
+       Шестиугольная сетка с пульсирующими
+       энергетическими волнами от центра
+       ══════════════════════════════════════════ */
+    class HexGrid {
+        constructor(w, h) {
+            this.t = 0;
+            this.resize(w, h);
+        }
+
+        resize(w, h) {
+            this.w = w; this.h = h;
+            this.hexes = [];
+            const S  = 40;   // радиус шестиугольника
+            const dx = S * 1.73;
+            const dy = S * 1.50;
+            for (let r = -1; r <= Math.ceil(h / dy) + 1; r++) {
+                for (let c = -1; c <= Math.ceil(w / dx) + 1; c++) {
+                    this.hexes.push({
+                        x:     c * dx + (r % 2 === 0 ? 0 : dx / 2),
+                        y:     r * dy,
+                        s:     S,
+                        phase: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+        }
+
+        hexPath(ctx, x, y, s) {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const a  = (Math.PI / 3) * i - Math.PI / 6;
+                const px = x + s * Math.cos(a);
+                const py = y + s * Math.sin(a);
+                i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+        }
+
+        draw(ctx) {
+            ctx.clearRect(0, 0, this.w, this.h);
+
+            /* Базовый фон */
+            ctx.fillStyle = '#070b17';
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            const cx = this.w / 2;
+            const cy = this.h / 2;
+            const T  = this.t * 0.012;
+
+            for (const h of this.hexes) {
+                const dist  = Math.hypot(h.x - cx, h.y - cy);
+                const wave  = Math.sin(dist * 0.014 - T * 2.8 + h.phase * 0.25);
+                const pulse = (wave + 1) / 2; // 0..1
+
+                /* Обводка сота */
+                ctx.strokeStyle = `rgba(21,101,192,${0.06 + pulse * 0.20})`;
+                ctx.lineWidth   = 0.8;
+                this.hexPath(ctx, h.x, h.y, h.s - 1);
+                ctx.stroke();
+
+                /* Заливка активных сот */
+                if (pulse > 0.78) {
+                    const t = (pulse - 0.78) / 0.22;
+                    ctx.fillStyle = `rgba(13,148,136,${t * 0.18})`;
+                    this.hexPath(ctx, h.x, h.y, h.s - 1);
+                    ctx.fill();
+                }
+
+                /* Центральная точка узла */
+                if (pulse > 0.65) {
+                    const t = (pulse - 0.65) / 0.35;
+                    ctx.fillStyle = `rgba(116,192,252,${t * 0.85})`;
+                    ctx.beginPath();
+                    ctx.arc(h.x, h.y, 1.5 + t * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            /* Радиальное свечение в центре */
+            const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 320);
+            gl.addColorStop(0,   'rgba(21,101,192,0.14)');
+            gl.addColorStop(0.5, 'rgba(13,148,136,0.05)');
+            gl.addColorStop(1,   'transparent');
+            ctx.fillStyle = gl;
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            /* Виньет */
+            const vg = ctx.createRadialGradient(cx, cy, this.h * 0.28, cx, cy, this.h * 0.9);
+            vg.addColorStop(0, 'transparent');
+            vg.addColorStop(1, 'rgba(4,7,16,0.6)');
+            ctx.fillStyle = vg;
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            this.t++;
+        }
+    }
+
+    /* ══════════════════════════════════════════
+       РЕЖИМ 2: VOID RINGS
+       Концентрические вращающиеся кольца
+       с орбитальными частицами — стиль «портал»
+       ══════════════════════════════════════════ */
+    class VoidRings {
+        constructor(w, h) {
+            this.t = 0;
+            this.resize(w, h);
+            this.particles = Array.from({ length: 140 }, () => this._mkParticle(w, h));
+        }
+
+        _mkParticle(w, h) {
+            const orbitR  = [110, 165, 230, 310];
+            const radius  = orbitR[Math.floor(Math.random() * orbitR.length)]
+                          + (Math.random() - 0.5) * 35;
+            return {
+                angle:  Math.random() * Math.PI * 2,
+                radius,
+                speed:  (0.0018 + Math.random() * 0.0055) * (Math.random() > 0.5 ? 1 : -1),
+                size:   0.8 + Math.random() * 2.2,
+                alpha:  0.15 + Math.random() * 0.65,
+                ci:     Math.floor(Math.random() * 3)  // индекс цвета
+            };
+        }
+
+        resize(w, h) {
+            this.w = w; this.h = h;
+        }
+
+        draw(ctx) {
+            ctx.clearRect(0, 0, this.w, this.h);
+            ctx.fillStyle = '#070b17';
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            const cx = this.w / 2;
+            const cy = this.h / 2;
+            const T  = this.t;
+
+            const palette = [
+                [21,  101, 192],  // синий
+                [13,  148, 136],  // бирюзовый
+                [116, 192, 252],  // голубой
+            ];
+
+            /* Фоновое свечение центра */
+            const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 380);
+            bg.addColorStop(0,   'rgba(11,18,37,0.8)');
+            bg.addColorStop(0.4, 'rgba(21,101,192,0.06)');
+            bg.addColorStop(1,   'transparent');
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            /* Кольца */
+            const rings = [
+                { r: 110, w: 1.8, spd:  0.0022, dir:  1, ci: 0, alpha: 0.42, marks: 12 },
+                { r: 165, w: 1.2, spd:  0.0015, dir: -1, ci: 2, alpha: 0.30, marks: 18 },
+                { r: 230, w: 2.2, spd:  0.0009, dir:  1, ci: 1, alpha: 0.22, marks: 24 },
+                { r: 310, w: 1.0, spd:  0.0005, dir: -1, ci: 0, alpha: 0.13, marks: 32 },
+            ];
+
+            rings.forEach((ring, ri) => {
+                const [r, g, b] = palette[ring.ci];
+                const rot = T * ring.spd * ring.dir;
+
+                /* Основная окружность */
+                ctx.beginPath();
+                ctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(${r},${g},${b},${ring.alpha})`;
+                ctx.lineWidth   = ring.w;
+                ctx.stroke();
+
+                /* Отметки-точки на кольце */
+                for (let m = 0; m < ring.marks; m++) {
+                    const a     = rot + (Math.PI * 2 / ring.marks) * m;
+                    const mx    = cx + Math.cos(a) * ring.r;
+                    const my    = cy + Math.sin(a) * ring.r;
+                    const pulse = (Math.sin(T * 0.04 + m * 0.7 + ri) + 1) / 2;
+                    const ar    = ring.alpha + pulse * 0.45;
+
+                    ctx.fillStyle = `rgba(${r},${g},${b},${ar})`;
+                    ctx.beginPath();
+                    ctx.arc(mx, my, 1.5 + pulse * 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            /* Орбитальные частицы */
+            this.particles.forEach(p => {
+                p.angle += p.speed;
+                const px = cx + Math.cos(p.angle) * p.radius;
+                const py = cy + Math.sin(p.angle) * p.radius;
+                const [r, g, b] = palette[p.ci];
+                ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(px, py, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            /* Центральный орб */
+            const pulse = (Math.sin(T * 0.048) + 1) / 2;
+            const orbR  = 55 + pulse * 15;
+            const orb   = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
+            orb.addColorStop(0,   `rgba(180,230,255,${0.18 + pulse * 0.12})`);
+            orb.addColorStop(0.4, `rgba(21,101,192,${0.10 + pulse * 0.08})`);
+            orb.addColorStop(1,   'transparent');
+            ctx.fillStyle = orb;
+            ctx.beginPath();
+            ctx.arc(cx, cy, orbR, 0, Math.PI * 2);
+            ctx.fill();
+
+            /* Ядро */
+            const coreR = 5 + pulse * 4;
+            const core  = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+            core.addColorStop(0, `rgba(220,245,255,${0.7 + pulse * 0.3})`);
+            core.addColorStop(1, 'transparent');
+            ctx.fillStyle = core;
+            ctx.beginPath();
+            ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+            ctx.fill();
+
+            /* Виньет */
+            const vg = ctx.createRadialGradient(cx, cy, this.h * 0.25, cx, cy, this.h * 0.9);
+            vg.addColorStop(0, 'transparent');
+            vg.addColorStop(1, 'rgba(4,7,16,0.55)');
+            ctx.fillStyle = vg;
+            ctx.fillRect(0, 0, this.w, this.h);
+
+            this.t++;
+        }
+    }
+
+    /* ══════════════════════════════════════════
+       СИСТЕМА УПРАВЛЕНИЯ СМЕНОЙ РЕЖИМОВ
+       ══════════════════════════════════════════ */
+    const W = cvA.width, H = cvA.height;
+    const modes = [
+        new CalamityRain(W, H),
+        new HexGrid(W, H),
+        new VoidRings(W, H)
+    ];
+
+    let modeA          = 0;    // текущий режим на cvA
+    let modeB          = 1;    // следующий режим (рисуется на cvB при переходе)
+    let isTransitioning = false;
+
+    const SWITCH_MS     = 10000;  // 10 сек между сменами
+    const CROSSFADE_MS  = 2500;   // 2.5 сек crossfade
+
+    /* Стартовый фон */
+    ctxA.fillStyle = '#070b17';
+    ctxA.fillRect(0, 0, cvA.width, cvA.height);
+
+    function startTransition() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        modeB = (modeA + 1) % modes.length;
+
+        /* cvB готовим: без transition, прозрачный */
+        cvB.style.transition = 'none';
+        cvB.style.opacity    = '0';
+
+        /* Первый кадр нового режима уже нарисован в cvB (из animate()),
+           теперь запускаем crossfade */
+        requestAnimationFrame(() => {
+            cvB.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
+            cvA.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
+            cvB.style.opacity    = '1';
+            cvA.style.opacity    = '0';
+        });
+
+        setTimeout(() => {
+            /* cvA переключается на новый режим, cvB скрывается */
+            modeA = modeB;
+            cvA.style.transition = 'none';
+            cvA.style.opacity    = '1';
+            cvB.style.transition = 'none';
+            cvB.style.opacity    = '0';
+            isTransitioning      = false;
+        }, CROSSFADE_MS + 80);
+    }
+
+    /* Анимационный цикл */
+    function animate() {
+        modes[modeA].draw(ctxA);
+        if (isTransitioning) {
+            modes[modeB].draw(ctxB);
+        }
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+    setInterval(startTransition, SWITCH_MS);
+
+})(); /* конец initBackground */
 
 </script>
 </body>

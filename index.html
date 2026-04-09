@@ -8,17 +8,12 @@
 </head>
 <body>
 
-<!-- ════ ФОН: два canvas для crossfade между четырьмя режимами ════ -->
 <canvas id="bgCanvasA"></canvas>
 <canvas id="bgCanvasB"></canvas>
-
-<!-- Полоса глитча (END тема) -->
 <div class="glitch-bar" id="glitchBar"></div>
 
-<!-- ══════════════ ШАПКА ══════════════ -->
 <header class="site-header" id="top">
     <div class="header-inner">
-        <!-- Логотип -->
         <div class="header-logo">
             <svg class="logo-svg" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="50,4 96,82 4,82" fill="none"
@@ -36,12 +31,6 @@
             </div>
         </div>
 
-        <!--
-            НОВИНКА 5: Кнопка переключения темы.
-            Находится между логотипом и навигацией.
-            "NEW STORY" = синяя тема, "END STORY" = красная тема с глитчами.
-            data-theme хранит текущее состояние.
-        -->
         <button class="theme-toggle-btn" id="themeToggle" data-theme="new"
                 aria-label="Переключить тему">
             <span class="theme-label-full">NEW STORY</span>
@@ -59,18 +48,12 @@
     </div>
 </header>
 
-<!-- ══════════════ ОСНОВНОЙ КОНТЕНТ ══════════════ -->
 <main>
 
-    <!-- ══ ВКЛАДКА: ГЛАВНАЯ ══ -->
     <div class="tab-pane active" id="tab-home" role="tabpanel">
         <section class="hero">
             <div class="hero-text">
                 <div class="hero-label">— Roguelite Action —</div>
-                <!--
-                    data-text нужен для CSS glitch ::before/::after
-                    в END теме (они читают текст через attr(data-text))
-                -->
                 <h1 class="hero-title" data-text="ENTROPY">
                     ENTROPY<br><span class="accent">EFFECT</span>
                 </h1>
@@ -85,33 +68,20 @@
                 <div class="hero-ring r1"></div>
                 <div class="hero-ring r2"></div>
                 <div class="hero-ring r3"></div>
-
-                <!--
-                    НОВИНКА 1: Логотип игры вместо фото-заглушки.
-                    Воссоздан точно по скриншоту: SVG-треугольник + "BLAZBLUE" + "ENTROPY EFFECT".
-                    Обёрнут в .hero-logo-display для layout.
-                    Анимация pulse + drop-shadow из переменных темы.
-                    Никаких <img src="es.jpg"> — только векторная графика.
-                -->
                 <div class="hero-center">
                     <div class="hero-logo-display">
                         <svg class="hero-logo-svg-large" viewBox="0 0 100 88"
                              xmlns="http://www.w3.org/2000/svg">
-                            <!-- Внешний треугольник -->
                             <polygon points="50,4 96,82 4,82" fill="none"
                                 stroke="rgba(255,255,255,0.95)" stroke-width="2.5"
                                 stroke-linejoin="round"/>
-                            <!-- Нижняя горизонталь -->
                             <line x1="4" y1="82" x2="96" y2="82"
                                 stroke="rgba(255,255,255,0.95)" stroke-width="2.5"/>
-                            <!-- Внутренний треугольник (литера A) -->
                             <polyline points="50,20 70,66 30,66" fill="none"
                                 stroke="rgba(255,255,255,0.9)" stroke-width="2"
                                 stroke-linejoin="round"/>
-                            <!-- Перекладина A -->
                             <line x1="36" y1="54" x2="64" y2="54"
                                 stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
-                            <!-- Внутреннее свечение — полупрозрачный заполнитель -->
                             <polygon points="50,20 70,66 30,66"
                                 fill="rgba(116,192,252,0.06)"/>
                         </svg>
@@ -123,7 +93,6 @@
         </section>
     </div>
 
-    <!-- ══ ВКЛАДКА: ПЕРСОНАЖИ ══ -->
     <div class="tab-pane" id="tab-characters" role="tabpanel">
         <section class="char-section">
             <div class="section-title-wrap">
@@ -164,7 +133,6 @@
         </section>
     </div>
 
-    <!-- ══ ВКЛАДКА: ОБ ИГРЕ ══ -->
     <div class="tab-pane" id="tab-about" role="tabpanel">
         <section class="about-section">
             <div class="about-inner">
@@ -209,103 +177,682 @@
     <button class="back-to-top" id="backTop">↑ НАВЕРХ</button>
 </footer>
 
-<!-- ══════════════ JAVASCRIPT ══════════════ -->
 <script>
 
 /* ═══════════════════════════════════════════
-   ДАННЫЕ ПЕРСОНАЖЕЙ
+   ДАННЫЕ ПЕРСОНАЖЕЙ — РАСШИРЕННЫЕ КАРТОЧКИ
+   Стиль описания соответствует характеру:
+   • Рагна     — агрессивный жирный шрифт, красные акценты
+   • Джин      — холодный моноширинный, синие тона
+   • Ноэль     — мягкий курсив, зелёные пастельные тона
+   • Таокака   — хаотичный, жёлтые всплески
+   • Рэйчел    — аристократический Georgia/serif, фиолетовый
+   • Хакумэн   — тяжёлый капслок, стальной серый
+   • Эс        — техничный моноширинный, бирюза
+   • Коконоэ   — псевдокод, оранжевый
+   • Май       — тёплый курсив, розовый
+   • Хибики    — тихий, тёмно-серый
+   • Лямбда    — фрагментированный лог, холодная бирюза
+   • ICEY      — энергичный, золотой
+   • Узник     — адаптивный, серебристый
    ═══════════════════════════════════════════ */
 const characters = [
     {
-        id: 'ragna', name: 'Ragna the Bloodedge', role: 'Ближний боец',
-        type: 'melee', tag: 'BLOODEDGE', color: '#8b1a1a', glow: '#e74c3c',
+        id: 'ragna',
+        name: 'Ragna the Bloodedge',
+        role: 'Ближний боец',
+        type: 'melee',
+        tag: 'BLOODEDGE',
+        color: '#8b1a1a',
+        glow: '#e74c3c',
         stats: { atk: 90, def: 50, spd: 70, hp: 85 },
-        desc: 'Ближний боец, который усиливает атаки по мере снижения HP. Может восстанавливать здоровье за счёт урона, наносимого противникам.',
-        abilities: ['Берсерк при низком HP', 'Вампиризм урона', 'Мощные ближние атаки'], diff: '★★☆'
+        desc: `
+<span style="font-size:1.12em;font-weight:900;letter-spacing:3px;
+      color:#e74c3c;text-transform:uppercase;
+      text-shadow:0 0 12px #e74c3c88;">
+  УНИЧТОЖИТЬ ВСЕХ. ТОЧКА.
+</span><br><br>
+
+Ragnaмашет двуручным тесаком и использует
+<strong style="color:#e74c3c;">Azure Grimoire</strong> —
+проклятую правую руку, пожирающую душу врагов.
+Каждый удар активирует пассивный
+<span style="font-family:'Courier New',monospace;
+             font-size:0.88em;color:#ff8888;">Soul&nbsp;Eater</span>:
+часть нанесённого урона возвращается к нему как
+<em>восстановление HP</em>.<br><br>
+
+Ключевая черта: чем <strong style="color:#ff4444;">ниже полоса здоровья</strong>,
+тем <em>разрушительнее</em> становятся его атаки.
+При критически низком HP активируется режим
+<span style="font-weight:900;font-size:1.05em;color:#ff2222;
+             text-shadow:0 0 10px #ff000099;">BERSERKER</span> —
+урон и скорость атаки резко возрастают.<br><br>
+
+Сигнатурные приёмы: <strong>Inferno&nbsp;Divider</strong>
+<em style="color:#aaa;font-size:0.9em;">(огненный апперкот)</em>,
+<strong>Dead&nbsp;Spike</strong>
+<em style="color:#aaa;font-size:0.9em;">(тёмная волна из земли)</em>,
+<strong>Gauntlet&nbsp;Hades</strong>
+<em style="color:#aaa;font-size:0.9em;">(таранный рывок)</em>.<br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Заткнись и дерись. Мне некогда с тобой разговаривать.»
+</span>`,
+        abilities: [
+            '<strong>Soul Eater</strong> — вампиризм: урон → HP',
+            'Берсерк при низком HP',
+            'Dead Spike — тёмная волна из земли',
+            'Inferno Divider — огненный апперкот',
+            'Gauntlet Hades — таранный рывок'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'jin', name: 'Jin Kisaragi', role: 'Ледяной мечник',
-        type: 'melee', tag: 'FROST BLADE', color: '#0d3b6e', glow: '#5dade2',
+        id: 'jin',
+        name: 'Jin Kisaragi',
+        role: 'Ледяной мечник',
+        type: 'melee',
+        tag: 'FROST BLADE',
+        color: '#0d3b6e',
+        glow: '#5dade2',
         stats: { atk: 80, def: 60, spd: 75, hp: 70 },
-        desc: 'Мечник, специализирующийся на ледяных навыках. Умеет замораживать врагов и получать бонусы к силе при правильном выполнении комбо.',
-        abilities: ['Заморозка врагов', 'Бонусы за комбо', 'Ледяное оружие'], diff: '★★☆'
+        desc: `
+<span style="font-family:'Courier New',monospace;
+      font-size:0.9em;letter-spacing:2px;color:#5dade2;">
+[ ИНИЦИАЛИЗАЦИЯ — ПЕРВЫЙ ЛЕЙТЕНАНТ НОЛ ]<br>
+[ СТАТУС: БОЕВАЯ ГОТОВНОСТЬ ]
+</span><br><br>
+
+Холодный. Расчётливый.
+<strong style="color:#aed6f1;">Абсолютно контролируемый.</strong><br><br>
+
+Меч <em>Yukianesa</em> — реликвия, реагирующая на
+<span style="color:#85c1e9;">ледяные Ars Magus</span>
+и <em>психологическое состояние владельца</em>.
+При контакте с врагом накладывает
+<strong style="color:#5dade2;">статус заморозки</strong>,
+многократно сковывая движение.<br><br>
+
+<span style="font-family:'Courier New',monospace;
+      font-size:0.85em;color:#5dade2;">
+Техника Hyōga&nbsp;no&nbsp;Kamosu:<br>
+каждый шаг оставляет ледяной след на полу.<br>
+Враги, наступившие на него → заморожены.
+</span><br><br>
+
+Правильное исполнение комбо-последовательностей
+даёт <strong>нарастающий бонус ATK</strong>.
+Точность здесь важнее скорости.<br>
+Сигнатура: <strong>Musō&nbsp;Battōjin</strong>
+<em style="color:#aaa;font-size:0.9em;">(вакуумный порезающий слэш)</em>.<br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Ты недостоин даже скрестить клинки со мной.»
+</span>`,
+        abilities: [
+            '<strong>Yukianesa</strong> — ледяной меч-реликвия',
+            'Заморозка при попадании',
+            'Ледяной след Hyōga no Kamosu',
+            'Musō Battōjin — вакуумный слэш',
+            'Нарастающий ATK за комбо'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'noel', name: 'Noel Vermillion', role: 'Дальнобойный боец',
-        type: 'ranged', tag: 'GUNSLINGER', color: '#1a4d2e', glow: '#2ecc71',
+        id: 'noel',
+        name: 'Noel Vermillion',
+        role: 'Дальнобойный боец',
+        type: 'ranged',
+        tag: 'GUNSLINGER',
+        color: '#1a4d2e',
+        glow: '#2ecc71',
         stats: { atk: 75, def: 45, spd: 80, hp: 65 },
-        desc: 'Дальнобойный персонаж с ракетным вооружением. Сокращает время перезарядки и использует Over-Exhaust для каста навыков при нуле MP.',
-        abilities: ['Ракетное оружие', 'Over-Exhaust механика', 'Сокращение кулдауна'], diff: '★☆☆'
+        desc: `
+<em style="color:#2ecc71;font-size:1.0em;">
+  Нежная внешность, стальная воля — и два пистолета.
+</em><br><br>
+
+Ноэль управляет двойными пистолетами
+<strong style="color:#58d68d;">Bolverk</strong> —
+реликвией Кодекса, усиливающей её Drive-атаки.
+<em>Они не просто оружие</em> — часть её самой.<br><br>
+
+Уникальная механика
+<span style="font-family:'Courier New',monospace;
+             font-size:0.88em;color:#abebc6;">Over-Exhaust</span>:
+позволяет применять навыки <strong>даже при нулевом MP</strong>
+— в обмен на часть HP.
+Рискованно, но позволяет <em>не останавливаться</em>.<br><br>
+
+Драйв <strong>Chain&nbsp;Drive</strong> запускает
+серию стремительных выстрелов, каждый из которых
+<em>снижает время перезарядки</em> следующего навыка.
+Цикл почти непрерывен при правильном ритме.<br><br>
+
+Рекомендуется новичкам:
+<em style="color:#82e0aa;">прощающий стиль с высокой мобильностью.</em><br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Я постараюсь! Я… обязательно справлюсь.»
+</span>`,
+        abilities: [
+            '<strong>Bolverk</strong> — двойные пистолеты-реликвии',
+            'Over-Exhaust — навык без MP (−HP)',
+            'Chain Drive — серийный скорострельный огонь',
+            'Сокращение кулдауна за выстрелы',
+            'Высокая мобильность'
+        ],
+        diff: '★☆☆'
     },
+
     {
-        id: 'taokaka', name: 'Taokaka', role: 'Мобильный боец',
-        type: 'melee', tag: 'SHADOW CAT', color: '#5d4a00', glow: '#f1c40f',
+        id: 'taokaka',
+        name: 'Taokaka',
+        role: 'Мобильный боец',
+        type: 'melee',
+        tag: 'SHADOW CAT',
+        color: '#5d4a00',
+        glow: '#f1c40f',
         stats: { atk: 70, def: 35, spd: 95, hp: 60 },
-        desc: 'Отличается высокой мобильностью и непредсказуемыми атаками, включая создание теневых клонов.',
-        abilities: ['Теневые клоны', 'Высокая мобильность', 'Непредсказуемые атаки'], diff: '★★★'
+        desc: `
+<span style="font-size:1.18em;font-weight:900;color:#f1c40f;">
+  НЯА~! ВАУ ВАУ ВАУ!!!
+</span>
+<span style="font-size:0.78em;color:#f39c12;"> ...тао хочет кушать.</span><br><br>
+
+Таокака — <strong style="font-size:1.06em;color:#f4d03f;">САМЫЙ БЫСТРЫЙ</strong>
+персонаж в игре. Скорость <em>95/100</em>.
+Её траектория движения настолько хаотична,
+что <em>враги буквально не успевают</em> следить
+за позицией.<br><br>
+
+Создаёт <span style="color:#f1c40f;font-weight:700;">теневые клоны</span>
+клана Кака — двойники атакуют со всех направлений
+<strong>одновременно</strong>, нарушая любую оборону.<br><br>
+
+<em>Тройной рывок</em> позволяет мгновенно
+менять дистанцию. Никаких паттернов —
+<strong>чистый звериный инстинкт.</strong><br><br>
+
+<span style="font-size:0.82em;color:#aaa;font-style:italic;">
+  Примечание: По мнению Тао, все незнакомцы —
+  либо «вкусняшки», либо «добряки».
+  Иногда сразу оба.
+</span><br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Тао поймает тебя! Обязательно! Ня~»
+</span>`,
+        abilities: [
+            '<strong>Shadow Clone</strong> — теневые двойники клана Кака',
+            'Тройной рывок без кулдауна',
+            'Скорость 95/100 — быстрейшая в игре',
+            'Непредсказуемые комбо из воздуха',
+            'Атаки с нескольких направлений'
+        ],
+        diff: '★★★'
     },
+
     {
-        id: 'rachel', name: 'Rachel Alucard', role: 'Маг / Контролёр',
-        type: 'control', tag: 'MISTRESS', color: '#4a1e6e', glow: '#a569bd',
+        id: 'rachel',
+        name: 'Rachel Alucard',
+        role: 'Маг / Контролёр',
+        type: 'control',
+        tag: 'MISTRESS',
+        color: '#4a1e6e',
+        glow: '#a569bd',
         stats: { atk: 85, def: 50, spd: 60, hp: 70 },
-        desc: 'Управляет волнами врагов с помощью фамильяров и молниевых атак. Может истощать здоровье противников.',
-        abilities: ['Фамильяры', 'Молниевые атаки', 'Отражение снарядов'], diff: '★★☆'
+        desc: `
+<span style="font-family:Georgia,'Times New Roman',serif;
+      font-size:1.05em;font-style:italic;
+      color:#c39bd3;letter-spacing:1px;">
+  Как невыносимо утомительно…
+</span><br><br>
+
+<span style="font-family:Georgia,serif;">
+Рэйчел Алукард — вампирская аристократка высшего порядка,
+наблюдатель от Тёмной Стороны. Её фамильяры
+<strong style="color:#a569bd;">Наго</strong>
+<em>(чёрный кот)</em> и
+<strong style="color:#bb8fce;">Гии</strong>
+<em>(летучая мышь)</em> служат одновременно
+оружием, щитом и платформой.<br><br>
+
+Лягушка <em>Джордж&nbsp;XIII</em> генерирует
+<span style="color:#d7bde2;">молниевые разряды</span> —
+самое элегантное средство для борьбы с
+<em>чернью</em>, посмевшей приблизиться.<br><br>
+
+Управляет <strong>ветром и молнией</strong>,
+высасывает жизненную силу из врагов пассивным
+<span style="font-family:'Courier New',monospace;
+             font-size:0.87em;color:#d7bde2;">Silpheed</span>.
+Идеальна для тех, кто предпочитает
+<em style="color:#c39bd3;">дирижировать боем</em>,
+а не участвовать в нём напрямую.
+</span><br><br>
+
+<span style="font-style:italic;font-family:Georgia,serif;
+      color:#777;font-size:0.87em;">
+  «Ты думаешь, что можешь меня остановить?
+   Мне смешно. По-настоящему смешно.»
+</span>`,
+        abilities: [
+            '<strong>Наго & Гии</strong> — фамильяры-щит/атака',
+            'Джордж XIII — зарядный молниевый удар',
+            'Silpheed — ветровой барьер и отражение',
+            'Высасывание HP у врагов',
+            'Отражение снарядов обратно'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'hakumen', name: 'Hakumen', role: 'Танк / Контратакер',
-        type: 'tank', tag: 'VOID WARRIOR', color: '#2c3e50', glow: '#bdc3c7',
+        id: 'hakumen',
+        name: 'Hakumen',
+        role: 'Танк / Контратакер',
+        type: 'tank',
+        tag: 'VOID WARRIOR',
+        color: '#2c3e50',
+        glow: '#bdc3c7',
         stats: { atk: 85, def: 95, spd: 45, hp: 95 },
-        desc: 'Танк с мощными контратаками и супербронёй. Подходит для изучения паттернов боссов.',
-        abilities: ['Суперброня', 'Мощные контратаки', 'Высокая живучесть'], diff: '★★☆'
+        desc: `
+<span style="font-size:1.1em;font-weight:900;
+      letter-spacing:4px;color:#ecf0f1;
+      text-transform:uppercase;
+      font-family:'Courier New',monospace;
+      text-shadow:0 0 10px #bdc3c766;">
+  Я — БЕЛАЯ ПУСТОТА. Я — МЕЧ ПРАВОСУДИЯ.
+</span><br><br>
+
+<strong style="color:#bdc3c7;">Хакумэн</strong> —
+воплощение самого Нуля. Облачён в
+<em>Susano'o Unit</em> — доспехи, дарующие почти
+абсолютную неуязвимость. Несёт меч
+<span style="font-weight:900;color:#ecf0f1;">Ōkami</span>,
+разрывающий ткань реальности одним ударом.<br><br>
+
+Обладает <strong style="font-size:1.05em;">
+абсолютной суперброней</strong>:
+большинство вражеских атак
+<em>не прерывают его движений</em>.
+Использует магатамы
+<span style="font-family:'Courier New',monospace;
+             font-size:0.88em;color:#a9cce3;">Magatama</span>
+как ресурс для усиленных контратак —
+<em>каждый принятый удар заряжает следующий.</em><br><br>
+
+<strong style="color:#ecf0f1;letter-spacing:2px;">
+Медленный. Непреклонный. Неостановимый.</strong><br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Правосудие не знает пощады. И я — тоже.»
+</span>`,
+        abilities: [
+            '<strong>Susano\'o Unit</strong> — доспехи суперброни',
+            'Magatama — зарядка контратаки от урона',
+            '<strong>Ōkami</strong> — меч, рвущий пространство',
+            'Контратака — удвоенный урон',
+            'Суперброня — не прерывается ударами'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'es', name: 'Es', role: 'Пространственный боец',
-        type: 'melee', tag: 'AZURE SHRINE', color: '#083d30', glow: '#1abc9c',
+        id: 'es',
+        name: 'Es',
+        role: 'Пространственный боец',
+        type: 'melee',
+        tag: 'AZURE SHRINE',
+        color: '#083d30',
+        glow: '#1abc9c',
         stats: { atk: 80, def: 65, spd: 65, hp: 75 },
-        desc: 'Использует мечи и кресты для контроля пространства. Требует точного тайминга для поддержания комбо.',
-        abilities: ['Контроль пространства', 'Точный тайминг', 'Крест-атаки'], diff: '★★★'
+        desc: `
+<span style="font-family:'Courier New',monospace;
+      font-size:0.88em;color:#1abc9c;letter-spacing:1px;">
+  [ CODENAME: ES ]<br>
+  [ ROLE: AZURE SHRINE MAIDEN ]<br>
+  [ MISSION STATUS: ACTIVE ]
+</span><br><br>
+
+Эс — страж Лазурного Святилища, связанная с
+<strong style="color:#1abc9c;">Code: Embryo</strong>.
+Её бой строится на
+<em>геометрической точности</em>:
+мечи и кресты размещаются в пространстве,
+создавая предопределённые зоны поражения.<br><br>
+
+Система
+<span style="font-family:'Courier New',monospace;
+             font-size:0.88em;color:#76d7c4;">
+  Cross&nbsp;Combination
+</span>:
+каждый размещённый крест должен быть
+<strong>активирован в строгий временной интервал</strong>.
+Промах — цепочка прерывается.
+Попадание — урон и скорость резко растут.<br><br>
+
+Несёт в себе фрагмент
+<em style="color:#76d7c4;">Лазурного кристалла</em>
+— отсюда её <strong>нечеловеческое спокойствие</strong>
+в бою и абсолютная сосредоточенность.<br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;
+      font-family:'Courier New',monospace;">
+  «Я выполняю свою миссию. Этого достаточно.»
+</span>`,
+        abilities: [
+            '<strong>Cross Combination</strong> — тайминг-крест атаки',
+            'Пространственные плавающие мечи',
+            'Нарастающий урон за точный тайминг',
+            'Лазурное усиление — бонус за серию',
+            'Контроль зон через расстановку крестов'
+        ],
+        diff: '★★★'
     },
+
     {
-        id: 'kokonoe', name: 'Kokonoe', role: 'Зональный контроль',
-        type: 'control', tag: 'PROFESSOR', color: '#6e2a00', glow: '#e67e22',
+        id: 'kokonoe',
+        name: 'Kokonoe',
+        role: 'Зональный контроль',
+        type: 'control',
+        tag: 'PROFESSOR',
+        color: '#6e2a00',
+        glow: '#e67e22',
         stats: { atk: 90, def: 40, spd: 55, hp: 60 },
-        desc: 'Специализируется на зональном контроле с помощью ракет и лазерных столбов.',
-        abilities: ['Ракеты', 'Лазерные столбы', 'Бонус за серию убийств'], diff: '★★☆'
+        desc: `
+<span style="font-family:'Courier New',monospace;
+      font-size:0.92em;color:#e67e22;">
+  // PROFESSOR_MERCURY.EXE — ЗАПУЩЕНО<br>
+  // Терпение к союзникам : NULL<br>
+  // Сарказм              : ПЕРЕПОЛНЕНИЕ
+</span><br><br>
+
+<strong style="color:#e67e22;">Коконоэ Меркури</strong> —
+дочь легендарных Шести Героев,
+гений-учёный категории
+<em>«сделаю быстрее сама, без этих идиотов»</em>.<br><br>
+
+Управляет полем боя через систему
+<span style="font-family:'Courier New',monospace;
+             color:#fad7a0;">Grimalkin</span>:
+наводимые ракеты, лазерные столбы,
+орбитальные турели. Её
+<strong>зона контроля — вся карта.</strong><br><br>
+
+<span style="font-family:'Courier New',monospace;
+      font-size:0.85em;color:#f0a500;">
+  // Kill&nbsp;Streak&nbsp;Bonus:<br>
+  // +15% урон за каждое убийство<br>
+  // Накапливается до ×4.0
+</span><br><br>
+
+Хрупка физически — ей лучше <em>не подпускать
+врагов ближе</em>, чем на дальность ракеты.<br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;
+      font-family:'Courier New',monospace;">
+  // «Тупицы. Я окружена тупицами. Дайте кофе.»
+</span>`,
+        abilities: [
+            '<strong>Grimalkin</strong> — система наводимых ракет',
+            'Лазерные столбы-турели',
+            'Kill Streak — до ×4.0 бонус урона',
+            'Орбитальный зональный контроль',
+            'Ядерный финальный удар'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'mai', name: 'Mai Natsume', role: 'Контроль толпы',
-        type: 'control', tag: 'SPEAR MAIDEN', color: '#6e0028', glow: '#e84393',
+        id: 'mai',
+        name: 'Mai Natsume',
+        role: 'Контроль толпы',
+        type: 'control',
+        tag: 'SPEAR MAIDEN',
+        color: '#6e0028',
+        glow: '#e84393',
         stats: { atk: 75, def: 60, spd: 70, hp: 70 },
-        desc: 'Использует копьё и торнадо для контроля толпы. Крайне эффективна против больших групп врагов.',
-        abilities: ['Копейные атаки', 'Торнадо', 'Контроль толпы'], diff: '★★☆'
+        desc: `
+<em style="color:#e84393;font-size:1.0em;">
+  Мягкость снаружи — и совсем другое внутри.
+</em><br><br>
+
+Май владеет магическим копьём
+<strong style="color:#f1948a;">Gallia Sphyra: Outseal</strong>,
+способным генерировать
+<span style="color:#e84393;">торнадо, ударные волны</span>
+и силовые поля. В толпе — настоящее стихийное бедствие.<br><br>
+
+Её стиль сочетает <em>плавные широкие замахи</em>
+с <strong>жёсткими зональными AoE</strong>.
+Торнадо удерживает врагов в воздухе
+<em>(stunlock)</em>, пока прямые выпады копья
+наносят <strong>основной урон по всей области</strong>.<br><br>
+
+Чем <em style="color:#f8c471;">больше врагов в зоне</em> —
+тем <strong>эффективнее</strong> каждая её атака.
+Против одиночных боссов — средняя.
+Против орды — незаменима.<br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Я защищу тех, кто мне дорог. Любой ценой.»
+</span>`,
+        abilities: [
+            '<strong>Outseal</strong> — магическое копьё AoE',
+            'Торнадо — stunlock врагов в воздухе',
+            'Ударная волна по площади',
+            'Бонус урона за количество целей',
+            'Силовое поле — кратковременная защита'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'hibiki', name: 'Hibiki Kohaku', role: 'Скрытный боец',
-        type: 'melee', tag: 'PROTOTYPE', color: '#0d1b2a', glow: '#5d6d7e',
+        id: 'hibiki',
+        name: 'Hibiki Kohaku',
+        role: 'Скрытный боец',
+        type: 'melee',
+        tag: 'PROTOTYPE',
+        color: '#0d1b2a',
+        glow: '#5d6d7e',
         stats: { atk: 85, def: 50, spd: 85, hp: 65 },
-        desc: 'Скрытный персонаж с возможностью создавать клонов и наносить внезапные удары.',
-        abilities: ['Создание клонов', 'Внезапные удары', 'Скрытность'], diff: '★★★'
+        desc: `
+<span style="color:#85929e;font-size:0.9em;
+      letter-spacing:3px;font-family:'Courier New',monospace;">
+  ...он уже рядом. Вы просто ещё не знаете.
+</span><br><br>
+
+<strong style="color:#85929e;">Хибики Кохаку</strong> —
+дворецкий лорда Нэйтса и мастер
+<em>асассинских техник</em>.
+Его существование замечают <em>только в момент удара.</em><br><br>
+
+Создаёт
+<span style="color:#7f8c8d;font-weight:700;">теневые клоны</span>:
+двойники повторяют те же атаки с задержкой,
+формируя <strong>кольцо поражения</strong>
+вокруг жертвы. Правильная расстановка —
+и враг атакован со всех сторон одновременно.<br><br>
+
+Внезапные удары из невидимости дают
+<strong>критический бонус</strong> к урону.
+Стиль требует <em style="color:#aab7b8;">терпения</em>:
+сначала расставить клонов, затем нанести удар.<br><br>
+
+<span style="font-style:italic;color:#666;font-size:0.87em;
+      font-family:'Courier New',monospace;">
+  «Лорд Нэйтс не должен был это видеть.
+   Теперь — никто не должен.»
+</span>`,
+        abilities: [
+            '<strong>Shadow Clone</strong> — двойники с задержкой',
+            'Внезапный удар из тени — крит',
+            'Кольцо окружения из клонов',
+            'Скрытное перемещение',
+            'Асассин: мгновенное убийство'
+        ],
+        diff: '★★★'
     },
+
     {
-        id: 'lambda', name: 'Lambda-11', role: 'Зональный боец',
-        type: 'ranged', tag: 'PRIME FIELD', color: '#063025', glow: '#17a589',
+        id: 'lambda',
+        name: 'Lambda-11',
+        role: 'Зональный боец',
+        type: 'ranged',
+        tag: 'PRIME FIELD',
+        color: '#063025',
+        glow: '#17a589',
         stats: { atk: 80, def: 45, spd: 70, hp: 65 },
-        desc: 'Использует призываемые лезвия для зонального контроля. Создаёт зоны поражения.',
-        abilities: ['Призываемые лезвия', 'Зональный контроль', 'Дистанционные атаки'], diff: '★★☆'
+        desc: `
+<span style="font-family:'Courier New',monospace;
+      font-size:0.86em;color:#17a589;letter-spacing:1px;">
+  PRIME FIELD DEVICE Λ-11<br>
+  STATUS ............. OPERATIONAL<br>
+  EMOTION MODULE ..... ——<br>
+  MEMORY CORE ........ FRAGMENTED
+</span><br><br>
+
+Лямбда — клон серии Prime Field,
+созданный для… <em style="color:#76d7c4;">
+она сама не помнит, для чего.</em><br><br>
+
+Призывает
+<strong style="color:#17a589;">нематериальные клинки</strong>,
+парящие в пространстве вокруг неё.
+Расставляет их как <em>минное поле</em>,
+формируя зоны
+<span style="color:#76d7c4;">гарантированного поражения</span>.<br><br>
+
+В отличие от
+<span style="color:#aaa;font-size:0.9em;">Nu-13</span>,
+она выбрала <strong>другой путь</strong>.
+Холодная. Точная. Без лишних слов.<br><br>
+
+<em>Phantom Edge</em> — массовый залп
+всех призванных лезвий одновременно.
+Враги в зоне — <strong>уничтожены.</strong><br><br>
+
+<span style="font-style:italic;color:#666;font-size:0.87em;
+      font-family:'Courier New',monospace;">
+  «…тепло. Что это такое?»
+</span>`,
+        abilities: [
+            '<strong>Sword Summoner</strong> — парящие клинки-ловушки',
+            'Phantom Edge — одновременный залп всех лезвий',
+            'Зональный контроль через расстановку',
+            'Дистанционные атаки без отдачи',
+            'Пассивный барьер из клинков'
+        ],
+        diff: '★★☆'
     },
+
     {
-        id: 'icey', name: 'ICEY', role: 'Гость: Стремительный боец',
-        type: 'guest', tag: '★ GUEST', color: '#4d3e00', glow: '#f4d03f',
+        id: 'icey',
+        name: 'ICEY',
+        role: 'Гость: Стремительный боец',
+        type: 'guest',
+        tag: '★ GUEST',
+        color: '#4d3e00',
+        glow: '#f4d03f',
         stats: { atk: 85, def: 55, spd: 95, hp: 70 },
-        desc: 'Гостевой персонаж из одноимённой серии. Обладает бесконечным рывком в любом направлении.',
-        abilities: ['Бесконечный рывок', 'Разрушение брони', 'Высокая скорость'], diff: '★☆☆'
+        desc: `
+<span style="font-size:1.1em;font-weight:900;
+      color:#f4d03f;letter-spacing:2px;
+      text-shadow:0 0 10px #f4d03f66;">
+  ★ ГОСТЕВОЙ ПЕРСОНАЖ — ВСЕЛЕННАЯ ICEY ★
+</span><br><br>
+
+Айси врывается в мир BlazBlue с
+<strong style="color:#f9e79f;">непоколебимой решимостью</strong>
+и <em>бесконечной энергией</em>.
+Её фирменный
+<span style="color:#f4d03f;font-weight:700;">Infinite Dash</span>
+позволяет рывок в
+<strong>абсолютно любом направлении</strong>
+без кулдауна — снова и снова.<br><br>
+
+Специализируется на
+<em>сломе вражеской брони</em>:
+атаки <strong>игнорируют защитные слои</strong>
+и выводят боссов из режима щита,
+открывая для союзников окно для атаки.<br><br>
+
+<span style="font-size:0.85em;color:#f0e68c;">
+  Сопровождается голосом <strong>SAI</strong> —
+  её неизменного спутника из родной вселенной.
+</span><br><br>
+
+Рекомендована новичкам:
+<em style="color:#f9e79f;">прощающая механика,
+высокая мобильность, низкий порог входа.</em><br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «SAI, следующая цель — там! Не отставай!»
+</span>`,
+        abilities: [
+            '<strong>Infinite Dash</strong> — рывок в любом направлении',
+            'Нет кулдауна у рывка',
+            'Разрушение брони и щита боссов',
+            'Скорость 95/100 — наравне с Таокакой',
+            'SAI — голосовой навигатор'
+        ],
+        diff: '★☆☆'
     },
+
     {
-        id: 'prisoner', name: 'The Prisoner', role: 'Гость: Dead Cells',
-        type: 'guest', tag: '★ DEAD CELLS', color: '#2c2c2c', glow: '#aab7b8',
+        id: 'prisoner',
+        name: 'The Prisoner',
+        role: 'Гость: Dead Cells',
+        type: 'guest',
+        tag: '★ DEAD CELLS',
+        color: '#2c2c2c',
+        glow: '#aab7b8',
         stats: { atk: 80, def: 60, spd: 75, hp: 80 },
-        desc: 'Гостевой персонаж из Dead Cells. Обладает тремя сменными наборами снаряжения.',
-        abilities: ['3 набора снаряжения', 'Критические удары', 'Адаптивный стиль'], diff: '★★☆'
+        desc: `
+<span style="font-weight:700;color:#bdc3c7;
+      letter-spacing:2px;font-size:0.95em;">
+  ★ ГОСТЕВОЙ ПЕРСОНАЖ — DEAD CELLS
+</span><br><br>
+
+Узник — воплощение
+<strong style="color:#bdc3c7;">адаптации</strong>.
+Не имея постоянного облика, он несёт с собой
+<em>три сменных набора снаряжения</em>,
+переключаясь между стилями боя
+<strong>прямо в разгаре сражения</strong>.<br><br>
+
+Наборы:
+<span style="color:#e74c3c;font-weight:700;">Ближний</span>
+— меч и щит,
+<span style="color:#5dade2;font-weight:700;">Дальний</span>
+— лук и арбалет,
+<span style="color:#a569bd;font-weight:700;">Ловушечный</span>
+— капканы и яды.
+Каждый открывает <em>уникальные атаки</em>.<br><br>
+
+Тайминговое парирование даёт
+<strong>критический удар ×2</strong>.
+<em style="color:#aab7b8;">Смерть для него —
+лишь временное неудобство.</em>
+После каждого падения он возвращается —
+немного другим, но готовым к следующей попытке.<br><br>
+
+<span style="font-style:italic;color:#777;font-size:0.87em;">
+  «Ещё одна ячейка. Ещё одна попытка.
+   Конец всегда один — но я выберу его сам.»
+</span>`,
+        abilities: [
+            '<strong>3 набора</strong> — ближний / дальний / ловушки',
+            'Тайминг-парирование — крит ×2',
+            'Адаптивный стиль под ситуацию',
+            'Яды и капканы — пассивный урон',
+            'Смерть — временна (особый перк)'
+        ],
+        diff: '★★☆'
     }
 ];
 
@@ -314,15 +861,10 @@ const characters = [
    ═══════════════════════════════════════════ */
 let selectedIndex  = 6;
 let currentFilter  = 'all';
-let activeTheme    = 'new';  // 'new' | 'end'
+let activeTheme    = 'new';
 
 /* ═══════════════════════════════════════════
-   НОВИНКА 4+5: ПЕРЕКЛЮЧЕНИЕ ТЕМЫ
-   ─────────────────────────────────────────
-   toggleTheme() меняет класс theme-end на
-   корневом элементе <html>, обновляет текст
-   кнопки и запускает JS-анимации глитча
-   для END темы (случайные полосы помех).
+   ПЕРЕКЛЮЧЕНИЕ ТЕМЫ
    ═══════════════════════════════════════════ */
 const themeToggleBtn = document.getElementById('themeToggle');
 const glitchBar      = document.getElementById('glitchBar');
@@ -333,7 +875,7 @@ function toggleTheme() {
         document.documentElement.classList.add('theme-end');
         themeToggleBtn.querySelector('.theme-label-full').textContent = 'END STORY';
         themeToggleBtn.querySelector('.theme-label-short').textContent = '✕';
-        startGlitchBars();  // запускаем JS-полосы помех
+        startGlitchBars();
     } else {
         activeTheme = 'new';
         document.documentElement.classList.remove('theme-end');
@@ -342,23 +884,15 @@ function toggleTheme() {
         stopGlitchBars();
     }
 }
-
 themeToggleBtn.addEventListener('click', toggleTheme);
 
-/* ─── Горизонтальные полосы-помехи (JS) ──────────────────
-   В END теме периодически показываем div.glitch-bar
-   в случайной вертикальной позиции — эффект артефактов.
-   ───────────────────────────────────────────────────────── */
 let glitchBarInterval = null;
 
-function startGlitchBars() {
-    // Первый показ быстрее
-    scheduleGlitchBar();
-}
+function startGlitchBars() { scheduleGlitchBar(); }
 
 function scheduleGlitchBar() {
     if (activeTheme !== 'end') return;
-    const delay = 1200 + Math.random() * 3000;  // случайный интервал 1.2–4.2 сек
+    const delay = 1200 + Math.random() * 3000;
     glitchBarInterval = setTimeout(() => {
         showGlitchBar();
         scheduleGlitchBar();
@@ -366,23 +900,19 @@ function scheduleGlitchBar() {
 }
 
 function showGlitchBar() {
-    // Случайная высота и толщина полосы
     const y = Math.random() * window.innerHeight;
     const h = 1 + Math.random() * 4;
-    const r = Math.floor(150 + Math.random() * 105);  // оттенок красного
+    const r = Math.floor(150 + Math.random() * 105);
     glitchBar.style.top    = `${y}px`;
     glitchBar.style.height = `${h}px`;
     glitchBar.style.background =
         `linear-gradient(90deg, transparent, rgba(${r},0,0,0.85) 20%, rgba(${r},30,0,0.9) 50%, transparent)`;
     glitchBar.style.opacity = '1';
-
-    // Иногда добавляем смещение (хаотичный глитч)
     if (Math.random() > 0.6) {
         glitchBar.style.transform = `scaleX(${0.3 + Math.random() * 0.7}) translateX(${(Math.random()-0.5)*40}%)`;
     } else {
         glitchBar.style.transform = 'none';
     }
-
     setTimeout(() => { glitchBar.style.opacity = '0'; }, 80 + Math.random() * 120);
 }
 
@@ -479,6 +1009,11 @@ function renderCarousel(animate = false) {
 
 /* ═══════════════════════════════════════════
    ДЕТАЛЬНАЯ ПАНЕЛЬ
+   ─────────────────────────────────────────
+   ИЗМЕНЕНИЕ: dpDesc использует innerHTML
+   вместо textContent — чтобы отображать
+   HTML-разметку внутри описания персонажа
+   (теги <strong>, <em>, <span style=...> и т.д.)
    ═══════════════════════════════════════════ */
 function renderDetail() {
     const c = characters[selectedIndex];
@@ -486,7 +1021,9 @@ function renderDetail() {
     document.getElementById('dpTag').style.background = c.glow;
     document.getElementById('dpName').textContent  = c.name.toUpperCase();
     document.getElementById('dpRole').textContent  = c.role;
-    document.getElementById('dpDesc').textContent  = c.desc;
+
+    /* ← КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: innerHTML вместо textContent */
+    document.getElementById('dpDesc').innerHTML    = c.desc;
 
     const icon = document.getElementById('dpIcon');
     icon.style.filter = `drop-shadow(0 0 25px ${c.glow}) drop-shadow(0 0 55px ${c.glow})`;
@@ -536,29 +1073,20 @@ document.querySelectorAll('.filter').forEach(btn => {
 });
 
 /* ═══════════════════════════════════════════
-   НОВИНКА 2: ДВУХФАЗНЫЙ ПЕРЕХОД ВКЛАДОК
-   ─────────────────────────────────────────
-   Фаза 1 (0.5s): текущая вкладка получает класс
-   tab-leave → fade-out + сдвиг вверх + blur.
-   Фаза 2 (0.85s): после завершения fade-out
-   новая вкладка получает класс tab-enter →
-   fade-in + сдвиг снизу + unblur.
-   Итого: ~1.35 сек полного перехода.
+   ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
    ═══════════════════════════════════════════ */
-const LEAVE_MS = 500;   // длительность fade-out
-const ENTER_MS = 850;   // длительность fade-in
+const LEAVE_MS = 500;
+const ENTER_MS = 850;
 let   isTabSwitching = false;
 
 function switchTab(tabId) {
     if (isTabSwitching) return;
-
     const currentPane = document.querySelector('.tab-pane.active');
     const targetPane  = document.getElementById(`tab-${tabId}`);
     if (!targetPane || currentPane === targetPane) return;
 
     isTabSwitching = true;
 
-    /* Обновляем активную кнопку сразу */
     document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
@@ -569,30 +1097,22 @@ function switchTab(tabId) {
         activeBtn.setAttribute('aria-selected', 'true');
     }
 
-    /* Фаза 1: fade-out текущей вкладки */
     currentPane.classList.add('tab-leave');
 
     setTimeout(() => {
-        /* Скрываем старую вкладку */
         currentPane.classList.remove('active', 'tab-leave');
+        targetPane.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        /* Фаза 2: fade-in новой вкладки */
-       targetPane.classList.add('active');                     // сначала display:block
-window.scrollTo({ top: 0, behavior: 'smooth' });
-
-// два RAF = ждём пока браузер применит display:block
-requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-        targetPane.classList.add('tab-enter');
-
-        // надёжный таймер вместо animationend
-        setTimeout(() => {
-            targetPane.classList.remove('tab-enter');
-            isTabSwitching = false;
-        }, ENTER_MS + 50);                              // 850 + 50 = 900 мс
-    });
-});
-
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                targetPane.classList.add('tab-enter');
+                setTimeout(() => {
+                    targetPane.classList.remove('tab-enter');
+                    isTabSwitching = false;
+                }, ENTER_MS + 50);
+            });
+        });
     }, LEAVE_MS);
 }
 
@@ -611,19 +1131,9 @@ document.getElementById('backTop').addEventListener('click', () => {
 renderCarousel(false);
 renderDetail();
 
-
-/* ╔══════════════════════════════════════════════════════════════╗
-   ║  АНИМИРОВАННЫЙ ФОН — ЧЕТЫРЕ РЕЖИМА С ПЛАВНЫМ CROSSFADE      ║
-   ║                                                              ║
-   ║  НОВИНКА 3: Добавлен 4-й режим NEURAL WEB                   ║
-   ║  Режим 0: CALAMITY RAIN  — матрица символов                 ║
-   ║  Режим 1: HEX GRID       — шестиугольная сетка              ║
-   ║  Режим 2: VOID RINGS     — вращающиеся кольца               ║
-   ║  Режим 3: NEURAL WEB     — нейронная сеть (узлы + связи)    ║
-   ║                                                              ║
-   ║  НОВИНКА 4: Все режимы переключают палитру при END теме      ║
-   ║  через getBgPalette() — красные/оранжевые оттенки           ║
-   ╚══════════════════════════════════════════════════════════════╝ */
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  АНИМИРОВАННЫЙ ФОН — ЧЕТЫРЕ РЕЖИМА С CROSSFADE          ║
+   ╚══════════════════════════════════════════════════════════╝ */
 (function initBackground() {
     'use strict';
 
@@ -632,7 +1142,6 @@ renderDetail();
     const ctxA = cvA.getContext('2d');
     const ctxB = cvB.getContext('2d');
 
-    /* ── Размеры ── */
     function resize() {
         cvA.width  = cvB.width  = window.innerWidth;
         cvA.height = cvB.height = window.innerHeight;
@@ -643,32 +1152,24 @@ renderDetail();
         modes.forEach(m => m.resize && m.resize(cvA.width, cvA.height));
     });
 
-    /* ── Геттер текущей палитры (реагирует на тему) ──────────────
-       NEW STORY: синий / бирюзовый / голубой
-       END STORY: тёмно-красный / оранжевый / ярко-красный
-    ───────────────────────────────────────────────────────────── */
     function getBgPalette() {
         const isEnd = document.documentElement.classList.contains('theme-end');
         if (isEnd) {
             return [
-                [180,  10,   0],   // тёмно-красный
-                [220,  60,   0],   // оранжево-красный
-                [255, 100,  30],   // яркий оранжевый
+                [180,  10,   0],
+                [220,  60,   0],
+                [255, 100,  30],
             ];
         }
         return [
-            [ 21, 101, 192],   // синий
-            [ 13, 148, 136],   // бирюзовый
-            [116, 192, 252],   // голубой
+            [ 21, 101, 192],
+            [ 13, 148, 136],
+            [116, 192, 252],
         ];
     }
 
-    /* ══════════════════════════════════════════
-       РЕЖИМ 0: CALAMITY RAIN
-       ══════════════════════════════════════════ */
     class CalamityRain {
         constructor(w, h) { this.resize(w, h); }
-
         resize(w, h) {
             this.w = w; this.h = h;
             this.chars = 'アイウエオカキクサシスΔΨΩ∞◈⬡01ABCDEF∇◆';
@@ -678,23 +1179,18 @@ renderDetail();
             this.speeds = Array.from({ length: this.cols }, () => 0.25 + Math.random() * 0.75);
             this.cidx   = Array.from({ length: this.cols }, () => Math.floor(Math.random() * 3));
         }
-
         draw(ctx) {
             const palette = getBgPalette();
             const bgAlpha = document.documentElement.classList.contains('theme-end')
                 ? 'rgba(13,0,0,0.16)' : 'rgba(7,11,23,0.16)';
-
             ctx.fillStyle = bgAlpha;
             ctx.fillRect(0, 0, this.w, this.h);
             ctx.font = 'bold 13px "Courier New", monospace';
-
             for (let i = 0; i < this.cols; i++) {
                 const x  = i * this.colW + 2;
                 const yH = Math.floor(this.drops[i]) * this.colW;
-
                 ctx.fillStyle = 'rgba(220,235,255,0.92)';
                 ctx.fillText(this.chars[Math.floor(Math.random() * this.chars.length)], x, yH);
-
                 const [r, g, b] = palette[this.cidx[i]];
                 const tailLen = 6 + Math.floor(Math.random() * 4);
                 for (let t = 1; t <= tailLen; t++) {
@@ -702,13 +1198,11 @@ renderDetail();
                     ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
                     ctx.fillText(this.chars[Math.floor(Math.random() * this.chars.length)], x, yH - t * this.colW);
                 }
-
                 this.drops[i] += this.speeds[i];
                 if (yH > this.h + 50 && Math.random() > 0.975) {
                     this.drops[i] = Math.random() * -8;
                 }
             }
-
             const vign = ctx.createRadialGradient(this.w/2, this.h/2, this.h*0.3, this.w/2, this.h/2, this.h*0.85);
             vign.addColorStop(0, 'transparent');
             vign.addColorStop(1, 'rgba(4,7,16,0.55)');
@@ -717,12 +1211,8 @@ renderDetail();
         }
     }
 
-    /* ══════════════════════════════════════════
-       РЕЖИМ 1: HEX GRID
-       ══════════════════════════════════════════ */
     class HexGrid {
         constructor(w, h) { this.t = 0; this.resize(w, h); }
-
         resize(w, h) {
             this.w = w; this.h = h;
             this.hexes = [];
@@ -738,7 +1228,6 @@ renderDetail();
                 }
             }
         }
-
         hexPath(ctx, x, y, s) {
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
@@ -748,38 +1237,31 @@ renderDetail();
             }
             ctx.closePath();
         }
-
         draw(ctx) {
             const palette = getBgPalette();
             const [r0,g0,b0] = palette[0];
             const [r1,g1,b1] = palette[1];
             const [r2,g2,b2] = palette[2];
             const isEnd = document.documentElement.classList.contains('theme-end');
-
             ctx.clearRect(0, 0, this.w, this.h);
             ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
             ctx.fillRect(0, 0, this.w, this.h);
-
             const cx = this.w / 2, cy = this.h / 2;
             const T  = this.t * 0.012;
-
             for (const h of this.hexes) {
                 const dist  = Math.hypot(h.x - cx, h.y - cy);
                 const wave  = Math.sin(dist * 0.014 - T * 2.8 + h.phase * 0.25);
                 const pulse = (wave + 1) / 2;
-
                 ctx.strokeStyle = `rgba(${r0},${g0},${b0},${0.06 + pulse * 0.20})`;
                 ctx.lineWidth   = 0.8;
                 this.hexPath(ctx, h.x, h.y, h.s - 1);
                 ctx.stroke();
-
                 if (pulse > 0.78) {
                     const t = (pulse - 0.78) / 0.22;
                     ctx.fillStyle = `rgba(${r1},${g1},${b1},${t * 0.18})`;
                     this.hexPath(ctx, h.x, h.y, h.s - 1);
                     ctx.fill();
                 }
-
                 if (pulse > 0.65) {
                     const t = (pulse - 0.65) / 0.35;
                     ctx.fillStyle = `rgba(${r2},${g2},${b2},${t * 0.85})`;
@@ -788,34 +1270,27 @@ renderDetail();
                     ctx.fill();
                 }
             }
-
             const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 320);
             gl.addColorStop(0,   `rgba(${r0},${g0},${b0},0.14)`);
             gl.addColorStop(0.5, `rgba(${r1},${g1},${b1},0.05)`);
             gl.addColorStop(1,   'transparent');
             ctx.fillStyle = gl;
             ctx.fillRect(0, 0, this.w, this.h);
-
             const vg = ctx.createRadialGradient(cx, cy, this.h * 0.28, cx, cy, this.h * 0.9);
             vg.addColorStop(0, 'transparent');
             vg.addColorStop(1, 'rgba(4,7,16,0.6)');
             ctx.fillStyle = vg;
             ctx.fillRect(0, 0, this.w, this.h);
-
             this.t++;
         }
     }
 
-    /* ══════════════════════════════════════════
-       РЕЖИМ 2: VOID RINGS
-       ══════════════════════════════════════════ */
     class VoidRings {
         constructor(w, h) {
             this.t = 0;
             this.resize(w, h);
             this.particles = Array.from({ length: 140 }, () => this._mkParticle(w, h));
         }
-
         _mkParticle() {
             const orbitR = [110, 165, 230, 310];
             const radius = orbitR[Math.floor(Math.random() * orbitR.length)] + (Math.random()-0.5)*35;
@@ -828,44 +1303,35 @@ renderDetail();
                 ci:     Math.floor(Math.random() * 3)
             };
         }
-
         resize(w, h) { this.w = w; this.h = h; }
-
         draw(ctx) {
             const palette = getBgPalette();
             const isEnd = document.documentElement.classList.contains('theme-end');
-
             ctx.clearRect(0, 0, this.w, this.h);
             ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
             ctx.fillRect(0, 0, this.w, this.h);
-
             const cx = this.w / 2, cy = this.h / 2, T = this.t;
             const [r0,g0,b0] = palette[0];
-
             const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 380);
             bg.addColorStop(0,   isEnd ? 'rgba(22,0,0,0.8)' : 'rgba(11,18,37,0.8)');
             bg.addColorStop(0.4, `rgba(${r0},${g0},${b0},0.06)`);
             bg.addColorStop(1,   'transparent');
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, this.w, this.h);
-
             const rings = [
                 { r:110, w:1.8, spd:0.0022, dir: 1, ci:0, alpha:0.42, marks:12 },
                 { r:165, w:1.2, spd:0.0015, dir:-1, ci:2, alpha:0.30, marks:18 },
                 { r:230, w:2.2, spd:0.0009, dir: 1, ci:1, alpha:0.22, marks:24 },
                 { r:310, w:1.0, spd:0.0005, dir:-1, ci:0, alpha:0.13, marks:32 },
             ];
-
             rings.forEach((ring, ri) => {
                 const [r, g, b] = palette[ring.ci];
                 const rot = T * ring.spd * ring.dir;
-
                 ctx.beginPath();
                 ctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
                 ctx.strokeStyle = `rgba(${r},${g},${b},${ring.alpha})`;
                 ctx.lineWidth   = ring.w;
                 ctx.stroke();
-
                 for (let m = 0; m < ring.marks; m++) {
                     const a     = rot + (Math.PI * 2 / ring.marks) * m;
                     const mx    = cx + Math.cos(a) * ring.r;
@@ -877,7 +1343,6 @@ renderDetail();
                     ctx.fill();
                 }
             });
-
             this.particles.forEach(p => {
                 p.angle += p.speed;
                 const px = cx + Math.cos(p.angle) * p.radius;
@@ -888,7 +1353,6 @@ renderDetail();
                 ctx.arc(px, py, p.size, 0, Math.PI * 2);
                 ctx.fill();
             });
-
             const pulse = (Math.sin(T * 0.048) + 1) / 2;
             const orbR  = 55 + pulse * 15;
             const orb   = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
@@ -899,7 +1363,6 @@ renderDetail();
             ctx.beginPath();
             ctx.arc(cx, cy, orbR, 0, Math.PI * 2);
             ctx.fill();
-
             const coreR = 5 + pulse * 4;
             const core  = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
             core.addColorStop(0, `rgba(220,245,255,${0.7 + pulse * 0.3})`);
@@ -908,35 +1371,15 @@ renderDetail();
             ctx.beginPath();
             ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
             ctx.fill();
-
             const vg = ctx.createRadialGradient(cx, cy, this.h * 0.25, cx, cy, this.h * 0.9);
             vg.addColorStop(0, 'transparent');
             vg.addColorStop(1, 'rgba(4,7,16,0.55)');
             ctx.fillStyle = vg;
             ctx.fillRect(0, 0, this.w, this.h);
-
             this.t++;
         }
     }
 
-    /* ══════════════════════════════════════════
-       НОВИНКА 3: РЕЖИМ 3 — NEURAL WEB
-       ─────────────────────────────────────────
-       Нейронная сеть: 80 узлов медленно дрейфуют
-       по экрану. Если расстояние между двумя
-       узлами < LINK_DIST — рисуем полупрозрачную
-       линию-связь. Узлы пульсируют и меняют яркость.
-       Алгоритм:
-         1. Каждый узел имеет позицию (x,y),
-            скорость (vx,vy) и фазу пульса.
-         2. На каждом кадре позиции обновляются,
-            узлы отражаются от краёв.
-         3. Для каждой пары узлов:
-            dist = Math.hypot(dx,dy)
-            если dist < 160 → рисуем линию
-            с opacity = (1 - dist/160) * 0.45
-         4. Цвет берётся из getBgPalette().
-       ══════════════════════════════════════════ */
     class NeuralWeb {
         constructor(w, h) {
             this.t = 0;
@@ -944,49 +1387,38 @@ renderDetail();
             this.LINK_DIST  = 160;
             this.resize(w, h);
         }
-
         resize(w, h) {
             this.w = w; this.h = h;
-            /* При ресайзе пересоздаём узлы */
             this.nodes = Array.from({ length: this.NODE_COUNT }, () => ({
                 x:     Math.random() * w,
                 y:     Math.random() * h,
                 vx:    (Math.random() - 0.5) * 0.55,
                 vy:    (Math.random() - 0.5) * 0.55,
-                r:     1.5 + Math.random() * 2.5,    // радиус узла
-                phase: Math.random() * Math.PI * 2,   // фаза пульса
-                ci:    Math.floor(Math.random() * 3)  // индекс цвета
+                r:     1.5 + Math.random() * 2.5,
+                phase: Math.random() * Math.PI * 2,
+                ci:    Math.floor(Math.random() * 3)
             }));
         }
-
         draw(ctx) {
             const palette = getBgPalette();
             const isEnd   = document.documentElement.classList.contains('theme-end');
             const T       = this.t;
-
             ctx.clearRect(0, 0, this.w, this.h);
             ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
             ctx.fillRect(0, 0, this.w, this.h);
-
-            /* Обновляем позиции узлов */
             for (const n of this.nodes) {
-                n.x += n.vx;
-                n.y += n.vy;
-                /* Отражение от краёв с небольшим отступом */
-                if (n.x < 0)        { n.x = 0;       n.vx *= -1; }
-                if (n.x > this.w)   { n.x = this.w;  n.vx *= -1; }
-                if (n.y < 0)        { n.y = 0;        n.vy *= -1; }
-                if (n.y > this.h)   { n.y = this.h;   n.vy *= -1; }
+                n.x += n.vx; n.y += n.vy;
+                if (n.x < 0)      { n.x = 0;      n.vx *= -1; }
+                if (n.x > this.w) { n.x = this.w; n.vx *= -1; }
+                if (n.y < 0)      { n.y = 0;      n.vy *= -1; }
+                if (n.y > this.h) { n.y = this.h; n.vy *= -1; }
             }
-
-            /* Рисуем связи */
             for (let i = 0; i < this.nodes.length; i++) {
                 for (let j = i + 1; j < this.nodes.length; j++) {
                     const a = this.nodes[i];
                     const b = this.nodes[j];
                     const dist = Math.hypot(a.x - b.x, a.y - b.y);
                     if (dist < this.LINK_DIST) {
-                        /* Более близкие узлы — более яркая линия */
                         const alpha = (1 - dist / this.LINK_DIST) * 0.35;
                         const [r, g, b_] = palette[a.ci];
                         ctx.beginPath();
@@ -998,14 +1430,10 @@ renderDetail();
                     }
                 }
             }
-
-            /* Рисуем узлы */
             for (const n of this.nodes) {
                 const pulse = (Math.sin(T * 0.03 + n.phase) + 1) / 2;
                 const [r, g, b_] = palette[n.ci];
                 const nodeR = n.r + pulse * 1.5;
-
-                /* Свечение вокруг узла */
                 const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, nodeR * 3);
                 grd.addColorStop(0,   `rgba(${r},${g},${b_},${0.4 + pulse * 0.35})`);
                 grd.addColorStop(1,   `rgba(${r},${g},${b_},0)`);
@@ -1013,15 +1441,11 @@ renderDetail();
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, nodeR * 3, 0, Math.PI * 2);
                 ctx.fill();
-
-                /* Ядро узла */
                 ctx.fillStyle = `rgba(${r},${g},${b_},${0.7 + pulse * 0.3})`;
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, nodeR, 0, Math.PI * 2);
                 ctx.fill();
             }
-
-            /* Центральное свечение */
             const cx = this.w / 2, cy = this.h / 2;
             const [r0,g0,b0] = palette[0];
             const radGl = ctx.createRadialGradient(cx, cy, 0, cx, cy, 350);
@@ -1029,35 +1453,29 @@ renderDetail();
             radGl.addColorStop(1,   'transparent');
             ctx.fillStyle = radGl;
             ctx.fillRect(0, 0, this.w, this.h);
-
-            /* Виньет */
             const vg = ctx.createRadialGradient(cx, cy, this.h * 0.3, cx, cy, this.h * 0.95);
             vg.addColorStop(0, 'transparent');
             vg.addColorStop(1, isEnd ? 'rgba(10,0,0,0.65)' : 'rgba(4,7,16,0.60)');
             ctx.fillStyle = vg;
             ctx.fillRect(0, 0, this.w, this.h);
-
             this.t++;
         }
     }
 
-    /* ══════════════════════════════════════════
-       УПРАВЛЕНИЕ СМЕНОЙ РЕЖИМОВ
-       ══════════════════════════════════════════ */
     const W = cvA.width, H = cvA.height;
     const modes = [
         new CalamityRain(W, H),
         new HexGrid(W, H),
         new VoidRings(W, H),
-        new NeuralWeb(W, H)    // НОВИНКА 3: 4-й режим
+        new NeuralWeb(W, H)
     ];
 
     let modeA           = 0;
     let modeB           = 1;
     let isTransitioning = false;
 
-    const SWITCH_MS    = 10000;   // 10 сек между сменами
-    const CROSSFADE_MS = 2500;    // 2.5 сек crossfade
+    const SWITCH_MS    = 10000;
+    const CROSSFADE_MS = 2500;
 
     ctxA.fillStyle = '#070b17';
     ctxA.fillRect(0, 0, cvA.width, cvA.height);
@@ -1065,19 +1483,15 @@ renderDetail();
     function startTransition() {
         if (isTransitioning) return;
         isTransitioning = true;
-
         modeB = (modeA + 1) % modes.length;
-
         cvB.style.transition = 'none';
         cvB.style.opacity    = '0';
-
         requestAnimationFrame(() => {
             cvB.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
             cvA.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
             cvB.style.opacity    = '1';
             cvA.style.opacity    = '0';
         });
-
         setTimeout(() => {
             modeA = modeB;
             cvA.style.transition = 'none';
@@ -1097,7 +1511,7 @@ renderDetail();
     animate();
     setInterval(startTransition, SWITCH_MS);
 
-})(); /* конец initBackground */
+})();
 
 </script>
 </body>

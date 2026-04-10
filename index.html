@@ -364,70 +364,87 @@
     }
 
     /* ══════════════════════════════════════════
-       ЗАГРУЗКА ФОТО ПЕРСОНАЖА
+       КНОПКА СТРАНИЦЫ ПЕРСОНАЖА
        ══════════════════════════════════════════ */
-    .dp-photo-block {
-        margin-top: 1.2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.55rem;
+    .detail-panel {
+        position: relative; /* нужно для absolute-позиционирования кнопки */
     }
-    .dp-upload-btn {
+
+    .char-page-btn {
+        position: absolute;
+        bottom: 1.6rem;
+        right: 1.8rem;
         display: inline-flex;
         align-items: center;
-        gap: 0.45rem;
-        font-family: 'Rajdhani', sans-serif;
+        gap: 0.5rem;
+        padding: 0.55rem 1.35rem;
+        font-family: 'Big Shoulders Display', sans-serif;
         font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.18em;
+        font-weight: 800;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
-        color: rgba(116,192,252,0.75);
-        border: 1px solid rgba(116,192,252,0.25);
+        color: var(--clr-gold, #38bdf8);
+        border: 1px solid rgba(56,189,248,0.35);
         border-radius: 4px;
-        padding: 0.45rem 1rem;
-        cursor: pointer;
-        background: rgba(21,101,192,0.07);
-        transition: all 0.25s ease;
-        user-select: none;
+        background: rgba(21,101,192,0.09);
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        overflow: hidden;
+        white-space: nowrap;
+        z-index: 5;
     }
-    .dp-upload-btn:hover {
+
+    .char-page-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.45s ease;
+    }
+
+    .char-page-btn:hover::before { transform: translateX(100%); }
+
+    .char-page-btn:hover {
         color: #fff;
-        border-color: rgba(116,192,252,0.6);
-        background: rgba(21,101,192,0.18);
-        box-shadow: 0 0 12px rgba(116,192,252,0.2);
+        border-color: var(--clr-blue-light, #42a5f5);
+        background: rgba(21,101,192,0.22);
+        box-shadow:
+            0 0 18px rgba(66,165,245,0.35),
+            inset 0 0 12px rgba(66,165,245,0.08);
+        transform: translateY(-2px);
     }
-    .dp-upload-btn input[type="file"] {
-        display: none;
+
+    .char-page-btn .cpb-arrow {
+        font-size: 0.85em;
+        transition: transform 0.25s ease;
     }
-    .dp-reset-btn {
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 0.64rem;
-        font-weight: 600;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: rgba(136,146,176,0.4);
-        background: none;
-        border: 1px solid rgba(136,146,176,0.12);
-        border-radius: 3px;
-        padding: 0.25rem 0.7rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: none;
+    .char-page-btn:hover .cpb-arrow {
+        transform: translateX(4px);
     }
-    .dp-reset-btn:hover {
-        color: rgba(220,80,80,0.8);
-        border-color: rgba(220,80,80,0.3);
+
+    /* END-тема */
+    :root.theme-end .char-page-btn {
+        color: #ff8844;
+        border-color: rgba(255,80,0,0.35);
+        background: rgba(180,20,0,0.09);
     }
-    .dp-reset-btn.visible { display: inline-block; }
-    .dp-custom-badge {
-        font-family: 'Courier New', monospace;
-        font-size: 0.58rem;
-        letter-spacing: 0.12em;
-        color: rgba(116,192,252,0.5);
-        display: none;
+    :root.theme-end .char-page-btn:hover {
+        border-color: #cc1500;
+        background: rgba(180,20,0,0.22);
+        box-shadow: 0 0 18px rgba(220,60,0,0.35), inset 0 0 12px rgba(200,40,0,0.08);
     }
-    .dp-custom-badge.visible { display: block; }
+
+    /* адаптив — на узких экранах убираем absolute и даём нормальный поток */
+    @media (max-width: 768px) {
+        .char-page-btn {
+            position: static;
+            margin: 1.2rem auto 0;
+            display: flex;
+            justify-content: center;
+            width: fit-content;
+        }
+    }
 
     /* ══════════════════════════════════════════
        ИСПРАВЛЕНИЕ: убираем вертикальную полоску
@@ -457,16 +474,6 @@
     :root.theme-end .char-search:focus {
         border-color: #cc1500;
         box-shadow: 0 0 15px rgba(200,0,0,0.25);
-    }
-    :root.theme-end .dp-upload-btn {
-        color: rgba(255,100,50,0.75);
-        border-color: rgba(255,100,50,0.25);
-        background: rgba(180,20,0,0.07);
-    }
-    :root.theme-end .dp-upload-btn:hover {
-        border-color: rgba(255,100,50,0.6);
-        background: rgba(180,20,0,0.18);
-        box-shadow: 0 0 12px rgba(255,60,0,0.2);
     }
     </style>
 </head>
@@ -633,7 +640,6 @@
             </div>
             <div class="search-no-result" id="searchNoResult"></div>
 
-            <!-- Оставлены только ВСЕ и СЛУЧАЙНЫЙ -->
             <div class="filter-bar">
                 <button class="filter active" data-filter="all">ВСЕ</button>
                 <button class="filter random-btn" id="randomChar">
@@ -667,16 +673,14 @@
                         <img src="es-new.jpg" class="dp-char-img" id="dpIcon" alt="character">
                         <div class="dp-platform"></div>
                     </div>
-                    <!-- БЛОК ЗАГРУЗКИ ФОТО -->
-                    <div class="dp-photo-block">
-                        <label class="dp-upload-btn" id="dpUploadLabel" title="Загрузить своё фото для персонажа">
-                            📷 ЗАГРУЗИТЬ ФОТО
-                            <input type="file" id="dpFileInput" accept="image/*">
-                        </label>
-                        <div class="dp-custom-badge" id="dpCustomBadge">◈ CUSTOM IMAGE</div>
-                        <button class="dp-reset-btn" id="dpResetBtn" title="Сбросить к оригиналу">✕ СБРОСИТЬ</button>
-                    </div>
                 </div>
+
+                <!-- ══ КНОПКА СТРАНИЦЫ ПЕРСОНАЖА (правый нижний угол) ══ -->
+                <a href="#" class="char-page-btn" id="charPageBtn"
+                   title="Открыть страницу персонажа">
+                    ◈ СТРАНИЦА ПЕРСОНАЖА
+                    <span class="cpb-arrow">→</span>
+                </a>
             </div>
         </section>
     </div>
@@ -1139,39 +1143,6 @@ let currentFilter  = 'all';
 let activeTheme    = 'new';
 
 /* ═══════════════════════════════════════════
-   КАСТОМНЫЕ ИЗОБРАЖЕНИЯ (localStorage)
-   ═══════════════════════════════════════════ */
-function getCharImg(c) {
-    var custom = localStorage.getItem('char_img_' + c.id);
-    return custom || c.img;
-}
-function hasCustomImg(c) {
-    return !!localStorage.getItem('char_img_' + c.id);
-}
-function saveCustomImg(c, dataUrl) {
-    localStorage.setItem('char_img_' + c.id, dataUrl);
-}
-function removeCustomImg(c) {
-    localStorage.removeItem('char_img_' + c.id);
-}
-
-/* ═══════════════════════════════════════════
-   ОБНОВЛЕНИЕ UI КНОПОК ЗАГРУЗКИ
-   ═══════════════════════════════════════════ */
-function updateUploadUI() {
-    var c        = characters[selectedIndex];
-    var badge    = document.getElementById('dpCustomBadge');
-    var resetBtn = document.getElementById('dpResetBtn');
-    if (hasCustomImg(c)) {
-        badge.classList.add('visible');
-        resetBtn.classList.add('visible');
-    } else {
-        badge.classList.remove('visible');
-        resetBtn.classList.remove('visible');
-    }
-}
-
-/* ═══════════════════════════════════════════
    TOAST-УВЕДОМЛЕНИЯ
    ═══════════════════════════════════════════ */
 function showToast(msg, color, duration) {
@@ -1297,11 +1268,10 @@ function renderCarousel(animate) {
         panel.style.setProperty('--cg', c.glow);
 
         var isCenter = offset === 0;
-        var imgSrc = getCharImg(c);
 
         panel.innerHTML =
             '<div class="panel-bg-grad"></div>' +
-            '<img src="' + imgSrc + '" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
+            '<img src="' + c.img + '" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
             '<div class="panel-info">' +
                 '<div class="panel-char-name">' + c.name.split(' ')[0].toUpperCase() + '</div>' +
                 '<div class="panel-char-role">' + c.role + '</div>' +
@@ -1333,6 +1303,7 @@ function renderCarousel(animate) {
    ═══════════════════════════════════════════ */
 function renderDetail() {
     var c = characters[selectedIndex];
+
     document.getElementById('dpTag').textContent   = c.tag;
     document.getElementById('dpTag').style.background = c.glow;
     document.getElementById('dpName').textContent  = c.name.toUpperCase();
@@ -1340,7 +1311,7 @@ function renderDetail() {
     document.getElementById('dpDesc').innerHTML    = c.desc;
 
     var icon = document.getElementById('dpIcon');
-    icon.src = getCharImg(c);
+    icon.src = c.img;
     icon.style.filter = 'drop-shadow(0 0 25px ' + c.glow + ') drop-shadow(0 0 55px ' + c.glow + ')';
 
     var glow = document.getElementById('dpGlow');
@@ -1359,47 +1330,12 @@ function renderDetail() {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
 
-    updateUploadUI();
-    document.getElementById('dpFileInput').value = '';
+    /* Обновляем ссылку кнопки страницы персонажа */
+    var pageBtn = document.getElementById('charPageBtn');
+    pageBtn.href = 'characters/' + c.id + '.html';
+    pageBtn.style.borderColor = c.glow + '55';
+    pageBtn.style.color       = c.glow;
 }
-
-/* ═══════════════════════════════════════════
-   ЗАГРУЗКА КАСТОМНОГО ФОТО
-   ═══════════════════════════════════════════ */
-document.getElementById('dpFileInput').addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-        showToast('⚠ Файл слишком большой (макс. 5 МБ)', '#e74c3c', 2500);
-        return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-        var c = characters[selectedIndex];
-        try {
-            saveCustomImg(c, ev.target.result);
-            document.getElementById('dpIcon').src = ev.target.result;
-            renderCarousel(false);
-            updateUploadUI();
-            showToast('📷 Фото для ' + c.name.split(' ')[0] + ' обновлено', c.glow, 2200);
-        } catch(ex) {
-            showToast('⚠ Не удалось сохранить (хранилище переполнено)', '#e74c3c', 3000);
-        }
-    };
-    reader.onerror = function() {
-        showToast('⚠ Ошибка чтения файла', '#e74c3c', 2000);
-    };
-    reader.readAsDataURL(file);
-});
-
-document.getElementById('dpResetBtn').addEventListener('click', function() {
-    var c = characters[selectedIndex];
-    removeCustomImg(c);
-    document.getElementById('dpIcon').src = c.img;
-    renderCarousel(false);
-    updateUploadUI();
-    showToast('↺ Фото для ' + c.name.split(' ')[0] + ' сброшено', '#74c0fc', 2000);
-});
 
 /* ═══════════════════════════════════════════
    НАВИГАЦИЯ КАРУСЕЛИ

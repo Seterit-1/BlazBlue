@@ -1336,18 +1336,19 @@ pageBtn.style.borderColor = c.glow + '55';
 pageBtn.style.color       = c.glow;
 
 if (c.id === 'es') {
-    pageBtn.href                 = 'es.html';
-    pageBtn.style.opacity        = '1';
-    pageBtn.style.pointerEvents  = 'auto';
-    pageBtn.style.cursor         = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Es');
-} else {
-    pageBtn.href                 = '#';
-    pageBtn.style.opacity        = '0.25';
-    pageBtn.style.pointerEvents  = 'none';
-    pageBtn.style.cursor         = 'default';
-    pageBtn.setAttribute('title', 'Страница персонажа в разработке');
-}
+        pageBtn.href                 = 'es.html';
+        pageBtn.style.opacity        = '1';
+        pageBtn.style.pointerEvents  = 'auto';
+        pageBtn.style.cursor         = 'pointer';
+        pageBtn.setAttribute('title', 'Открыть страницу Es');
+    } else {
+        pageBtn.href                 = '#';
+        pageBtn.style.opacity        = '0.25';
+        pageBtn.style.pointerEvents  = 'none';
+        pageBtn.style.cursor         = 'default';
+        pageBtn.setAttribute('title', 'Страница персонажа в разработке');
+    }
+}   // ← ВОТ ЭТА СТРОКА. Закрывает renderDetail()
 
 /* ═══════════════════════════════════════════
    НАВИГАЦИЯ КАРУСЕЛИ
@@ -1356,11 +1357,6 @@ document.getElementById('navPrev').addEventListener('click', function() {
     selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
     renderCarousel(true); renderDetail();
 });
-document.getElementById('navNext').addEventListener('click', function() {
-    selectedIndex = (selectedIndex + 1) % characters.length;
-    renderCarousel(true); renderDetail();
-});
-
 /* ═══════════════════════════════════════════
    КЛАВИАТУРНАЯ НАВИГАЦИЯ ← →
    ═══════════════════════════════════════════ */

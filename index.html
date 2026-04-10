@@ -429,6 +429,14 @@
     }
     .dp-custom-badge.visible { display: block; }
 
+    /* ══════════════════════════════════════════
+       ИСПРАВЛЕНИЕ: убираем вертикальную полоску
+       на активной (центральной) карточке
+       ══════════════════════════════════════════ */
+    .c-panel.center .panel-glow-line {
+        display: none;
+    }
+
     /* END-тема адаптации */
     :root.theme-end .intro-bar {
         background: linear-gradient(90deg, #8b0000, #ff3300);
@@ -625,13 +633,9 @@
             </div>
             <div class="search-no-result" id="searchNoResult"></div>
 
+            <!-- Оставлены только ВСЕ и СЛУЧАЙНЫЙ -->
             <div class="filter-bar">
                 <button class="filter active" data-filter="all">ВСЕ</button>
-                <button class="filter" data-filter="melee">БЛИЖНИЙ БОЙ</button>
-                <button class="filter" data-filter="ranged">ДАЛЬНИЙ БОЙ</button>
-                <button class="filter" data-filter="tank">ТАНК</button>
-                <button class="filter" data-filter="control">КОНТРОЛЬ</button>
-                <button class="filter" data-filter="guest">ГОСТЕВЫЕ</button>
                 <button class="filter random-btn" id="randomChar">
                     <span class="dice-icon" id="diceIcon">⚄</span> СЛУЧАЙНЫЙ
                 </button>
@@ -726,7 +730,6 @@
 
 /* ═══════════════════════════════════════════
    ДАННЫЕ ПЕРСОНАЖЕЙ
-   img — имя файла изображения в папке сайта
    ═══════════════════════════════════════════ */
 const characters = [
     {
@@ -1131,7 +1134,7 @@ Ragna машет двуручным тесаком и использует
 /* ═══════════════════════════════════════════
    СОСТОЯНИЕ
    ═══════════════════════════════════════════ */
-let selectedIndex  = 6;   // Es по умолчанию
+let selectedIndex  = 6;
 let currentFilter  = 'all';
 let activeTheme    = 'new';
 
@@ -1142,15 +1145,12 @@ function getCharImg(c) {
     var custom = localStorage.getItem('char_img_' + c.id);
     return custom || c.img;
 }
-
 function hasCustomImg(c) {
     return !!localStorage.getItem('char_img_' + c.id);
 }
-
 function saveCustomImg(c, dataUrl) {
     localStorage.setItem('char_img_' + c.id, dataUrl);
 }
-
 function removeCustomImg(c) {
     localStorage.removeItem('char_img_' + c.id);
 }
@@ -1162,7 +1162,6 @@ function updateUploadUI() {
     var c        = characters[selectedIndex];
     var badge    = document.getElementById('dpCustomBadge');
     var resetBtn = document.getElementById('dpResetBtn');
-
     if (hasCustomImg(c)) {
         badge.classList.add('visible');
         resetBtn.classList.add('visible');
@@ -1220,15 +1219,12 @@ function toggleTheme() {
 themeToggleBtn.addEventListener('click', toggleTheme);
 
 let glitchBarInterval = null;
-
 function startGlitchBars() { scheduleGlitchBar(); }
-
 function scheduleGlitchBar() {
     if (activeTheme !== 'end') return;
     var delay = 1200 + Math.random() * 3000;
     glitchBarInterval = setTimeout(function() { showGlitchBar(); scheduleGlitchBar(); }, delay);
 }
-
 function showGlitchBar() {
     var y = Math.random() * window.innerHeight;
     var h = 1 + Math.random() * 4;
@@ -1245,7 +1241,6 @@ function showGlitchBar() {
     }
     setTimeout(function() { glitchBar.style.opacity = '0'; }, 80 + Math.random() * 120);
 }
-
 function stopGlitchBars() {
     clearTimeout(glitchBarInterval);
     glitchBarInterval = null;
@@ -1302,12 +1297,10 @@ function renderCarousel(animate) {
         panel.style.setProperty('--cg', c.glow);
 
         var isCenter = offset === 0;
-        /* Используем кастомное фото или стандартное */
         var imgSrc = getCharImg(c);
 
         panel.innerHTML =
             '<div class="panel-bg-grad"></div>' +
-            '<div class="panel-glow-line"></div>' +
             '<img src="' + imgSrc + '" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
             '<div class="panel-info">' +
                 '<div class="panel-char-name">' + c.name.split(' ')[0].toUpperCase() + '</div>' +
@@ -1347,7 +1340,6 @@ function renderDetail() {
     document.getElementById('dpDesc').innerHTML    = c.desc;
 
     var icon = document.getElementById('dpIcon');
-    /* Подставляем кастомное или стандартное фото */
     icon.src = getCharImg(c);
     icon.style.filter = 'drop-shadow(0 0 25px ' + c.glow + ') drop-shadow(0 0 55px ' + c.glow + ')';
 
@@ -1367,10 +1359,7 @@ function renderDetail() {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
 
-    /* Обновляем UI загрузки фото */
     updateUploadUI();
-
-    /* Сбрасываем input чтобы можно было загрузить тот же файл повторно */
     document.getElementById('dpFileInput').value = '';
 }
 
@@ -1380,25 +1369,20 @@ function renderDetail() {
 document.getElementById('dpFileInput').addEventListener('change', function(e) {
     var file = e.target.files[0];
     if (!file) return;
-
-    /* Проверяем размер (макс 5 MB) */
     if (file.size > 5 * 1024 * 1024) {
         showToast('⚠ Файл слишком большой (макс. 5 МБ)', '#e74c3c', 2500);
         return;
     }
-
     var reader = new FileReader();
     reader.onload = function(ev) {
         var c = characters[selectedIndex];
         try {
             saveCustomImg(c, ev.target.result);
-            /* Обновляем изображение без перерисовки карусели */
             document.getElementById('dpIcon').src = ev.target.result;
             renderCarousel(false);
             updateUploadUI();
             showToast('📷 Фото для ' + c.name.split(' ')[0] + ' обновлено', c.glow, 2200);
         } catch(ex) {
-            /* localStorage может быть переполнен */
             showToast('⚠ Не удалось сохранить (хранилище переполнено)', '#e74c3c', 3000);
         }
     };
@@ -1408,7 +1392,6 @@ document.getElementById('dpFileInput').addEventListener('change', function(e) {
     reader.readAsDataURL(file);
 });
 
-/* Сброс кастомного фото к оригинальному */
 document.getElementById('dpResetBtn').addEventListener('click', function() {
     var c = characters[selectedIndex];
     removeCustomImg(c);
@@ -1449,7 +1432,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 /* ═══════════════════════════════════════════
-   ФИЛЬТРЫ
+   ФИЛЬТР "ВСЕ"
    ═══════════════════════════════════════════ */
 document.querySelectorAll('.filter:not(.random-btn)').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -1458,20 +1441,7 @@ document.querySelectorAll('.filter:not(.random-btn)').forEach(function(btn) {
         });
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
-        if (currentFilter !== 'all') {
-            var idx = characters.findIndex(function(c) { return c.type === currentFilter; });
-            if (idx !== -1) {
-                selectedIndex = idx;
-                renderCarousel(true); renderDetail();
-                var typeLabels = {
-                    melee:'ближний бой', ranged:'дальний бой',
-                    tank:'танк', control:'контроль', guest:'гостевые'
-                };
-                showToast('Фильтр: ' + (typeLabels[currentFilter] || currentFilter).toUpperCase(), '#74c0fc', 1800);
-            }
-        } else {
-            renderCarousel(true); renderDetail();
-        }
+        renderCarousel(true); renderDetail();
     });
 });
 

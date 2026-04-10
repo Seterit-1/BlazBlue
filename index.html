@@ -1331,10 +1331,22 @@ function renderDetail() {
         }).join('');
 
     /* Обновляем ссылку кнопки страницы персонажа */
-    var pageBtn = document.getElementById('charPageBtn');
-    pageBtn.href = 'characters/' + c.id + '.html';
-    pageBtn.style.borderColor = c.glow + '55';
-    pageBtn.style.color       = c.glow;
+var pageBtn = document.getElementById('charPageBtn');
+pageBtn.style.borderColor = c.glow + '55';
+pageBtn.style.color       = c.glow;
+
+if (c.id === 'es') {
+    pageBtn.href                 = 'es.html';
+    pageBtn.style.opacity        = '1';
+    pageBtn.style.pointerEvents  = 'auto';
+    pageBtn.style.cursor         = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Es');
+} else {
+    pageBtn.href                 = '#';
+    pageBtn.style.opacity        = '0.25';
+    pageBtn.style.pointerEvents  = 'none';
+    pageBtn.style.cursor         = 'default';
+    pageBtn.setAttribute('title', 'Страница персонажа в разработке');
 }
 
 /* ═══════════════════════════════════════════

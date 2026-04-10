@@ -363,6 +363,72 @@
         color: rgba(136,146,176,0.4);
     }
 
+    /* ══════════════════════════════════════════
+       ЗАГРУЗКА ФОТО ПЕРСОНАЖА
+       ══════════════════════════════════════════ */
+    .dp-photo-block {
+        margin-top: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.55rem;
+    }
+    .dp-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(116,192,252,0.75);
+        border: 1px solid rgba(116,192,252,0.25);
+        border-radius: 4px;
+        padding: 0.45rem 1rem;
+        cursor: pointer;
+        background: rgba(21,101,192,0.07);
+        transition: all 0.25s ease;
+        user-select: none;
+    }
+    .dp-upload-btn:hover {
+        color: #fff;
+        border-color: rgba(116,192,252,0.6);
+        background: rgba(21,101,192,0.18);
+        box-shadow: 0 0 12px rgba(116,192,252,0.2);
+    }
+    .dp-upload-btn input[type="file"] {
+        display: none;
+    }
+    .dp-reset-btn {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.64rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(136,146,176,0.4);
+        background: none;
+        border: 1px solid rgba(136,146,176,0.12);
+        border-radius: 3px;
+        padding: 0.25rem 0.7rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: none;
+    }
+    .dp-reset-btn:hover {
+        color: rgba(220,80,80,0.8);
+        border-color: rgba(220,80,80,0.3);
+    }
+    .dp-reset-btn.visible { display: inline-block; }
+    .dp-custom-badge {
+        font-family: 'Courier New', monospace;
+        font-size: 0.58rem;
+        letter-spacing: 0.12em;
+        color: rgba(116,192,252,0.5);
+        display: none;
+    }
+    .dp-custom-badge.visible { display: block; }
+
     /* END-тема адаптации */
     :root.theme-end .intro-bar {
         background: linear-gradient(90deg, #8b0000, #ff3300);
@@ -383,6 +449,16 @@
     :root.theme-end .char-search:focus {
         border-color: #cc1500;
         box-shadow: 0 0 15px rgba(200,0,0,0.25);
+    }
+    :root.theme-end .dp-upload-btn {
+        color: rgba(255,100,50,0.75);
+        border-color: rgba(255,100,50,0.25);
+        background: rgba(180,20,0,0.07);
+    }
+    :root.theme-end .dp-upload-btn:hover {
+        border-color: rgba(255,100,50,0.6);
+        background: rgba(180,20,0,0.18);
+        box-shadow: 0 0 12px rgba(255,60,0,0.2);
     }
     </style>
 </head>
@@ -483,7 +559,6 @@
                 </p>
                 <button class="btn-primary" id="goToChars">⚔ ВЫБРАТЬ ПЕРСОНАЖА</button>
 
-                <!-- НОВОЕ: анимированные счётчики -->
                 <div class="hero-counters" id="heroCounters">
                     <div class="hc-item">
                         <div class="hc-num" data-target="13" id="cntChars">0</div>
@@ -542,7 +617,6 @@
                 <span class="title-line"></span>
             </div>
 
-            <!-- НОВОЕ: поиск -->
             <div class="search-wrap">
                 <span class="search-icon">⌕</span>
                 <input type="text" class="char-search" id="charSearch"
@@ -558,7 +632,6 @@
                 <button class="filter" data-filter="tank">ТАНК</button>
                 <button class="filter" data-filter="control">КОНТРОЛЬ</button>
                 <button class="filter" data-filter="guest">ГОСТЕВЫЕ</button>
-                <!-- НОВОЕ: случайный -->
                 <button class="filter random-btn" id="randomChar">
                     <span class="dice-icon" id="diceIcon">⚄</span> СЛУЧАЙНЫЙ
                 </button>
@@ -570,7 +643,6 @@
                 <button class="nav-btn" id="navNext">&#9654;</button>
             </div>
 
-            <!-- НОВОЕ: подсказка клавиатурной навигации -->
             <div class="keyboard-hint">
                 <span class="kbd">←</span> <span class="kbd">→</span>
                 &nbsp;навигация клавиатурой
@@ -588,8 +660,17 @@
                 <div class="dp-right">
                     <div class="dp-spotlight">
                         <div class="dp-glow" id="dpGlow"></div>
-                        <img src="es.jpg" class="dp-char-img" id="dpIcon" alt="character">
+                        <img src="es.png" class="dp-char-img" id="dpIcon" alt="character">
                         <div class="dp-platform"></div>
+                    </div>
+                    <!-- БЛОК ЗАГРУЗКИ ФОТО -->
+                    <div class="dp-photo-block">
+                        <label class="dp-upload-btn" id="dpUploadLabel" title="Загрузить своё фото для персонажа">
+                            📷 ЗАГРУЗИТЬ ФОТО
+                            <input type="file" id="dpFileInput" accept="image/*">
+                        </label>
+                        <div class="dp-custom-badge" id="dpCustomBadge">◈ CUSTOM IMAGE</div>
+                        <button class="dp-reset-btn" id="dpResetBtn" title="Сбросить к оригиналу">✕ СБРОСИТЬ</button>
                     </div>
                 </div>
             </div>
@@ -609,22 +690,22 @@
                 </p>
                 <div class="features-grid">
                     <div class="feature-card">
-                        <div class="feature-icon"><img src="es.jpg" alt="Бой"></div>
+                        <div class="feature-icon"><img src="es.png" alt="Бой"></div>
                         <h3>Динамичный бой</h3>
                         <p>Стремительные экшн-сражения с уникальными механиками каждого персонажа</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon"><img src="es.jpg" alt="Roguelite"></div>
+                        <div class="feature-icon"><img src="es.png" alt="Roguelite"></div>
                         <h3>Roguelite механики</h3>
                         <p>Процедурная генерация уровней, случайные апгрейды, бесконечная реиграбельность</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon"><img src="es.jpg" alt="Сюжет"></div>
+                        <div class="feature-icon"><img src="es.png" alt="Сюжет"></div>
                         <h3>Сюжет</h3>
                         <p>Оригинальная история с петлями времени и тайнами Entropy</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon"><img src="es.jpg" alt="Персонажи"></div>
+                        <div class="feature-icon"><img src="es.png" alt="Персонажи"></div>
                         <h3>13 персонажей</h3>
                         <p>Уникальные бойцы с разными стилями игры и механиками</p>
                     </div>
@@ -645,11 +726,13 @@
 
 /* ═══════════════════════════════════════════
    ДАННЫЕ ПЕРСОНАЖЕЙ
+   img — имя файла изображения в папке сайта
    ═══════════════════════════════════════════ */
 const characters = [
     {
         id: 'ragna',
         name: 'Ragna the Bloodedge',
+        img: 'ragna.png',
         role: 'Ближний боец',
         type: 'melee',
         tag: 'BLOODEDGE',
@@ -687,6 +770,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'jin',
         name: 'Jin Kisaragi',
+        img: 'jin.png',
         role: 'Ледяной мечник',
         type: 'melee',
         tag: 'FROST BLADE',
@@ -719,6 +803,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'noel',
         name: 'Noel Vermillion',
+        img: 'noel.png',
         role: 'Дальнобойный боец',
         type: 'ranged',
         tag: 'GUNSLINGER',
@@ -749,6 +834,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'taokaka',
         name: 'Taokaka',
+        img: 'taokaka.png',
         role: 'Мобильный боец',
         type: 'melee',
         tag: 'SHADOW CAT',
@@ -777,6 +863,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'rachel',
         name: 'Rachel Alucard',
+        img: 'rachel.png',
         role: 'Маг / Контролёр',
         type: 'control',
         tag: 'MISTRESS',
@@ -806,6 +893,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'hakumen',
         name: 'Hakumen',
+        img: 'hakumen.png',
         role: 'Танк / Контратакер',
         type: 'tank',
         tag: 'VOID WARRIOR',
@@ -834,6 +922,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'es',
         name: 'Es',
+        img: 'es.png',
         role: 'Пространственный боец',
         type: 'melee',
         tag: 'AZURE SHRINE',
@@ -864,6 +953,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'kokonoe',
         name: 'Kokonoe',
+        img: 'kokonoe.png',
         role: 'Зональный контроль',
         type: 'control',
         tag: 'PROFESSOR',
@@ -893,6 +983,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'mai',
         name: 'Mai Natsume',
+        img: 'mai.png',
         role: 'Контроль толпы',
         type: 'control',
         tag: 'SPEAR MAIDEN',
@@ -919,6 +1010,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'hibiki',
         name: 'Hibiki Kohaku',
+        img: 'hibiki.png',
         role: 'Скрытный боец',
         type: 'melee',
         tag: 'PROTOTYPE',
@@ -947,6 +1039,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'lambda',
         name: 'Lambda-11',
+        img: 'lambda.png',
         role: 'Зональный боец',
         type: 'ranged',
         tag: 'PRIME FIELD',
@@ -976,6 +1069,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'icey',
         name: 'ICEY',
+        img: 'icey.png',
         role: 'Гость: Стремительный боец',
         type: 'guest',
         tag: '★ GUEST',
@@ -1005,6 +1099,7 @@ Ragna машет двуручным тесаком и использует
     {
         id: 'prisoner',
         name: 'The Prisoner',
+        img: 'prisoner.png',
         role: 'Гость: Dead Cells',
         type: 'guest',
         tag: '★ DEAD CELLS',
@@ -1034,11 +1129,48 @@ Ragna машет двуручным тесаком и использует
 ];
 
 /* ═══════════════════════════════════════════
-   СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+   СОСТОЯНИЕ
    ═══════════════════════════════════════════ */
-let selectedIndex  = 6;
+let selectedIndex  = 6;   // Es по умолчанию
 let currentFilter  = 'all';
 let activeTheme    = 'new';
+
+/* ═══════════════════════════════════════════
+   КАСТОМНЫЕ ИЗОБРАЖЕНИЯ (localStorage)
+   ═══════════════════════════════════════════ */
+function getCharImg(c) {
+    var custom = localStorage.getItem('char_img_' + c.id);
+    return custom || c.img;
+}
+
+function hasCustomImg(c) {
+    return !!localStorage.getItem('char_img_' + c.id);
+}
+
+function saveCustomImg(c, dataUrl) {
+    localStorage.setItem('char_img_' + c.id, dataUrl);
+}
+
+function removeCustomImg(c) {
+    localStorage.removeItem('char_img_' + c.id);
+}
+
+/* ═══════════════════════════════════════════
+   ОБНОВЛЕНИЕ UI КНОПОК ЗАГРУЗКИ
+   ═══════════════════════════════════════════ */
+function updateUploadUI() {
+    var c        = characters[selectedIndex];
+    var badge    = document.getElementById('dpCustomBadge');
+    var resetBtn = document.getElementById('dpResetBtn');
+
+    if (hasCustomImg(c)) {
+        badge.classList.add('visible');
+        resetBtn.classList.add('visible');
+    } else {
+        badge.classList.remove('visible');
+        resetBtn.classList.remove('visible');
+    }
+}
 
 /* ═══════════════════════════════════════════
    TOAST-УВЕДОМЛЕНИЯ
@@ -1046,26 +1178,19 @@ let activeTheme    = 'new';
 function showToast(msg, color, duration) {
     color    = color    || '#74c0fc';
     duration = duration || 2500;
-
-    const container = document.getElementById('toastContainer');
-    const toast     = document.createElement('div');
+    var container = document.getElementById('toastContainer');
+    var toast     = document.createElement('div');
     toast.className = 'toast';
     toast.style.borderLeftColor = color;
-    toast.innerHTML = `<span class="toast-dot" style="background:${color}"></span>${msg}`;
+    toast.innerHTML = '<span class="toast-dot" style="background:' + color + '"></span>' + msg;
     container.appendChild(toast);
-
     requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-            toast.classList.add('toast-show');
-        });
+        requestAnimationFrame(function() { toast.classList.add('toast-show'); });
     });
-
     setTimeout(function() {
         toast.classList.remove('toast-show');
         toast.classList.add('toast-hide');
-        setTimeout(function() {
-            if (toast.parentNode) toast.parentNode.removeChild(toast);
-        }, 400);
+        setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
     }, duration);
 }
 
@@ -1101,10 +1226,7 @@ function startGlitchBars() { scheduleGlitchBar(); }
 function scheduleGlitchBar() {
     if (activeTheme !== 'end') return;
     var delay = 1200 + Math.random() * 3000;
-    glitchBarInterval = setTimeout(function() {
-        showGlitchBar();
-        scheduleGlitchBar();
-    }, delay);
+    glitchBarInterval = setTimeout(function() { showGlitchBar(); scheduleGlitchBar(); }, delay);
 }
 
 function showGlitchBar() {
@@ -1180,10 +1302,13 @@ function renderCarousel(animate) {
         panel.style.setProperty('--cg', c.glow);
 
         var isCenter = offset === 0;
+        /* Используем кастомное фото или стандартное */
+        var imgSrc = getCharImg(c);
+
         panel.innerHTML =
             '<div class="panel-bg-grad"></div>' +
             '<div class="panel-glow-line"></div>' +
-            '<img src="es.jpg" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
+            '<img src="' + imgSrc + '" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
             '<div class="panel-info">' +
                 '<div class="panel-char-name">' + c.name.split(' ')[0].toUpperCase() + '</div>' +
                 '<div class="panel-char-role">' + c.role + '</div>' +
@@ -1222,6 +1347,8 @@ function renderDetail() {
     document.getElementById('dpDesc').innerHTML    = c.desc;
 
     var icon = document.getElementById('dpIcon');
+    /* Подставляем кастомное или стандартное фото */
+    icon.src = getCharImg(c);
     icon.style.filter = 'drop-shadow(0 0 25px ' + c.glow + ') drop-shadow(0 0 55px ' + c.glow + ')';
 
     var glow = document.getElementById('dpGlow');
@@ -1239,7 +1366,57 @@ function renderDetail() {
         c.abilities.map(function(a) {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
+
+    /* Обновляем UI загрузки фото */
+    updateUploadUI();
+
+    /* Сбрасываем input чтобы можно было загрузить тот же файл повторно */
+    document.getElementById('dpFileInput').value = '';
 }
+
+/* ═══════════════════════════════════════════
+   ЗАГРУЗКА КАСТОМНОГО ФОТО
+   ═══════════════════════════════════════════ */
+document.getElementById('dpFileInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+
+    /* Проверяем размер (макс 5 MB) */
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('⚠ Файл слишком большой (макс. 5 МБ)', '#e74c3c', 2500);
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+        var c = characters[selectedIndex];
+        try {
+            saveCustomImg(c, ev.target.result);
+            /* Обновляем изображение без перерисовки карусели */
+            document.getElementById('dpIcon').src = ev.target.result;
+            renderCarousel(false);
+            updateUploadUI();
+            showToast('📷 Фото для ' + c.name.split(' ')[0] + ' обновлено', c.glow, 2200);
+        } catch(ex) {
+            /* localStorage может быть переполнен */
+            showToast('⚠ Не удалось сохранить (хранилище переполнено)', '#e74c3c', 3000);
+        }
+    };
+    reader.onerror = function() {
+        showToast('⚠ Ошибка чтения файла', '#e74c3c', 2000);
+    };
+    reader.readAsDataURL(file);
+});
+
+/* Сброс кастомного фото к оригинальному */
+document.getElementById('dpResetBtn').addEventListener('click', function() {
+    var c = characters[selectedIndex];
+    removeCustomImg(c);
+    document.getElementById('dpIcon').src = c.img;
+    renderCarousel(false);
+    updateUploadUI();
+    showToast('↺ Фото для ' + c.name.split(' ')[0] + ' сброшено', '#74c0fc', 2000);
+});
 
 /* ═══════════════════════════════════════════
    НАВИГАЦИЯ КАРУСЕЛИ
@@ -1259,10 +1436,7 @@ document.getElementById('navNext').addEventListener('click', function() {
 document.addEventListener('keydown', function(e) {
     var activePane = document.querySelector('.tab-pane.active');
     if (!activePane || activePane.id !== 'tab-characters') return;
-
-    /* Игнорируем, если фокус в поле ввода */
     if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
-
     if (e.key === 'ArrowLeft' || e.key === 'Left') {
         e.preventDefault();
         selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
@@ -1284,19 +1458,16 @@ document.querySelectorAll('.filter:not(.random-btn)').forEach(function(btn) {
         });
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
-
         if (currentFilter !== 'all') {
             var idx = characters.findIndex(function(c) { return c.type === currentFilter; });
             if (idx !== -1) {
                 selectedIndex = idx;
-                renderCarousel(true);
-                renderDetail();
+                renderCarousel(true); renderDetail();
                 var typeLabels = {
                     melee:'ближний бой', ranged:'дальний бой',
                     tank:'танк', control:'контроль', guest:'гостевые'
                 };
-                showToast('Фильтр: ' + (typeLabels[currentFilter] || currentFilter).toUpperCase(),
-                    '#74c0fc', 1800);
+                showToast('Фильтр: ' + (typeLabels[currentFilter] || currentFilter).toUpperCase(), '#74c0fc', 1800);
             }
         } else {
             renderCarousel(true); renderDetail();
@@ -1308,7 +1479,6 @@ document.querySelectorAll('.filter:not(.random-btn)').forEach(function(btn) {
    СЛУЧАЙНЫЙ ПЕРСОНАЖ
    ═══════════════════════════════════════════ */
 document.getElementById('randomChar').addEventListener('click', function() {
-    /* Анимируем иконку кубика */
     var dice = document.getElementById('diceIcon');
     dice.style.animation = 'none';
     void dice.offsetWidth;
@@ -1320,9 +1490,7 @@ document.getElementById('randomChar').addEventListener('click', function() {
     while (newIdx === prev && characters.length > 1);
 
     selectedIndex = newIdx;
-    renderCarousel(true);
-    renderDetail();
-
+    renderCarousel(true); renderDetail();
     var c = characters[newIdx];
     showToast('⚄ Случайный выбор: ' + c.name.split(' ')[0], c.glow, 2200);
 });
@@ -1336,23 +1504,18 @@ document.getElementById('charSearch').addEventListener('input', function() {
     var el  = this;
     var noR = document.getElementById('searchNoResult');
     noR.textContent = '';
-
     searchTimeout = setTimeout(function() {
         var query = el.value.trim().toLowerCase();
         if (!query) return;
-
         var idx = characters.findIndex(function(c) {
             return c.name.toLowerCase().includes(query) ||
                    c.role.toLowerCase().includes(query) ||
                    c.tag.toLowerCase().includes(query)  ||
-                   (c.id  && c.id.toLowerCase().includes(query));
+                   (c.id && c.id.toLowerCase().includes(query));
         });
-
         if (idx !== -1) {
             selectedIndex = idx;
-            renderCarousel(true);
-            renderDetail();
-            /* Сбрасываем активный фильтр на «все» */
+            renderCarousel(true); renderDetail();
             document.querySelectorAll('.filter:not(.random-btn)').forEach(function(b) {
                 b.classList.remove('active');
             });
@@ -1364,7 +1527,6 @@ document.getElementById('charSearch').addEventListener('input', function() {
     }, 300);
 });
 
-/* Очищаем сообщение при очистке поля */
 document.getElementById('charSearch').addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         this.value = '';
@@ -1384,9 +1546,7 @@ function switchTab(tabId) {
     var currentPane = document.querySelector('.tab-pane.active');
     var targetPane  = document.getElementById('tab-' + tabId);
     if (!targetPane || currentPane === targetPane) return;
-
     isTabSwitching = true;
-
     document.querySelectorAll('.tab-btn').forEach(function(b) {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
@@ -1396,23 +1556,15 @@ function switchTab(tabId) {
         activeBtn.classList.add('active');
         activeBtn.setAttribute('aria-selected', 'true');
     }
-
     currentPane.classList.add('tab-leave');
-
     setTimeout(function() {
         currentPane.classList.remove('active', 'tab-leave');
         targetPane.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-
         requestAnimationFrame(function() {
             requestAnimationFrame(function() {
                 targetPane.classList.add('tab-enter');
-
-                /* Запускаем счётчики при переходе на главную */
-                if (tabId === 'home') {
-                    setTimeout(runCounters, 200);
-                }
-
+                if (tabId === 'home') setTimeout(runCounters, 200);
                 setTimeout(function() {
                     targetPane.classList.remove('tab-enter');
                     isTabSwitching = false;
@@ -1425,7 +1577,6 @@ function switchTab(tabId) {
 document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
 });
-
 document.getElementById('goToChars').addEventListener('click', function() { switchTab('characters'); });
 document.getElementById('backTop').addEventListener('click', function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1440,7 +1591,6 @@ function animateCounter(el) {
     var target   = parseInt(el.dataset.target, 10);
     var duration = 1400;
     var start    = performance.now();
-
     function update(now) {
         var elapsed  = now - start;
         var progress = Math.min(elapsed / duration, 1);
@@ -1461,7 +1611,6 @@ function runCounters() {
     });
 }
 
-/* Запускаем счётчики при первой загрузке (главная активна) */
 setTimeout(runCounters, 800);
 
 /* ═══════════════════════════════════════════
@@ -1480,14 +1629,13 @@ renderDetail();
     var skip   = document.getElementById('introSkip');
 
     var steps = [
-        { pct: 12,  text: 'LOADING ASSETS...'        },
-        { pct: 30,  text: 'INITIALIZING ENTROPY...'  },
-        { pct: 55,  text: 'LOADING CHARACTERS...'    },
-        { pct: 78,  text: 'CALIBRATING SYSTEMS...'   },
+        { pct: 12,  text: 'LOADING ASSETS...'         },
+        { pct: 30,  text: 'INITIALIZING ENTROPY...'   },
+        { pct: 55,  text: 'LOADING CHARACTERS...'     },
+        { pct: 78,  text: 'CALIBRATING SYSTEMS...'    },
         { pct: 92,  text: 'AZURE LINK ESTABLISHED...' },
-        { pct: 100, text: 'READY'                    },
+        { pct: 100, text: 'READY'                     },
     ];
-
     var stepIdx = 0;
 
     function closeIntro() {
@@ -1498,10 +1646,7 @@ renderDetail();
     }
 
     function nextStep() {
-        if (stepIdx >= steps.length) {
-            setTimeout(closeIntro, 350);
-            return;
-        }
+        if (stepIdx >= steps.length) { setTimeout(closeIntro, 350); return; }
         var s = steps[stepIdx++];
         bar.style.width    = s.pct + '%';
         status.textContent = s.text;
@@ -1518,13 +1663,10 @@ renderDetail();
    ╚══════════════════════════════════════════════════════════╝ */
 (function initBackground() {
     'use strict';
-
     var cvA  = document.getElementById('bgCanvasA');
     var cvB  = document.getElementById('bgCanvasB');
     var ctxA = cvA.getContext('2d');
     var ctxB = cvB.getContext('2d');
-
-    /* глобальный указатель текущего режима для индикатора */
     window.__bgCurrentMode = 0;
 
     function resize() {
@@ -1543,7 +1685,6 @@ renderDetail();
         return [[21,101,192],[13,148,136],[116,192,252]];
     }
 
-    /* ── CalamityRain ── */
     function CalamityRain(w, h) { this.resize(w, h); }
     CalamityRain.prototype.resize = function(w, h) {
         this.w = w; this.h = h;
@@ -1583,17 +1724,13 @@ renderDetail();
         ctx.fillRect(0,0,this.w,this.h);
     };
 
-    /* ── HexGrid ── */
     function HexGrid(w, h) { this.t=0; this.resize(w,h); }
     HexGrid.prototype.resize = function(w, h) {
         this.w=w; this.h=h; this.hexes=[];
         var S=40, dx=S*1.73, dy=S*1.5;
         for (var r=-1; r<=Math.ceil(h/dy)+1; r++) {
             for (var c=-1; c<=Math.ceil(w/dx)+1; c++) {
-                this.hexes.push({
-                    x: c*dx+(r%2===0?0:dx/2), y: r*dy, s:S,
-                    phase: Math.random()*Math.PI*2
-                });
+                this.hexes.push({ x: c*dx+(r%2===0?0:dx/2), y: r*dy, s:S, phase: Math.random()*Math.PI*2 });
             }
         }
     };
@@ -1601,8 +1738,7 @@ renderDetail();
         ctx.beginPath();
         for (var i=0; i<6; i++) {
             var a = (Math.PI/3)*i - Math.PI/6;
-            i===0 ? ctx.moveTo(x+s*Math.cos(a),y+s*Math.sin(a))
-                  : ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));
+            i===0 ? ctx.moveTo(x+s*Math.cos(a),y+s*Math.sin(a)) : ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));
         }
         ctx.closePath();
     };
@@ -1621,8 +1757,7 @@ renderDetail();
             var p0=palette[0];
             ctx.strokeStyle='rgba('+p0[0]+','+p0[1]+','+p0[2]+','+(0.06+pulse*0.20)+')';
             ctx.lineWidth=0.8;
-            this.hexPath(ctx, hex.x, hex.y, hex.s-1);
-            ctx.stroke();
+            this.hexPath(ctx, hex.x, hex.y, hex.s-1); ctx.stroke();
             if (pulse>0.78) {
                 var t=(pulse-0.78)/0.22, p1=palette[1];
                 ctx.fillStyle='rgba('+p1[0]+','+p1[1]+','+p1[2]+','+(t*0.18)+')';
@@ -1637,7 +1772,6 @@ renderDetail();
         this.t++;
     };
 
-    /* ── VoidRings ── */
     function VoidRings(w, h) {
         this.t=0; this.resize(w,h);
         var self=this;
@@ -1702,7 +1836,6 @@ renderDetail();
         this.t++;
     };
 
-    /* ── NeuralWeb ── */
     function NeuralWeb(w, h) { this.t=0; this.NODE_COUNT=80; this.LINK_DIST=160; this.resize(w,h); }
     NeuralWeb.prototype.resize = function(w, h) {
         this.w=w; this.h=h;
@@ -1762,19 +1895,16 @@ renderDetail();
         new VoidRings(W,H),
         new NeuralWeb(W,H)
     ];
-
     var modeNames       = ['RAIN','HEX','VOID','WEB'];
     var modeA           = 0;
     var modeB           = 1;
     var isTransitioning = false;
-
     var SWITCH_MS    = 10000;
     var CROSSFADE_MS = 2500;
 
     ctxA.fillStyle = '#070b17';
     ctxA.fillRect(0,0,cvA.width,cvA.height);
 
-    /* Обновление индикатора режима фона */
     function updateBgIndicator(idx) {
         document.querySelectorAll('.bmi-dot').forEach(function(dot, i) {
             dot.classList.toggle('active', i === idx);
@@ -1783,7 +1913,6 @@ renderDetail();
         if (nameEl) nameEl.textContent = modeNames[idx] || '';
         window.__bgCurrentMode = idx;
     }
-
     updateBgIndicator(0);
 
     function startTransition() {
@@ -1805,10 +1934,7 @@ renderDetail();
             cvB.style.transition = 'none';
             cvB.style.opacity    = '0';
             isTransitioning      = false;
-
-            /* ← Обновляем индикатор после смены режима */
             updateBgIndicator(modeA);
-
         }, CROSSFADE_MS + 80);
     }
 
@@ -1817,11 +1943,9 @@ renderDetail();
         if (isTransitioning) modes[modeB].draw(ctxB);
         requestAnimationFrame(animate);
     }
-
     animate();
     setInterval(startTransition, SWITCH_MS);
 
-    /* Клик по точке индикатора — ручное переключение режима */
     document.querySelectorAll('.bmi-dot').forEach(function(dot) {
         dot.addEventListener('click', function() {
             var targetMode = parseInt(this.dataset.mode, 10);
@@ -1848,7 +1972,6 @@ renderDetail();
             }, 1280);
         });
     });
-
 })();
 
 </script>

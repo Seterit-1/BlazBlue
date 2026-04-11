@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Персонаж — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+
+    /* ══════════════════════════════════════════
+       CSS-ПЕРЕМЕННЫЕ ТЕМЫ (меняются через JS)
+       ══════════════════════════════════════════ */
+    :root {
+        --cp:     #1abc9c;   /* primary   */
+        --cpd:    #083d30;   /* dark      */
+        --cpg:    #76d7c4;   /* glow      */
+        --cpa:    #2dd4bf;   /* accent    */
+        --cpdim:  #0d5c47;   /* dim       */
+    }
+
+    html, body { scroll-behavior: smooth; }
+
+    /* ══ ПРОГРЕСС-БАР СКРОЛЛА ══ */
+    .scroll-progress {
+        position: fixed;
+        top: 0; left: 0;
+        height: 3px;
+        width: 0%;
+        background: linear-gradient(90deg, var(--cpd), var(--cp), var(--cpg));
+        z-index: 9999;
+        box-shadow: 0 0 8px var(--cpg);
+        transition: width 0.1s linear;
+    }
+
+    /* ══ CANVAS ══ */
+    #charBg {
+        position: fixed; inset: 0;
+        z-index: 0; pointer-events: none;
+    }
+
+    /* ══ ШАПКА ══ */
+    .cp-header {
+        position: sticky; top: 0; z-index: 100;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: rgba(7,11,23,0.93);
+        border-bottom: 2px solid var(--cp);
+        box-shadow: 0 2px 40px color-mix(in srgb, var(--cp) 30%, transparent);
+        transition: border-color 0.5s, box-shadow 0.5s;
+    }
+    .cp-header-inner {
+        max-width: 1200px; margin: 0 auto;
+        padding: 0 2rem; height: 70px;
+        display: flex; align-items: center;
+        justify-content: space-between; gap: 1.5rem;
+    }
+    .cp-back {
+        display: inline-flex; align-items: center;
+        gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display);
+        font-size: 0.72rem; font-weight: 800;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--cpg);
+        border: 1px solid color-mix(in srgb, var(--cpg) 35%, transparent);
+        border-radius: var(--radius-sm);
+        background: color-mix(in srgb, var(--cp) 7%, transparent);
+        transition: all 0.3s ease; text-decoration: none;
+    }
+    .cp-back:hover {
+        background: color-mix(in srgb, var(--cp) 18%, transparent);
+        border-color: var(--cp); color: #fff;
+        box-shadow: 0 0 16px color-mix(in srgb, var(--cp) 35%, transparent);
+        transform: translateX(-3px);
+    }
+    .cp-header-title {
+        font-family: var(--font-display);
+        font-size: 1rem; font-weight: 900;
+        color: var(--cpg); letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-shadow: 0 0 14px color-mix(in srgb, var(--cpg) 50%, transparent);
+    }
+    .cp-nav-chars {
+        display: flex; gap: 0.5rem; align-items: center;
+    }
+    .cp-nav-btn {
+        padding: 0.4rem 0.9rem;
+        font-family: var(--font-display);
+        font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--clr-text-dim);
+        border: 1px solid var(--clr-border);
+        border-radius: var(--radius-sm);
+        background: rgba(255,255,255,0.03);
+        transition: all 0.3s; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .cp-nav-btn:hover {
+        color: var(--cpg); border-color: var(--cp);
+        background: color-mix(in srgb, var(--cp) 10%, transparent);
+    }
+
+    /* ══ HERO ══ */
+    .cp-hero {
+        position: relative; z-index: 1;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        max-width: 1200px; margin: 0 auto;
+        padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .cp-tag {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        font-family: var(--font-display);
+        font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.3em; text-transform: uppercase;
+        color: #fff; background: var(--cpdim);
+        border: 1px solid var(--cp);
+        border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem;
+        box-shadow: 0 0 14px color-mix(in srgb, var(--cp) 35%, transparent);
+    }
+    .cp-hero-name {
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 7vw, 5.5rem);
+        font-weight: 900; color: #fff;
+        line-height: 0.9; letter-spacing: 0.03em;
+        text-transform: uppercase;
+        text-shadow: 0 0 40px color-mix(in srgb, var(--cp) 50%, transparent),
+                     0 4px 20px rgba(0,0,0,0.8);
+        margin-bottom: 0.3rem;
+    }
+    .cp-hero-role {
+        font-family: var(--font-logo);
+        font-size: 0.72rem; letter-spacing: 0.35em;
+        color: var(--cp); text-transform: uppercase;
+        text-shadow: 0 0 10px color-mix(in srgb, var(--cp) 50%, transparent);
+        margin-bottom: 2rem;
+    }
+    .cp-quick-stats {
+        display: grid; grid-template-columns: repeat(3,1fr);
+        gap: 0.8rem; margin-bottom: 1.8rem;
+    }
+    .cp-qs {
+        padding: 0.85rem 0.6rem;
+        background: color-mix(in srgb, var(--cp) 6%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 20%, transparent);
+        border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s;
+    }
+    .cp-qs:hover {
+        background: color-mix(in srgb, var(--cp) 13%, transparent);
+        border-color: var(--cp); transform: translateY(-3px);
+    }
+    .cp-qs-val {
+        font-family: var(--font-display);
+        font-size: 1.3rem; font-weight: 900;
+        color: var(--cpg); line-height: 1;
+        text-shadow: 0 0 10px color-mix(in srgb, var(--cpg) 40%, transparent);
+    }
+    .cp-qs-lbl {
+        font-family: var(--font-main);
+        font-size: 0.6rem; font-weight: 600;
+        letter-spacing: 0.15em; color: var(--clr-text-dim);
+        text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .cp-hero-desc {
+        font-family: var(--font-main);
+        font-size: 0.93rem; font-weight: 500;
+        color: var(--clr-text-dim); line-height: 1.8;
+        border-left: 2px solid var(--cp);
+        padding-left: 1.1rem; margin-bottom: 1.8rem;
+    }
+    .cp-hero-desc strong { color: var(--cpg); }
+    .cp-tags-row {
+        display: flex; gap: 0.6rem; flex-wrap: wrap;
+    }
+    .cp-badge {
+        display: inline-block; padding: 0.28rem 0.85rem;
+        font-family: var(--font-display);
+        font-size: 0.63rem; font-weight: 800;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--cpg);
+        border: 1px solid color-mix(in srgb, var(--cp) 30%, transparent);
+        border-radius: 3px;
+    }
+
+    /* ══ VISUAL FRAME ══ */
+    .cp-char-frame {
+        position: relative; width: 320px; height: 400px;
+        display: flex; align-items: flex-end;
+        justify-content: center; margin: 0 auto;
+    }
+    .cp-char-frame::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%,
+            color-mix(in srgb, var(--cp) 18%, transparent) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: cpGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes cpGlowPulse {
+        0%,100%{opacity:.6;transform:scale(1)}
+        50%{opacity:1;transform:scale(1.08)}
+    }
+    .cp-char-img {
+        position: relative; z-index: 2;
+        width: 100%; height: 100%;
+        object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px color-mix(in srgb, var(--cp) 60%, transparent))
+                drop-shadow(0 0 70px color-mix(in srgb, var(--cp) 25%, transparent));
+        animation: cpFloat 4s ease-in-out infinite;
+        transition: filter 0.5s;
+    }
+    @keyframes cpFloat {
+        0%,100%{transform:translateY(0)}
+        50%{transform:translateY(-14px)}
+    }
+    .cp-char-platform {
+        position: absolute; bottom: -8px; left: 50%;
+        transform: translateX(-50%);
+        width: 150px; height: 6px;
+        background: linear-gradient(90deg, transparent, var(--cp), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: cpGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* ══ ДЕКОРАТИВНЫЕ ЭЛЕМЕНТЫ (зависят от типа) ══ */
+    .cp-deco-el {
+        position: absolute;
+        width: 20px; height: 20px;
+        opacity: 0;
+        animation: cpDecoAppear 3s ease-in-out infinite;
+        pointer-events: none;
+    }
+    @keyframes cpDecoAppear {
+        0%,100%{opacity:0;transform:scale(.5)rotate(0deg)}
+        30%,70%{opacity:.6;transform:scale(1)rotate(45deg)}
+    }
+    .cp-deco-el:nth-child(1){top:10%;left:5%;animation-delay:0s}
+    .cp-deco-el:nth-child(2){top:25%;right:5%;animation-delay:.7s;animation-duration:2.8s}
+    .cp-deco-el:nth-child(3){top:55%;left:7%;animation-delay:1.4s;animation-duration:3.5s}
+    .cp-deco-el:nth-child(4){top:70%;right:7%;animation-delay:.3s;animation-duration:2.6s}
+
+    /* ══ СЕКЦИИ ══ */
+    .cp-section {
+        position: relative; z-index: 1;
+        padding: 5rem 2rem;
+        opacity: 0; transform: translateY(30px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .cp-section.visible {
+        opacity: 1; transform: translateY(0);
+    }
+    .cp-section:nth-child(even) {
+        background: color-mix(in srgb, var(--cpd) 12%, transparent);
+        border-top: 1px solid color-mix(in srgb, var(--cp) 12%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--cp) 12%, transparent);
+    }
+    .cp-section-inner {
+        max-width: 1100px; margin: 0 auto;
+    }
+    .cp-section-head {
+        display: flex; align-items: center;
+        gap: 1.2rem; margin-bottom: 3rem;
+    }
+    .cp-section-line {
+        flex: 1; height: 1px;
+        background: linear-gradient(90deg, var(--cp), transparent);
+    }
+    .cp-section-line.rev {
+        background: linear-gradient(90deg, transparent, var(--cp));
+    }
+    .cp-section-title {
+        font-family: var(--font-display);
+        font-size: 1.45rem; font-weight: 900;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--cpg);
+        text-shadow: 0 0 18px color-mix(in srgb, var(--cp) 40%, transparent);
+        white-space: nowrap;
+    }
+    .cp-section-num {
+        font-family: var(--font-logo);
+        font-size: 0.65rem;
+        color: color-mix(in srgb, var(--cp) 40%, transparent);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ══ ДОСЬЕ ══ */
+    .cp-dossier {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    }
+    .cp-dossier-table {
+        background: color-mix(in srgb, var(--cpd) 20%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 18%, transparent);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .cp-dossier-row {
+        display: grid; grid-template-columns: 130px 1fr;
+        border-bottom: 1px solid color-mix(in srgb, var(--cp) 8%, transparent);
+        transition: background 0.2s;
+    }
+    .cp-dossier-row:last-child{border-bottom:none}
+    .cp-dossier-row:hover{background:color-mix(in srgb,var(--cp) 5%,transparent)}
+    .cp-dossier-key {
+        padding: 0.8rem 1rem;
+        font-family: var(--font-display);
+        font-size: 0.63rem; font-weight: 800;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--cp);
+        border-right: 1px solid color-mix(in srgb, var(--cp) 12%, transparent);
+        display: flex; align-items: center;
+    }
+    .cp-dossier-val {
+        padding: 0.8rem 1rem;
+        font-family: var(--font-main);
+        font-size: 0.86rem; font-weight: 500;
+        color: var(--clr-text); display: flex;
+        align-items: center; line-height: 1.5;
+    }
+
+    /* ══ СТАТЫ ══ */
+    .cp-stats-block {
+        background: color-mix(in srgb, var(--cpd) 20%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 18%, transparent);
+        border-radius: var(--radius-lg);
+        padding: 1.8rem; display: flex;
+        flex-direction: column; gap: 0.9rem;
+    }
+    .cp-stat-row {
+        display: flex; align-items: center; gap: 1rem;
+    }
+    .cp-stat-label {
+        font-family: var(--font-display); font-size: 0.66rem;
+        font-weight: 800; color: var(--clr-text-dim);
+        width: 40px; text-align: right; letter-spacing: 0.08em;
+    }
+    .cp-stat-bar {
+        flex: 1; height: 7px;
+        background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .cp-stat-fill {
+        height: 100%; border-radius: 4px;
+        background: linear-gradient(90deg, var(--cpd), var(--cp));
+        box-shadow: 0 0 8px color-mix(in srgb, var(--cp) 50%, transparent);
+        width: 0%; transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .cp-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem;
+        color: var(--cpg); width: 30px;
+    }
+    .cp-diff-block {
+        margin-top: 1rem; padding-top: 1rem;
+        border-top: 1px solid color-mix(in srgb, var(--cp) 10%, transparent);
+    }
+    .cp-diff-label {
+        font-family: var(--font-display); font-size: 0.62rem;
+        font-weight: 800; letter-spacing: 0.15em;
+        text-transform: uppercase; color: var(--clr-text-dim);
+        margin-bottom: 0.6rem;
+    }
+    .cp-diff-stars {
+        display: flex; gap: 0.3rem; align-items: center;
+    }
+    .cp-diff-stars span {
+        font-size: 1.3rem; color: var(--cp);
+    }
+    .cp-diff-text {
+        font-family: var(--font-main); font-size: 0.76rem;
+        color: var(--clr-text-dim); margin-left: 0.5rem;
+    }
+
+    /* ══ ИСТОРИЯ ══ */
+    .cp-story-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem;
+    }
+    .cp-story-card {
+        background: color-mix(in srgb, var(--cpd) 15%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 15%, transparent);
+        border-radius: var(--radius-lg); padding: 1.6rem;
+        transition: all 0.3s;
+    }
+    .cp-story-card:hover {
+        background: color-mix(in srgb, var(--cp) 8%, transparent);
+        border-color: color-mix(in srgb, var(--cp) 35%, transparent);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+    }
+    .cp-story-num {
+        font-family: var(--font-logo); font-size: 1.9rem;
+        font-weight: 900;
+        color: color-mix(in srgb, var(--cp) 15%, transparent);
+        line-height: 1; margin-bottom: 0.4rem;
+    }
+    .cp-story-title {
+        font-family: var(--font-display); font-size: 0.93rem;
+        font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--cpg);
+        margin-bottom: 0.7rem;
+    }
+    .cp-story-text {
+        font-family: var(--font-main); font-size: 0.86rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.8;
+    }
+    .cp-story-text strong{color:var(--cpg)}
+    .cp-story-text em{color:var(--clr-text);font-style:italic}
+    .cp-story-full {
+        margin-top: 2rem; padding: 2rem;
+        background: color-mix(in srgb, var(--cpd) 15%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 15%, transparent);
+        border-left: 3px solid var(--cp);
+        border-radius: var(--radius-md);
+    }
+    .cp-story-full p {
+        font-family: var(--font-main); font-size: 0.92rem;
+        font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.9; margin-bottom: 1.1rem;
+    }
+    .cp-story-full p:last-child{margin-bottom:0}
+    .cp-story-full strong{color:var(--cpg)}
+    .cp-story-full em{color:var(--clr-text)}
+    .cp-quote {
+        margin: 2.5rem 0; padding: 1.4rem 2rem;
+        background: color-mix(in srgb, var(--cp) 4%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 15%, transparent);
+        border-radius: var(--radius-md); text-align: center;
+    }
+    .cp-quote-text {
+        font-family: 'Georgia', serif; font-size: 1.03rem;
+        font-style: italic; color: var(--clr-text);
+        line-height: 1.7; margin-bottom: 0.55rem;
+    }
+    .cp-quote-attr {
+        font-family: var(--font-main); font-size: 0.68rem;
+        letter-spacing: 0.2em; color: var(--cp); text-transform: uppercase;
+    }
+
+    /* ══ НАВЫКИ ══ */
+    .cp-skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(290px,1fr));
+        gap: 1.1rem;
+    }
+    .cp-skill-card {
+        background: color-mix(in srgb, var(--cpd) 18%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 15%, transparent);
+        border-radius: var(--radius-lg); padding: 1.4rem;
+        display: flex; gap: 1rem; align-items: flex-start;
+        transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .cp-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, color-mix(in srgb, var(--cp) 8%, transparent) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .cp-skill-card:hover::before{opacity:1}
+    .cp-skill-card:hover {
+        border-color: color-mix(in srgb, var(--cp) 40%, transparent);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4),
+                    0 0 20px color-mix(in srgb, var(--cp) 10%, transparent);
+    }
+    .cp-skill-icon {
+        width: 46px; height: 46px;
+        border-radius: var(--radius-md);
+        background: color-mix(in srgb, var(--cp) 12%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 30%, transparent);
+        display: flex; align-items: center;
+        justify-content: center; font-size: 1.35rem;
+        flex-shrink: 0;
+        box-shadow: 0 0 12px color-mix(in srgb, var(--cp) 20%, transparent);
+    }
+    .cp-skill-info{flex:1}
+    .cp-skill-name {
+        font-family: var(--font-display); font-size: 0.86rem;
+        font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--cpg);
+        margin-bottom: 0.35rem; position: relative; z-index: 1;
+    }
+    .cp-skill-type {
+        display: inline-block; font-family: var(--font-display);
+        font-size: 0.57rem; font-weight: 800;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        color: #fff; background: var(--cpdim);
+        border-radius: 3px; padding: 0.12rem 0.45rem;
+        margin-bottom: 0.5rem;
+    }
+    .cp-skill-desc {
+        font-family: var(--font-main); font-size: 0.82rem;
+        font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+    .cp-skill-desc strong{color:var(--cp)}
+
+    /* ══ МЕХАНИКИ ══ */
+    .cp-mechanic-hero {
+        background: color-mix(in srgb, var(--cpd) 20%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 25%, transparent);
+        border-radius: var(--radius-lg); padding: 2.4rem;
+        margin-bottom: 1.8rem; position: relative; overflow: hidden;
+    }
+    .cp-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.25rem;
+        font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--cpg);
+        margin-bottom: 0.9rem;
+        text-shadow: 0 0 15px color-mix(in srgb, var(--cp) 40%, transparent);
+    }
+    .cp-mechanic-hero-sub {
+        font-family: var(--font-logo); font-size: 0.63rem;
+        letter-spacing: 0.25em; color: var(--cp);
+        text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .cp-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.92rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.85;
+    }
+    .cp-mechanic-hero-desc strong{color:var(--cpg)}
+    .cp-mechanic-hero-desc code {
+        font-family: 'Courier New', monospace; font-size: 0.82em;
+        color: var(--cpa);
+        background: color-mix(in srgb, var(--cp) 8%, transparent);
+        padding: 0.1em 0.4em; border-radius: 3px;
+    }
+    .cp-mech-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+        gap: 0.9rem; margin-top: 1.6rem;
+    }
+    .cp-mstep {
+        background: color-mix(in srgb, var(--cp) 6%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 18%, transparent);
+        border-radius: var(--radius-md); padding: 1.1rem; text-align: center;
+    }
+    .cp-mstep-num {
+        font-family: var(--font-logo); font-size: 1.7rem;
+        font-weight: 900;
+        color: color-mix(in srgb, var(--cp) 30%, transparent);
+        line-height: 1; margin-bottom: 0.4rem;
+    }
+    .cp-mstep-title {
+        font-family: var(--font-display); font-size: 0.76rem;
+        font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--cpg); margin-bottom: 0.35rem;
+    }
+    .cp-mstep-desc {
+        font-family: var(--font-main); font-size: 0.79rem;
+        color: var(--clr-text-dim); line-height: 1.6;
+    }
+    .cp-mechs-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem;
+    }
+    .cp-mech-card {
+        background: color-mix(in srgb, var(--cpd) 15%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 15%, transparent);
+        border-radius: var(--radius-lg); padding: 1.4rem;
+        transition: all 0.3s;
+    }
+    .cp-mech-card:hover {
+        border-color: color-mix(in srgb, var(--cp) 35%, transparent);
+        background: color-mix(in srgb, var(--cp) 7%, transparent);
+        transform: translateY(-3px);
+    }
+    .cp-mech-head {
+        display: flex; align-items: center;
+        gap: 0.7rem; margin-bottom: 0.7rem;
+    }
+    .cp-mech-icon {
+        font-size: 1.25rem; width: 38px; height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        background: color-mix(in srgb, var(--cp) 10%, transparent);
+        border-radius: var(--radius-sm); flex-shrink: 0;
+    }
+    .cp-mech-title {
+        font-family: var(--font-display); font-size: 0.83rem;
+        font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--cpg);
+    }
+    .cp-mech-desc {
+        font-family: var(--font-main); font-size: 0.83rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.75;
+    }
+    .cp-mech-desc strong{color:var(--cp)}
+
+    /* ══ СОВЕТЫ ══ */
+    .cp-tips {
+        list-style: none; display: flex;
+        flex-direction: column; gap: 0.75rem;
+    }
+    .cp-tips li {
+        display: flex; gap: 0.9rem; align-items: flex-start;
+        padding: 0.85rem 1.1rem;
+        background: color-mix(in srgb, var(--cpd) 15%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cp) 10%, transparent);
+        border-radius: var(--radius-md);
+        font-family: var(--font-main); font-size: 0.87rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7;
+        transition: all 0.25s;
+    }
+    .cp-tips li:hover {
+        border-color: color-mix(in srgb, var(--cp) 28%, transparent);
+        background: color-mix(in srgb, var(--cp) 6%, transparent);
+    }
+    .cp-tip-bullet { color: var(--cp); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .cp-tips strong{color:var(--cpg)}
+
+    /* ══ ФУТЕР ══ */
+    .cp-footer {
+        position: relative; z-index: 1; text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(4,6,14,0.97);
+        border-top: 1px solid color-mix(in srgb, var(--cp) 15%, transparent);
+    }
+    .cp-footer p {
+        font-family: var(--font-main); font-size: 0.78rem;
+        color: var(--clr-text-dim); margin-bottom: 0.3rem;
+    }
+    .cp-footer-note { color: rgba(136,146,176,0.35)!important; font-size:0.68rem!important }
+    .cp-footer-nav {
+        display: flex; gap: 1rem; justify-content: center;
+        margin-top: 1.5rem; flex-wrap: wrap;
+    }
+    .cp-back-top {
+        display: inline-block; padding: 0.5rem 1.5rem;
+        border: 1px solid color-mix(in srgb, var(--cp) 20%, transparent);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.73rem;
+        font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase;
+        transition: all 0.3s; background: none; cursor: pointer;
+    }
+    .cp-back-top:hover {
+        border-color: var(--cp); color: var(--cpg);
+        box-shadow: 0 0 10px color-mix(in srgb, var(--cp) 25%, transparent);
+    }
+
+    /* ══ АДАПТИВ ══ */
+    @media(max-width:900px){
+        .cp-hero{grid-template-columns:1fr;text-align:center;padding:3rem 1.5rem;gap:2rem}
+        .cp-hero-desc{text-align:left}
+        .cp-char-frame{width:240px;height:300px}
+        .cp-dossier{grid-template-columns:1fr}
+        .cp-story-grid{grid-template-columns:1fr}
+        .cp-mechs-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:600px){
+        .cp-skills-grid{grid-template-columns:1fr}
+        .cp-mech-steps{grid-template-columns:1fr 1fr}
+        .cp-quick-stats{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:400px){
+        .cp-mech-steps{grid-template-columns:1fr}
+    }
+    </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<canvas id="charBg"></canvas>
+
+<header class="cp-header" id="cpHeader">
+    <div class="cp-header-inner">
+        <a href="index.html" class="cp-back">← НАЗАД</a>
+        <span class="cp-header-title" id="cpHeaderTitle">ЗАГРУЗКА...</span>
+        <nav class="cp-nav-chars">
+            <a href="#" class="cp-nav-btn" id="navPrevChar">◀ ПРЕД.</a>
+            <a href="#" class="cp-nav-btn" id="navNextChar">СЛЕД. ▶</a>
+        </nav>
+    </div>
+</header>
+
+<main id="cpMain">
+    <!-- Контент генерируется через JS -->
+</main>
+
+<footer class="cp-footer" id="cpFooter">
+    <p id="cpFooterMain">BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="cp-footer-note">Фан-страница создана в образовательных целях</p>
+    <div class="cp-footer-nav">
+        <a href="#" class="cp-nav-btn" id="footerPrev">◀ ПРЕДЫДУЩИЙ</a>
+        <button class="cp-back-top" id="cpBackTop">↑ НАВЕРХ</button>
+        <a href="#" class="cp-nav-btn" id="footerNext">СЛЕДУЮЩИЙ ▶</a>
+    </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   РАСШИРЕННЫЕ ДАННЫЕ ПЕРСОНАЖЕЙ
+   ═══════════════════════════════════════════════════════════ */
+const CHARS_DATA = {
+
+    ragna: {
+        name: 'Ragna the Bloodedge',
+        img: 'ragna.jpg',
+        role: 'Ближний боец / Вампир',
+        tag: 'BLOODEDGE',
+        color: '#5c0f0f',
+        glow: '#e74c3c',
+        stats: { ATK:90, DEF:50, SPD:70, HP:85, RANGE:40, SKILL:65 },
+        diff: '★★☆',
+        diffText: 'Средняя — агрессивный стиль, важен тайминг Soul Eater',
+        badges: ['Вампиризм','Берсерк','Высокий урон'],
+        heroDesc: `Ragna the Bloodedge — самый <strong>разыскиваемый преступник</strong> в мире BlazBlue. 
+            Его правая рука заменена проклятым оружием Azure Grimoire, пожирающим душу врагов. 
+            Чем ниже его здоровье, тем более разрушительными становятся его атаки — <strong>жизнь питает ярость</strong>.`,
+        dossier: [
+            ['Имя', 'Ragna the Bloodedge'],
+            ['Прозвище', 'Reaper / Кровавый Рубежник'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009)'],
+            ['Тип', 'Человек с правой рукой Azure Grimoire'],
+            ['Оружие', 'Blood-Scythe — двуручный меч-тесак'],
+            ['Особенность', 'Soul Eater — пассивный вампиризм'],
+            ['Роль в игре', 'Агрессивный ближний боец'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Детство в огне', text: 'Рагна вырос в небольшой деревне вместе с братом Джином и сестрой Сайей. Однажды ночью Терми — слуга Реки мрака — похитил Сайю и отрубил Рагне правую руку, после чего сжёг монастырь. Это событие определило его судьбу.' },
+            { num: 'II', title: 'Azure Grimoire', text: 'Монах Дзюбэй нашёл умирающего Рагну и заменил его потерянную руку <strong>Azure Grimoire</strong> — оружием, накапливающим силу из душ врагов. Цена: постепенное поглощение самого носителя.' },
+            { num: 'III', title: 'Кровавый Рубежник', text: 'Ragna стал <em>преступником номер один</em> с наградой за голову. Его цель — уничтожить Библиотеку Нобиле и разрушить систему, контролирующую мир. Каждая победа приближает его к Сайе — и к собственной гибели.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Рагна — один из немногих, кто <strong>сохраняет волю</strong> между циклами. Azure Grimoire реагирует на аномалии Entropy, усиливаясь с каждым витком. Его берсерк-режим в условиях петли становится опаснее, чем когда-либо.' },
+        ],
+        storyFull: `<p>В мире BlazBlue: Entropy Effect петли времени превращают даже самых сильных бойцов в пешки. Но не Рагну. Его <strong>Azure Grimoire</strong> — проклятие, ставшее благословением — не просто сохраняет память о прошлых циклах, но накапливает их энергию.</p>
+            <p>Каждый раз, умирая и возрождаясь, <strong>Soul Eater</strong> становится голоднее. Рагна чувствует, как граница между ним и оружием истончается. Но это не останавливает его — пока есть враги, пока есть Сайя, которую нужно спасти, он будет сражаться.</p>
+            <p>В условиях Entropy его берсерк-режим приобрёл новое измерение: при критически низком HP Azure Grimoire буквально <em>прорывает ткань петли</em>, наносясь ущерб самой аномалии. Это делает Рагну не просто бойцом — он сам становится оружием против Entropy.</p>`,
+        quote: { text: 'Заткнись и дерись. Когда я тебя убью — успею подумать о смысле жизни.', attr: '— Ragna the Bloodedge' },
+        skills: [
+            { icon:'🩸', name:'Soul Eater', type:'Пассивный', desc:'Каждый удар <strong>восстанавливает HP</strong> пропорционально нанесённому урону. Чем ниже текущее HP — тем выше процент вампиризма (от 15% до 35%).' },
+            { icon:'⚡', name:'Dead Spike', type:'Активный', desc:'Тёмная волна вырывается из земли перед Рагной. Хорошо захватывает врагов на средней дистанции и прерывает их атаки. <strong>Наносит урон по площади</strong>.' },
+            { icon:'🔥', name:'Inferno Divider', type:'Активный', desc:'Огненный апперкот, бросающий врага в воздух. Отличный <strong>лончер для воздушного комбо</strong>. При низком HP добавляет волну огня в точке приземления.' },
+            { icon:'💨', name:'Gauntlet Hades', type:'Рывок', desc:'Таранный рывок с правой руки. Проходит сквозь щиты и прерывает бронированных врагов. <strong>На берсерке — тройная дистанция</strong>.' },
+            { icon:'🌑', name:'Carnage Scissors', type:'Комбо-финишер', desc:'Двойной крест-удар тесаком с финальным взрывом тёмной энергии. Самый высокий разовый урон в его арсенале. Требует <strong>3 попаданий в рамках комбо</strong>.' },
+            { icon:'☠️', name:'Black Onslaught — Ультимейт', type:'Ультимейт', desc:'Ragna полностью высвобождает Azure Grimoire. Серия из 12 ударов завершается взрывом тёмной энергии. <strong>В берсерк-режиме добавляется 5 дополнительных ударов</strong>.' },
+        ],
+        mechMain: {
+            sub: '⚔ Ключевая система',
+            title: 'Soul Eater & Berserker Mode',
+            desc: `Вся философия Рагны — <strong>чем больнее, тем опаснее</strong>. Пассивный Soul Eater автоматически восстанавливает HP при каждом попадании, создавая петлю: атакуй — восстанавливайся — атакуй снова. Когда HP падает ниже <code>30%</code>, активируется <strong>Berserker Mode</strong>: +40% к урону, +20% к скорости, бесконечные рывки.`,
+            steps: [
+                { num:'01', title:'Атакуй непрерывно', desc:'Soul Eater работает только при попаданиях. Пассивное стояние не даёт ни одного HP.' },
+                { num:'02', title:'Контролируй HP', desc:'Поддерживай здоровье в зоне 35–60% — максимальный вампиризм без активации берсерка.' },
+                { num:'03', title:'Берсерк как инструмент', desc:'Опытные игроки намеренно снижают HP до 30% перед боссом, чтобы войти в берсерк в нужный момент.' },
+                { num:'04', title:'Azure Grimoire', desc:'При 3+ последовательных попаданиях правая рука вспыхивает — следующий удар наносит двойной урон.' },
+            ]
+        },
+        mechs: [
+            { icon:'🔴', title:'Кровяной щит', desc:'В берсерк-режиме первый удар по Рагне поглощается <strong>кровяным барьером</strong>. Перезарядка 8 сек.' },
+            { icon:'💀', title:'Death Drive', desc:'При HP меньше 10% следующая атака наносит <strong>урон ×2.5</strong>. Активируется один раз за бой — используй как финальный козырь.' },
+            { icon:'🌀', title:'Roguelite синергии', desc:'Апгрейд "Blood Feast" удваивает вампиризм. "Eternal Hunger" — берсерк активируется при 50% HP вместо 30%.' },
+            { icon:'⚡', title:'Комбо-множитель', desc:'Каждые 5 попаданий в рамках одного комбо дают +5% к урону (макс. +35%). Сбрасывается при пропуске атаки или получении урона.' },
+        ],
+        tips: [
+            '<strong>Никогда не стой на месте.</strong> Soul Eater не работает без попаданий. Агрессия — это твоя защита.',
+            '<strong>Gauntlet Hades через снаряды.</strong> Рывок проходит сквозь большинство дальних атак — используй его для сближения с дальнобойными противниками.',
+            '<strong>Берсерк — запланированный ресурс.</strong> Перед боссом можно намеренно получить несколько ударов, чтобы войти в 30% и активировать режим.',
+            '<strong>Inferno Divider → воздух → Carnage Scissors.</strong> Базовое комбо с максимальным уроном. Заучи его первым.',
+            '<strong>Dead Spike для прерывания.</strong> Тёмная волна имеет высокий приоритет и прерывает большинство атак врагов в начале анимации.',
+            '<strong>Берегись дальнобойных боссов.</strong> Рагна теряет эффективность на больших расстояниях. Всегда сокращай дистанцию через Gauntlet Hades.',
+        ]
+    },
+
+    jin: {
+        name: 'Jin Kisaragi',
+        img: 'jin.jpg',
+        role: 'Ледяной мечник',
+        tag: 'FROST BLADE',
+        color: '#0a2a50',
+        glow: '#5dade2',
+        stats: { ATK:80, DEF:60, SPD:75, HP:70, RANGE:55, SKILL:75 },
+        diff: '★★☆',
+        diffText: 'Средняя — важна точность комбо и управление заморозкой',
+        badges: ['Заморозка','Комбо-система','Контроль'],
+        heroDesc: `Первый лейтенант Нобиле. Джин владеет <strong>Yukianesa</strong> — ледяным мечом-реликвией, реагирующим на его эмоции. 
+            Каждое попадание накладывает заморозку, а точное исполнение комбо нарастающим образом усиливает его атаку.`,
+        dossier: [
+            ['Имя', 'Jin Kisaragi'],
+            ['Звание', 'Первый лейтенант NOL'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009)'],
+            ['Тип', 'Человек / Носитель Yukianesa'],
+            ['Оружие', 'Yukianesa — ледяная реликвия-меч'],
+            ['Особенность', 'Заморозка при попадании'],
+            ['Роль в игре', 'Технический мечник с комбо-системой'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Военная академия', text: 'Джин вырос как образцовый военный, скрывая за холодной маской комплексы и зависть к брату Рагне. В академии он стал лучшим в своём поколении — не через талант, а через <strong>железную дисциплину</strong>.' },
+            { num: 'II', title: 'Yukianesa', text: 'Ледяная реликвия выбрала Джина своим носителем, усиливая его склонность к холоду и изоляции. Меч усиливается от <em>негативных эмоций</em> — ненависти, зависти, одержимости.' },
+            { num: 'III', title: 'Одержимость Рагной', text: 'Джин одержим своим братом — он жаждет убить его собственными руками. Эта одержимость частично подпитывается самой Yukianesa, <strong>контролирующей разум носителя</strong>.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Джин постепенно освобождается от влияния Yukianesa — каждый цикл даёт ему больший контроль над мечом. Его <strong>тактический интеллект</strong> в условиях повторяющихся сражений становится главным преимуществом.' },
+        ],
+        storyFull: `<p>Джин Кисараги — персонаж парадоксов. Безупречный военный на службе системы, которую ненавидит его же брат. Носитель оружия, контролирующего его разум. Человек, одержимый убийством того, кого в глубине души не может перестать любить.</p>
+            <p>В BlazBlue: Entropy Effect петли Entropy оказывают неожиданный эффект: повторение одних и тех же ситуаций постепенно <strong>расшатывает влияние Yukianesa</strong>. Джин начинает действовать более осознанно, его комбо-техника достигает нового предела точности.</p>
+            <p>Его целью в Entropy остаётся та же: найти Рагну. Но теперь к этому добавилось новое — понять, <em>кто или что создало петлю</em>, и использует ли это нечто его одержимость в своих целях.</p>`,
+        quote: { text: 'Ты недостоин даже скрестить клинки со мной. Но раз уж ты здесь — умри.', attr: '— Jin Kisaragi' },
+        skills: [
+            { icon:'❄️', name:'Yukianesa Slash', type:'Базовый', desc:'Серия быстрых ударов, каждый из которых <strong>накладывает стак заморозки</strong>. При 3 стаках враг замораживается на 2 секунды.' },
+            { icon:'🌊', name:'Hyōga Kakusei', type:'Активный', desc:'Ледяная волна по земле средней дистанции. <strong>Замораживает группу врагов</strong> и оставляет ледяной след, замедляющий движение.' },
+            { icon:'⚔️', name:'Musō Battōjin', type:'Спецудар', desc:'Вакуумный рубящий слэш с высокой скоростью. <strong>Проходит сквозь заморозку</strong> и наносит дополнительный урон замороженным врагам (+30%).' },
+            { icon:'💎', name:'Reppū Jinsai', type:'Зональный', desc:'Создаёт ледяные кристаллы в указанных точках. Кристаллы взрываются при попадании врага или через 4 сек, <strong>замораживая область</strong>.' },
+            { icon:'🌪️', name:'Touga Hyōjin', type:'Комбо-финишер', desc:'Вихрь ледяных лезвий вокруг Джина. Захватывает нескольких врагов и <strong>накапливает 3 стака ATK-бонуса</strong> за каждое попадание.' },
+            { icon:'☃️', name:'Frostbite — Ультимейт', type:'Ультимейт', desc:'Джин выпускает ледяной столп огромной мощи. <strong>Мгновенно максимизирует заморозку</strong> всех целей в зоне. На замороженных врагах — двойной урон от всех источников на 5 сек.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Combo Precision & Freeze Chain',
+            desc: `Философия Джина — <strong>каждый удар должен быть точным</strong>. Система Combo Precision отслеживает ритм ваших атак: правильное чередование лёгких и тяжёлых ударов накапливает <code>ATK Bonus</code> до +45%. Сбой в ритме сбрасывает бонус. Параллельно работает цепочка заморозки: <strong>3 стака = заморозка = возможность для Critical Slash</strong>.`,
+            steps: [
+                { num:'01', title:'Ритм комбо', desc:'Чередуй лёгкие и тяжёлые удары в правильном ритме для накопления ATK Bonus.' },
+                { num:'02', title:'Стаки заморозки', desc:'3 стака замораживают врага. Используй это для безопасного продолжения комбо.' },
+                { num:'03', title:'Critical Slash', desc:'Удар Musō Battōjin по замороженному врагу даёт +30% к урону и продлевает заморозку.' },
+                { num:'04', title:'Finisher', desc:'Завершай комбо Touga Hyōjin — это накапливает ATK Bonus для следующей серии атак.' },
+            ]
+        },
+        mechs: [
+            { icon:'❄️', title:'Freeze Extension', desc:'Каждое попадание по замороженному врагу <strong>продлевает заморозку</strong> на 0.5 сек. Теоретически заморозка может длиться бесконечно при непрерывных ударах.' },
+            { icon:'📈', title:'ATK Accumulation', desc:'До <strong>+45% к ATK</strong> при 9+ непрерывных точных ударах. Сбрасывается при промахе или получении урона.' },
+            { icon:'🌊', title:'Cryo Field', desc:'Ледяной след от Hyōga Kakusei остаётся <strong>6 секунд</strong>. Враги в нём замедляются на 30% и получают 1 стак заморозки каждые 2 сек.' },
+            { icon:'🔧', title:'Roguelite: Yukianesa Unchained', desc:'Апгрейд снимает ограничение на 3 стака — заморозка наступает мгновенно после первого удара. Кардинально меняет стиль игры.' },
+        ],
+        tips: [
+            '<strong>Изучи ритм комбо наизусть.</strong> ATK Accumulation — твой главный ресурс. Неточное комбо теряет половину ценности Джина как персонажа.',
+            '<strong>Cryo Field как позиционный инструмент.</strong> Ставь ледяные следы в узких проходах — замедление делает врагов лёгкими мишенями.',
+            '<strong>Musō Battōjin = финишер замороженных.</strong> Никогда не используй его на незамороженных врагах без нужды — это смерть твоего комбо-ритма.',
+            '<strong>Кристаллы Reppū Jinsai — ловушки.</strong> Расставляй их перед собой в ожидании атаки врага. Взрыв + заморозка = бесплатный цикл комбо.',
+            '<strong>Берегись разрыва комбо.</strong> Одно попадание по Джину сбрасывает ATK Bonus. Приоритет — уклонение, а не блок.',
+        ]
+    },
+
+    noel: {
+        name: 'Noel Vermillion',
+        img: 'noel.jpg',
+        role: 'Дальнобойный боец',
+        tag: 'GUNSLINGER',
+        color: '#0d3320',
+        glow: '#2ecc71',
+        stats: { ATK:75, DEF:45, SPD:80, HP:65, RANGE:85, SKILL:70 },
+        diff: '★☆☆',
+        diffText: 'Низкая — интуитивный стиль, рекомендован новичкам',
+        badges: ['Дальний бой','Over-Exhaust','Высокая скорость'],
+        heroDesc: `Ноэль Вермиллион — носительница Bolverk, <strong>пистолетов-реликвий</strong> с уникальной системой Over-Exhaust: 
+            навыки работают даже при нулевом запасе маны, расходуя вместо неё HP. Её высокая мобильность компенсирует низкую защиту.`,
+        dossier: [
+            ['Имя', 'Noel Vermillion'],
+            ['Звание', 'Лейтенант NOL / Экземпляр XII'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009)'],
+            ['Тип', 'Prime Field Device (клон Слейры)'],
+            ['Оружие', 'Bolverk — двойные пистолеты-реликвии'],
+            ['Особенность', 'Over-Exhaust — навыки без MP за HP'],
+            ['Роль в игре', 'Мобильный дальнобойный боец'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Нежная внешность', text: 'Ноэль выросла в приёмной семье, скрывая природу искусственно созданного существа. Её нерешительность и робость — не слабость, а <strong>щит, за которым прячется стальная воля</strong>.' },
+            { num: 'II', title: 'Bolverk', text: 'Пистолеты-реликвии были назначены ей командованием NOL. Странность в том, что <em>Bolverk выбрал её сам</em> — реликвии, как правило, не терпят неопытных носителей.' },
+            { num: 'III', title: 'Экземпляр XII', text: 'Правда об истинной природе Ноэль — она <strong>клон Мю-12</strong>, созданный как прообраз оружия массового уничтожения. Это знание ломало её не раз, но каждый раз она поднималась.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Ноэль находит нечто освобождающее: <strong>каждый цикл — шанс исправить ошибки</strong>. Bolverk в условиях Entropy работает на резонансе с аномалией, давая ей возможности, недоступные другим бойцам.' },
+        ],
+        storyFull: `<p>Ноэль Вермиллион — один из самых недооценённых персонажей вселенной BlazBlue. За робкой улыбкой скрывается существо, способное в одиночку изменить баланс сил. Её Bolverk — не просто оружие: это <strong>расширение её воли</strong>.</p>
+            <p>В BlazBlue: Entropy Effect система Over-Exhaust обретает новый смысл. В условиях бесконечных петель, где ресурсы сбрасываются после каждого цикла, способность действовать <em>без маны</em> превращает её в одного из самых выносливых бойцов долгих забегов.</p>
+            <p>Её история в Entropy — это история человека, который наконец <strong>перестаёт сомневаться в себе</strong>. Повторяя сражения снова и снова, Ноэль обретает уверенность, которой ей всегда не хватало.</p>`,
+        quote: { text: 'Я… постараюсь! Я обязательно справлюсь. Я буду сражаться!', attr: '— Noel Vermillion' },
+        skills: [
+            { icon:'🔫', name:'Bolverk Burst', type:'Базовый', desc:'Серия быстрых выстрелов из обоих пистолетов. <strong>Каждое попадание сокращает кулдаун навыков</strong> на 0.1 сек. Высокая скорострельность.' },
+            { icon:'🌀', name:'Chain Drive', type:'Активный', desc:'Серийный скорострельный огонь по всем врагам в конусе. <strong>До 12 попаданий за 1.5 сек</strong>. Массовый урон по нескольким целям.' },
+            { icon:'💥', name:'Over-Exhaust Blast', type:'Расходный', desc:'Мощный выстрел без расхода MP — вместо этого тратится <strong>8% HP</strong>. Урон в 2.5 раза выше обычного. Доступен при нулевом MP.' },
+            { icon:'⚡', name:'Zero-Vector', type:'Мобильность', desc:'Рывок с одновременным выстрелом назад. Отдача от выстрела <strong>ускоряет рывок на 40%</strong>. Отличный уход от атак в ближнем бою.' },
+            { icon:'🎯', name:'Assault Through', type:'Зональный', desc:'Ноэль прорывается сквозь толпу врагов, стреляя в упор. <strong>Неуязвимость во время рывка</strong>. Оставляет след из взрывающихся снарядов.' },
+            { icon:'✨', name:'Valkyrie Edge — Ультимейт', type:'Ультимейт', desc:'Ноэль выпускает рой из <strong>30 самонаводящихся снарядов</strong>. Каждый имеет отдельный трекинг. При Over-Exhaust — количество удваивается.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Over-Exhaust System',
+            desc: `Уникальность Ноэль — работа <strong>без ресурсных ограничений</strong>. Over-Exhaust позволяет использовать любой навык при нулевом MP, расходуя вместо него HP. Это создаёт агрессивный стиль: не копи ману — <strong>трать HP, восстанавливай через обычные удары</strong>. В roguelite режиме с правильными апгрейдами Over-Exhaust превращается в абсолютное оружие.`,
+            steps: [
+                { num:'01', title:'Опустоши MP', desc:'Используй все навыки подряд до нуля. Не экономь на начальных врагах.' },
+                { num:'02', title:'Over-Exhaust', desc:'При нулевом MP навыки продолжают работать, расходуя HP вместо маны.' },
+                { num:'03', title:'Восстановление', desc:'Bolverk Burst при попаданиях сокращает кулдауны — MP быстро восстанавливается.' },
+                { num:'04', title:'Цикл', desc:'MP восстановлен → снова опустоши → Over-Exhaust. Бесконечный боевой цикл.' },
+            ]
+        },
+        mechs: [
+            { icon:'🔋', title:'MP Recovery', desc:'Каждые 5 попаданий из Bolverk восстанавливают <strong>1 единицу MP</strong>. При хорошей скорострельности MP никогда не падает до нуля надолго.' },
+            { icon:'💉', title:'HP Management', desc:'Over-Exhaust тратит HP, но апгрейд "Life on Hit" возвращает HP за каждое попадание. <strong>Правильный баланс = неограниченная агрессия</strong>.' },
+            { icon:'🎪', title:'Chain Drive Synergy', desc:'Chain Drive при Over-Exhaust наносит <strong>+50% урона</strong> и создаёт взрывную область в центре огня.' },
+            { icon:'🚀', title:'Roguelite: Valkyrie Mode', desc:'Апгрейд "Valkyrie Protocol" — Over-Exhaust больше не тратит HP, только усиливает навыки. Максимально мощный апгрейд для Ноэль.' },
+        ],
+        tips: [
+            '<strong>Не копи MP — трать его.</strong> Весь потенциал Ноэль раскрывается только в режиме Over-Exhaust. Скупость на ресурсы убивает её DPS.',
+            '<strong>Zero-Vector = твой спасательный круг.</strong> В ближнем бою всегда держи этот навык наготове — рывок с выстрелом назад мгновенно разрывает дистанцию.',
+            '<strong>Chain Drive по боссам в уязвимой фазе.</strong> 12 попаданий за 1.5 сек = огромный суммарный урон в момент открытой точки атаки босса.',
+            '<strong>Valkyrie Edge как финишер, не стартер.</strong> Самонаводящиеся снаряды лучше работают когда враг уже замедлен или оглушён.',
+            '<strong>Приоритет апгрейдам на кулдаун и Over-Exhaust.</strong> "Rapid Cooling" и "Valkyrie Protocol" — первые цели в roguelite режиме.',
+        ]
+    },
+
+    taokaka: {
+        name: 'Taokaka',
+        img: 'taokaka.jpg',
+        role: 'Мобильный боец',
+        tag: 'SHADOW CAT',
+        color: '#3d2e00',
+        glow: '#f1c40f',
+        stats: { ATK:70, DEF:35, SPD:95, HP:60, RANGE:30, SKILL:60 },
+        diff: '★★★',
+        diffText: 'Высокая — скорость сложна в управлении, слабая защита',
+        badges: ['Скорость 95','Теневые клоны','Воздушные комбо'],
+        heroDesc: `НЯА~! Таокака — <strong>самый быстрый боец</strong> в BlazBlue: Entropy Effect. 
+            Скорость 95/100 превращает её в молнию, создающую теневые клоны клана Кака. 
+            Непредсказуемые атаки с нескольких направлений делают её кошмаром для врагов.`,
+        dossier: [
+            ['Имя', 'Taokaka'],
+            ['Клан', 'Клан Кака — кошачьи дэми-люди'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009)'],
+            ['Тип', 'Дэми-человек (кошачий клан)'],
+            ['Оружие', 'Когти клана Кака — острые лезвия'],
+            ['Особенность', 'Shadow Clone — теневые двойники'],
+            ['Роль в игре', 'Гиперскоростной боец с клонами'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Клан Кака', text: 'Таокака выросла в деревне клана Кака — сообществе кошачьих дэми-людей, живущих в нижнем городе. Её простодушие и доброта скрывают <strong>инстинкты опасного хищника</strong>.' },
+            { num: 'II', title: 'Вечно голодная', text: 'Главная мотивация Таоки — еда. Она может сражаться с любым ради обеда. Эта простота натуры делает её <em>непредсказуемой</em> — враги не могут просчитать её действия логически.' },
+            { num: 'III', title: 'Быстрее молнии', text: 'Тренировки клана Кака развили в ней скорость, которой нет у людей. Способность создавать <strong>теневые клоны</strong> — не магия, а предельное совершенство движения.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Таокака воспринимает их как очень странную игру. Она не помнит деталей прошлых циклов, но <strong>тело помнит всё</strong> — её рефлексы с каждым витком становятся ещё острее.' },
+        ],
+        storyFull: `<p>Таокака — персонаж, чья сила прячется за комичным фасадом. Вечно голодная кошка, путающая имена и теряющая нить разговора, на самом деле <strong>один из опаснейших бойцов</strong> BlazBlue.</p>
+            <p>В BlazBlue: Entropy Effect её скорость приобретает новое измерение. Петли Entropy не дают ей воспоминаний, но дают нечто более ценное — <em>мышечную память, накопленную за сотни циклов</em>. Её тело двигается быстрее, чем она успевает думать.</p>
+            <p>Противники, встречающие Таокаку в Entropy, сталкиваются с явлением, превосходящим логику: <strong>скорость, которую невозможно отследить, и атаки с направлений, которых не существует</strong>.</p>`,
+        quote: { text: 'НЯА~! Тао поймает тебя! Потом поест! ...Тао хочет кушать~', attr: '— Taokaka' },
+        skills: [
+            { icon:'🐱', name:'Shadow Clone', type:'Ключевой', desc:'Создаёт до 3 теневых клонов клана Кака. Клоны атакуют с задержкой 0.3 сек, создавая <strong>непредсказуемый рисунок ударов</strong>.' },
+            { icon:'💨', name:'Triple Rush', type:'Рывок', desc:'Тройной рывок без кулдауна в любом направлении. <strong>Каждый рывок может отменить предыдущую анимацию</strong>. Основа мобильности Тао.' },
+            { icon:'⚡', name:'Claw Frenzy', type:'Активный', desc:'Стремительная серия царапающих ударов. <strong>7 попаданий за 0.8 сек</strong>. Каждое попадание сокращает кулдаун Shadow Clone на 0.2 сек.' },
+            { icon:'🌪️', name:'Aerial Assault', type:'Воздушный', desc:'В воздухе Тао атакует с пикирования, затем <strong>рикошетит между несколькими врагами</strong>. Высокая мобильность в воздухе.' },
+            { icon:'🔄', name:'Clone Vortex', type:'Комбо', desc:'Тао и все активные клоны одновременно атакуют одну цель с разных направлений. <strong>При 3 клонах — полное оглушение цели</strong>.' },
+            { icon:'✨', name:'Kaka Style: Storm — Ультимейт', type:'Ультимейт', desc:'Тао создаёт 6 клонов и все они одновременно атакуют, создавая <strong>ураган из когтей</strong>. 42 удара за 3 секунды.' },
+        ],
+        mechMain: {
+            sub: '🐱 Ключевая система',
+            title: 'Shadow Clone & Speed Mastery',
+            desc: `Таокака — персонаж о <strong>непредсказуемости через скорость</strong>. Теневые клоны атакуют с задержкой после основного удара Тао, создавая цепочку попаданий, которую враг не может заблокировать последовательно. Комбинация <code>Triple Rush</code> + <code>Shadow Clone</code> создаёт ситуацию, где <strong>враг теряет трекинг цели</strong>.`,
+            steps: [
+                { num:'01', title:'Активируй клонов', desc:'Shadow Clone создаёт 3 двойника. Они следуют за тобой с задержкой 0.3 сек.' },
+                { num:'02', title:'Triple Rush', desc:'Тройной рывок — клоны создают шлейф из попаданий по всей траектории.' },
+                { num:'03', title:'Claw Frenzy', desc:'Серия ударов в центре группы врагов — клоны добивают тех, кого ты пролетела мимо.' },
+                { num:'04', title:'Clone Vortex', desc:'При 3 клонах активируй Vortex — полное оглушение единственной сильной цели.' },
+            ]
+        },
+        mechs: [
+            { icon:'⚡', title:'Speed Break', desc:'При скорости 95/100 атаки Тао <strong>прерывают большинство вражеских анимаций</strong>. Контрить её удары сложнее, чем казалось.' },
+            { icon:'👥', title:'Clone Persistence', desc:'Клоны существуют <strong>8 секунд</strong> или до получения урона. Они могут отвлекать врагов как ложные цели.' },
+            { icon:'🌀', title:'Air Momentum', desc:'В воздухе Тао <strong>не теряет скорость</strong> между прыжками. Можно поддерживать воздушный бой бесконечно долго.' },
+            { icon:'💡', title:'Roguelite: Infinite Clone', desc:'Апгрейд "Kaka\'s Blessing" — клоны не исчезают при получении урона. Постоянное поле из теней вокруг тебя.' },
+        ],
+        tips: [
+            '<strong>Никогда не стой на месте.</strong> Тао без движения — уязвимая цель. Её защита — скорость, а не броня.',
+            '<strong>Triple Rush = уклонение И атака.</strong> Рывок проходит сквозь большинство атак. Используй его не только для сближения, но и для уходов.',
+            '<strong>Клоны вперёд — потом атакуй.</strong> Создай клонов ДО сближения. К моменту удара они уже будут в позиции для добивания.',
+            '<strong>Clone Vortex на боссах.</strong> 3 клона + Vortex = единственный надёжный способ Тао нанести массовый урон одной сильной цели.',
+            '<strong>Aerial Assault для избегания зон AoE.</strong> Воздух безопаснее земли против боссов с наземными атаками.',
+            '<strong>Не пытайся играть "умно".</strong> Таокака — персонаж инстинктов. Анализируй меньше, двигайся больше.',
+        ]
+    },
+
+    rachel: {
+        name: 'Rachel Alucard',
+        img: 'rachel.jpg',
+        role: 'Маг / Контролёр',
+        tag: 'MISTRESS',
+        color: '#2d1244',
+        glow: '#a569bd',
+        stats: { ATK:85, DEF:50, SPD:60, HP:70, RANGE:75, SKILL:85 },
+        diff: '★★☆',
+        diffText: 'Средняя — требует понимания зонального контроля',
+        badges: ['Фамильяры','Контроль поля','Вампиризм'],
+        heroDesc: `Вампирская аристократка из рода Алукард. Rachel управляет <strong>фамильярами Наго и Гии</strong>, 
+            превращая их в оружие, щит и транспорт. Её стиль — изысканный садизм: 
+            контролировать пространство и наблюдать, как враг медленно теряет силы.`,
+        dossier: [
+            ['Имя', 'Rachel Alucard'],
+            ['Звание', 'Глава рода Алукард'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009)'],
+            ['Тип', 'Вампир высшего рода'],
+            ['Оружие', 'Наго (кот) и Гии (зонт) — фамильяры'],
+            ['Особенность', 'Silpheed — управление ветром'],
+            ['Роль в игре', 'Зональный маг / Контролёр'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Вечность наблюдателя', text: 'Рейчел живёт сотни лет, наблюдая за повторяющимися циклами истории. Это сделало её <strong>циничной, умной и невыносимо скучающей</strong>. Большинство смертных кажутся ей не людьми, а слабыми персонажами предсказуемой пьесы.' },
+            { num: 'II', title: 'Наго и Гии', text: 'Фамильяры существуют рядом с Рейчел настолько долго, что <em>приобрели собственные характеры</em>. Наго — добродушный жирный кот-оружие. Гии — зонт с характером дворецкого. Оба преданы ей абсолютно.' },
+            { num: 'III', title: 'Роль в BlazBlue', text: 'Рейчел — один из немногих персонажей, <strong>осознающих цикличность временных петель</strong>. Её вмешательство в события BlazBlue всегда точечное, продуманное и имеет последствия, видные лишь ей.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'Петли Entropy вызывают у Рейчел единственную подлинную эмоцию: <strong>интерес</strong>. Нечто, повторяющее её собственный опыт вечности, но делающее это иначе. Она намерена разобраться в природе Entropy — из любопытства, не из долга.' },
+        ],
+        storyFull: `<p>Рейчел Алукард видела всё. Поднимались и падали цивилизации. Рождались и умирали герои. Временные петли для неё — не новость, а очередная итерация знакомой темы.</p>
+            <p>Но Entropy — другое. Эта аномалия <em>не подчиняется привычным законам временных петель</em>, которые она изучила за столетия. Что-то создало её намеренно. И это что-то знает о Рейчел достаточно, чтобы <strong>включить её в свой план</strong>.</p>
+            <p>Вооружённая Наго, Гии и абсолютным пренебрежением к смерти, Рейчел входит в Entropy не как спасительница — как <strong>следователь</strong>. И горе тому, кто думал, что вечная скука притупила её когти.</p>`,
+        quote: { text: 'Как невыносимо утомительно... и всё же — впервые за долгое время мне по-настоящему интересно.', attr: '— Rachel Alucard' },
+        skills: [
+            { icon:'🐱', name:'Наго — Удар', type:'Активный', desc:'Кот-фамильяр атакует в указанном направлении. <strong>Отражает снаряды обратно</strong>. Три разных режима: удар, щит, поглощение.' },
+            { icon:'☂️', name:'Silpheed', type:'Зональный', desc:'Гии создаёт <strong>ветровой барьер</strong>, отталкивающий всех врагов и снаряды. Также работает как платформа — позволяет стоять в воздухе.' },
+            { icon:'⚡', name:'Джордж XIII', type:'Атакующий', desc:'Рейчел вызывает заряженного лягушонка-Джорджа. При контакте с врагом <strong>мощный молниевый разряд</strong> наносит урон по площади.' },
+            { icon:'🩸', name:'Bloody Fangs', type:'Вампиризм', desc:'Рейчел высасывает HP у врага в зоне досягаемости. <strong>Восстанавливает до 30% HP</strong>. Замедляет врага на 2 сек.' },
+            { icon:'🌪️', name:'Wind Coffin', type:'Контроль', desc:'Мощный ветровой захват, удерживающий врага на месте. <strong>3 секунды стаза</strong>. Отлично для подготовки атаки Наго или Джорджа XIII.' },
+            { icon:'👑', name:'Tempest Dahlia — Ультимейт', type:'Ультимейт', desc:'Рейчел вызывает <strong>вихрь молний и ветра</strong> на всю арену. Наго и Гии участвуют одновременно. Урон по всем врагам в зоне с откидыванием и молнией.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Familiar Control & Spatial Dominance',
+            desc: `Рейчел — персонаж, <strong>контролирующий поле боя, а не врагов</strong>. Наго создаёт угрозу в одном направлении, Гии защищает другое, Джордж XIII добивает из-за угла. Задача игрока — <strong>одновременно управлять тремя независимыми элементами</strong>, создавая ситуацию, из которой врагу некуда деваться.`,
+            steps: [
+                { num:'01', title:'Позиционирование', desc:'Займи высоту — Гии как платформа позволяет атаковать сверху, куда большинство врагов не достаёт.' },
+                { num:'02', title:'Наго вперёд', desc:'Используй кота как передовой щит и атакующий элемент одновременно.' },
+                { num:'03', title:'Джордж XIII', desc:'Поставь лягушонка между Рейчел и врагом — он атакует любого, кто приближается.' },
+                { num:'04', title:'Финальный захват', desc:'Wind Coffin → Bloody Fangs → Tempest Dahlia. Стандартный цикл максимального урона.' },
+            ]
+        },
+        mechs: [
+            { icon:'🔄', title:'Отражение снарядов', desc:'Наго в режиме щита <strong>отражает снаряды обратно</strong> к отправителю с удвоенной силой.' },
+            { icon:'🌊', title:'Silpheed Platform', desc:'Гии как платформа позволяет <strong>зависать в воздухе неограниченно долго</strong>. Высокая позиция = тактическое преимущество.' },
+            { icon:'⚡', title:'Chain Lightning', desc:'Молния Джорджа XIII <strong>прыгает между близкими врагами</strong>. Максимальный эффект в толпе.' },
+            { icon:'👑', title:'Roguelite: Court of Alucard', desc:'Апгрейд призывает второго Джорджа XIII и увеличивает дальность Silpheed. Рейчел буквально <strong>контролирует весь экран</strong>.' },
+        ],
+        tips: [
+            '<strong>Высота — твоё главное преимущество.</strong> Гии как платформа недооценивается новичками. Позиция сверху меняет все углы атаки.',
+            '<strong>Наго = активный щит, не пассивный.</strong> Не жди атаки врага — выставляй кота навстречу снарядам. Отражение по врагу наносит двойной урон.',
+            '<strong>Джордж XIII — ловушка, не снаряд.</strong> Ставь лягушонка не там, где враг сейчас, а там, куда он пойдёт.',
+            '<strong>Wind Coffin = подготовка, не самоцель.</strong> Сам по себе захват урона не наносит. Всегда имей наготове следующий ход.',
+            '<strong>Bloody Fangs в критический момент.</strong> При низком HP немедленно используй вампиризм — 30% HP возврат часто меняет исход боя.',
+        ]
+    },
+
+    hakumen: {
+        name: 'Hakumen',
+        img: 'hakumen.jpg',
+        role: 'Танк / Контратакер',
+        tag: 'VOID WARRIOR',
+        color: '#1a2030',
+        glow: '#bdc3c7',
+        stats: { ATK:85, DEF:95, SPD:45, HP:95, RANGE:50, SKILL:80 },
+        diff: '★★☆',
+        diffText: 'Средняя — медленный, но контратаки требуют тайминга',
+        badges: ['Суперброня','Контратака','Магатамы'],
+        heroDesc: `Хакумен — воин, облачённый в <strong>Susano'o Unit</strong>. Медленный. Непреклонный. Неостановимый. 
+            Каждый принятый удар заряжает магатамы — и превращается в сокрушительную контратаку. 
+            Его суперброня не прерывается вражескими ударами.`,
+        dossier: [
+            ['Имя', 'Hakumen (Джин Кисараги — прошлое)'],
+            ['Звание', 'Один из Шести Героев'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009)'],
+            ['Тип', 'Человек в Susano\'o Unit'],
+            ['Оружие', 'Ōkami — меч, рвущий пространство'],
+            ['Особенность', 'Magatama — контратака от урона'],
+            ['Роль в игре', 'Танк с суперброней и контратаками'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Белая Пустота', text: 'Хакумен — это Джин Кисараги из будущего, прошедший через смерть и возрождение в Susano\'o Unit. Он отверг своё прошлое имя и стал <strong>воплощением правосудия</strong> — абсолютного и беспощадного.' },
+            { num: 'II', title: 'Susano\'o Unit', text: 'Доспехи Susano\'o были созданы для уничтожения богов. Надев их, носитель теряет часть человечности, но получает <em>мощь, равную стихии</em>. Хакумен носит их уже так долго, что перестал различать себя и доспехи.' },
+            { num: 'III', title: 'Шесть Героев', text: 'Хакумен — один из шести легендарных героев, победивших Чёрного Зверя сотни лет назад. Его опыт и тактическое мышление <strong>превосходят любого живущего бойца</strong>.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Хакумен видит нечто знакомое: <strong>цикличность, требующая разрушения</strong>. Его Ōkami — меч, способный разрезать саму реальность — возможно, единственное оружие, способное <em>разорвать петлю навсегда</em>.' },
+        ],
+        storyFull: `<p>Хакумен не сражается — он выносит приговоры. Каждый его удар — это акт правосудия, а не агрессии. <strong>Медленный, как надвигающаяся буря, и такой же неотвратимый.</strong></p>
+            <p>В BlazBlue: Entropy Effect его Susano'o Unit реагирует на аномалии петли особым образом: каждый новый цикл добавляет слой к доспехам. К определённому витку <em>Хакумен буквально становится неубиваемым</em>. Цена — скорость падает ещё ниже. Он знает об этом. Его это не беспокоит.</p>
+            <p>Его цель в Entropy проста и абсолютна: <strong>уничтожить источник петли</strong>. Не понять, не изучить — уничтожить. Правосудие не задаёт вопросов.</p>`,
+        quote: { text: 'Я — Белая Пустота. Я — Меч Правосудия. Правосудие не знает пощады.', attr: '— Hakumen' },
+        skills: [
+            { icon:'⚔️', name:'Gurren', type:'Базовый', desc:'Медленный, но <strong>непрерываемый удар</strong> с суперброней. Урон в 1.5 раза выше среднего. Отлично прерывает атаки врагов в первой трети анимации.' },
+            { icon:'💠', name:'Magatama Counter', type:'Контратака', desc:'При активации — <strong>следующий удар врага поглощается</strong> и преобразуется в собственный удар Хакумена с удвоенным уроном.' },
+            { icon:'🌑', name:'Tōken', type:'Дальний', desc:'Хакумен выпускает рубящий разряд из Ōkami. <strong>Рвёт пространство</strong> на средней дистанции. Хорошо для дистанционного контроля.' },
+            { icon:'🛡️', name:'Zantetsuken', type:'Прорыв', desc:'Таранный удар с разрушением щита врага. <strong>Снимает 100% брони</strong> за один удар. Незаменим против бронированных элит и боссов.' },
+            { icon:'⬡', name:'Mugen', type:'AoE', desc:'Хакумен выпускает волну пустоты вокруг себя. <strong>Отталкивает всех врагов</strong> в радиусе 5 метров и прерывает их атаки. Отличная "очистка" при окружении.' },
+            { icon:'☀️', name:'Ōkami: Void Rend — Ультимейт', type:'Ультимейт', desc:'Один удар мечом Ōkami разрезает <strong>пространство и всех врагов в нём</strong>. Урон настолько высок, что при полных магатамах — мгновенное уничтожение элит.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Magatama System & Superarmor',
+            desc: `Хакумен — персонаж, <strong>превращающий урон в силу</strong>. Каждый полученный удар заряжает магатамы (до 8 единиц). Накопленные магатамы тратятся на усиленные навыки и контратаку Magatama Counter, наносящую <code>двойной урон</code> от поглощённой атаки. Суперброня означает, что <strong>его атаки нельзя прервать</strong> вражескими ударами.`,
+            steps: [
+                { num:'01', title:'Принимай удары', desc:'Суперброня позволяет атаковать сквозь удары врагов. Каждый попавший удар заряжает магатамы.' },
+                { num:'02', title:'Magatama Counter', desc:'При 3+ магатамах активируй Counter — следующий удар врага становится твоим оружием.' },
+                { num:'03', title:'Zantetsuken', desc:'Сними броню с сильного врага одним ударом — открой его для полного урона.' },
+                { num:'04', title:'Ōkami Finisher', desc:'При максимальных магатамах Void Rend + Counter = мгновенное уничтожение любого врага.' },
+            ]
+        },
+        mechs: [
+            { icon:'🛡️', title:'Суперброня в действии', desc:'Атаки Хакумена <strong>не прерываются</strong> ударами с силой ниже определённого порога. Только сверхмощные удары боссов способны его остановить.' },
+            { icon:'💫', title:'Накопление магатам', desc:'<strong>8 магатам = максимум</strong>. Каждая единица добавляет +5% к урону. При максимуме все навыки получают дополнительный эффект.' },
+            { icon:'🌑', title:'Void Resonance', desc:'Ōkami резонирует с аномалиями Entropy. В зонах высокой энтропии <strong>его атаки дополнительно ослабляют щиты врагов</strong>.' },
+            { icon:'⚡', title:'Roguelite: Immovable', desc:'Апгрейд "White Void" — суперброня теперь абсолютна. Хакумен <strong>не прерывается ничем</strong>. Медленный нерушимый монолит.' },
+        ],
+        tips: [
+            '<strong>Медленность — не слабость.</strong> Суперброня значит, что ты можешь стоять и атаковать, пока враги бьют тебя. Это не проблема.',
+            '<strong>Magatama Counter перед атакой босса.</strong> Большинство боссов имеют телеграфируемые сильные удары. Активируй Counter перед ними — удвоенный урон.',
+            '<strong>Zantetsuken открывает боссов.</strong> Снятая броня = фаза уязвимости. Всегда имей этот навык наготове для начала фаз боссов.',
+            '<strong>Mugen при окружении, не в суматохе.</strong> AoE-отталкивание работает лучше в узких пространствах — враги летят в стены.',
+            '<strong>Накапливай магатамы намеренно.</strong> Иногда выгоднее принять несколько ударов для накопления максимума магатам перед боссом.',
+        ]
+    },
+
+    es: {
+        name: 'Es',
+        img: 'es-new.jpg',
+        role: 'Пространственный боец',
+        tag: 'AZURE SHRINE',
+        color: '#083d30',
+        glow: '#1abc9c',
+        stats: { ATK:80, DEF:65, SPD:65, HP:75, RANGE:55, SKILL:90 },
+        diff: '★★★',
+        diffText: 'Высокая — требует точного тайминга Cross Combination',
+        badges: ['Тайминг-система','Зональный контроль','Запечатывание'],
+        heroDesc: `Es — Хранительница Лазурного Алтаря. Её уникальная боевая система основана на <strong>геометрической точности</strong>: 
+            размещение крестообразных символов в пространстве и их активация в строго определённый момент. 
+            Чем точнее синхронизация — тем мощнее атака.`,
+        dossier: [
+            ['Имя', 'Es (ЭС)'],
+            ['Прозвище', 'Azure Shrine Maiden / Хранительница'],
+            ['Происхождение', 'XBlaze: Code Embryo (2013)'],
+            ['Тип', 'Искусственный боевой юнит'],
+            ['Оружие', 'Kerykeion — меч-жезл с крестовой гардой'],
+            ['Особенность', 'Cross Combination — тайминг-система'],
+            ['Роль в игре', 'Технический боец / Timing-Fighter'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Рождение юнита', text: 'Es была создана как <strong>специализированный боевой юнит</strong> для запечатывания Predator Crystal. Изначально лишённая личности, она воспринимала миссию как единственный смысл существования.' },
+            { num: 'II', title: 'XBlaze: Code Embryo', text: 'Встреча с Тоей Дзибики пробудила в Es нечто незапрограммированное: <em>зачатки собственного «я»</em>. Человеческое тепло изменило её точнее, чем любой апгрейд.' },
+            { num: 'III', title: 'Centralfiction', text: 'В BlazBlue: Centralfiction Es — полноправный боец, осознающий своё место в мире. Kerykeion стал символом её власти над пространством — <strong>оружием, способным запечатывать реальность</strong>.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Es — ключевая фигура. Её способность к запечатыванию и понимание природы границ делают её незаменимой. <strong>Она помнит все предыдущие циклы</strong> — каждый добавляет точности её тайминга.' },
+        ],
+        storyFull: `<p>В мире BlazBlue: Entropy Effect реальность охвачена петлями, стирающими события. Es — одна из редких личностей, сохраняющих опыт между итерациями. Её природа искусственного юнита парадоксально позволяет удерживать память о прошлых циклах.</p>
+            <p>Вооружённая Kerykeion и способностью создавать <strong>пространственные печати-кресты</strong>, Es методично собирает фрагменты истины, скрытые за каждым витком. Её холодная логика теперь служит не приказам — <em>собственной цели</em>.</p>
+            <p>Внешне невозмутимая, она несёт тихую решимость. Годы рядом с людьми научили её ценить то, что невозможно запрограммировать. И именно эта <strong>человечность, рождённая из данных</strong>, делает её самой опасной переменной в уравнении Entropy.</p>`,
+        quote: { text: 'Я выполняю свою миссию. Этого достаточно.\n...Или нет? Я больше не уверена.', attr: '— Es, BlazBlue: Entropy Effect' },
+        skills: [
+            { icon:'✛', name:'Cross Combination', type:'Ключевой навык', desc:'Размещает крест в пространстве. При повторной активации в <strong>точный тайминг</strong> — взрыв ×1.5 урона. Промах — базовый урон. Макс. 3 креста.' },
+            { icon:'⚔', name:'Sealing Blade', type:'Активный', desc:'Серия ударов парящими мечами. Накапливает <strong>заряды печати</strong>, усиливающие следующий Cross Combination.' },
+            { icon:'💠', name:'Cross Impact', type:'Усиленный удар', desc:'Мощный удар в зону активного креста. Perfect Timing: <strong>+50% урон и снятие барьера</strong>. При 3 зарядах — дополнительный лазер.' },
+            { icon:'🔒', name:'Azure Seal', type:'Дебафф', desc:'Запечатывает врага: <strong>замедление 3 сек и -20% защиты</strong>. Запечатанный получает повышенный урон от всех атак Es.' },
+            { icon:'⬆', name:'Trance Edge', type:'Мобильность', desc:'Воздушный рывок с ударом. В воздухе активирует <strong>серию из 3 скользящих клинков</strong>.' },
+            { icon:'⬡', name:'Grand Cross — Ультимейт', type:'Ультимейт', desc:'Гигантский крест на весь экран. Через 1.5 сек — <strong>взрывная детонация по всей области</strong>. При Perfect-очках — вторая волна.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Cross Combination System',
+            desc: `Вся боевая философия Es: <strong>расставь — подожди — активируй в нужный момент</strong>. Крест детонирует с базовым уроном в любое время, но точное попадание в окно <code>PERFECT</code> (~0.3 сек) даёт <strong>+50% к урону</strong>. До 3 крестов одновременно. Точность накапливает Cross Stack — при 3 зарядах все навыки получают дополнительные эффекты.`,
+            steps: [
+                { num:'01', title:'Размещение', desc:'Размести крест рядом с врагом или в точке его движения.' },
+                { num:'02', title:'Заряд', desc:'Крест пульсирует, меняя цвет. Бирюзовое свечение = приближение Perfect.' },
+                { num:'03', title:'Тайминг', desc:'Нажми атаку в момент полного свечения — окно Perfect ~0.3 сек.' },
+                { num:'04', title:'Детонация', desc:'Взрыв ×1.5 урона, накопление Cross Stack для следующих навыков.' },
+            ]
+        },
+        mechs: [
+            { icon:'🔢', title:'Cross Stack', desc:'3 Perfect Timing = <strong>3 заряда</strong>. Cross Impact выпускает лазер, Sealing Blade добавляет взрыв. Сбрасывается при получении урона.' },
+            { icon:'⬡', title:'Spatial Control', desc:'До <strong>3 активных крестов</strong> на арене создают поле зонального контроля. Враг вынужден постоянно двигаться.' },
+            { icon:'🔒', title:'Seal Amplification', desc:'Враг под Azure Seal получает повышенный урон. <strong>Seal + Perfect Cross Impact</strong> — наиболее разрушительное сочетание.' },
+            { icon:'⚡', title:'Roguelite синергии', desc:'Апгрейды расширяют Perfect Window, добавляют цепную реакцию между крестами или <strong>автоматическую детонацию</strong>.' },
+        ],
+        tips: [
+            '<strong>Расставляй кресты заранее.</strong> Предугадывай движение врага — идеально ставить крест перед рывком босса.',
+            '<strong>Тренируй тайминг на слабых врагах.</strong> Узкое окно Perfect требует рефлекса. Прокачивай на рядовых — там ошибка не критична.',
+            '<strong>Не теряй Cross Stack.</strong> 3 накопленных заряда — главный ресурс. При сильной атаке врага — уклоняйся.',
+            '<strong>Базовое комбо: Seal → Sealing Blade → Perfect Cross Impact.</strong> Максимум урона при правильном исполнении.',
+            '<strong>В roguelite — апгрейд Extended Perfect Window.</strong> +0.15 сек к окну Perfect ощутимо снижает требования к рефлексу.',
+        ]
+    },
+
+    kokonoe: {
+        name: 'Kokonoe',
+        img: 'kokonoe.jpg',
+        role: 'Зональный контроль',
+        tag: 'PROFESSOR',
+        color: '#4a1a00',
+        glow: '#e67e22',
+        stats: { ATK:90, DEF:40, SPD:55, HP:60, RANGE:90, SKILL:85 },
+        diff: '★★☆',
+        diffText: 'Средняя — управление системами Grimalkin требует планирования',
+        badges: ['Grimalkin','Орбитальные турели','Kill Streak'],
+        heroDesc: `Профессор ртуть. Кококоноэ управляет полем через систему <strong>Grimalkin</strong>: 
+            наводимые ракеты, лазерные столбы, орбитальные турели. 
+            Kill Streak множитель урона достигает ×4.0. Терпения к союзникам — ноль. Сарказма — переполнение.`,
+        dossier: [
+            ['Имя', 'Kokonoe Mercury'],
+            ['Звание', 'Профессор / Главный учёный NOL (ренегат)'],
+            ['Происхождение', 'BlazBlue: Calamity Trigger (2009, упом.)'],
+            ['Тип', 'Дэми-человек (кошачий клан) / Гений'],
+            ['Оружие', 'Система Grimalkin — орбитальные устройства'],
+            ['Особенность', 'Kill Streak — нарастающий ×4.0 урон'],
+            ['Роль в игре', 'Зональный контролёр / Турельщик'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Дочь двух легенд', text: 'Кококоноэ — дочь Дзюбэя и Nine, двух из Шести Героев. Унаследовала гений матери и упрямство отца. <strong>Использует оба в полной мере</strong>, но отрицает второе.' },
+            { num: 'II', title: 'Grimalkin Project', text: 'Всю жизнь посвятила созданию системы Grimalkin — <em>самонаводящейся орбитальной артиллерии</em>, способной уничтожать цели без непосредственного контакта. Потому что "ближний бой — для тех, кто не смог придумать ничего лучше".' },
+            { num: 'III', title: 'Кофе и злоба', text: 'Кококоноэ работает в режиме вечного дедлайна, поглощая кофе в количествах, запрещённых законами физиологии. Её сотрудники регулярно увольняются. Она регулярно <strong>нанимает новых путём принуждения</strong>.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'Петли Entropy — мечта учёного и кошмар одновременно. <strong>Бесконечные данные</strong> для исследования. Но каждый сброс данных означает потерю результатов. Она записывает всё вручную. Уже на 847-й тетради.' },
+        ],
+        storyFull: `<p>Кококоноэ — один из умнейших персонажей BlazBlue, и она об этом прекрасно знает. Этот факт не делает её приятнее в общении. Напротив: осознание собственного превосходства превратило её в <strong>функционального социопата с кофеиновой зависимостью</strong>.</p>
+            <p>В BlazBlue: Entropy Effect она — единственная, кто с первого цикла принялась <em>систематизировать природу петли</em>. Пока другие борются за выживание, она строит базу данных. Grimalkin в условиях Entropy адаптируется к аномалиям и становится <strong>точнее с каждым циклом</strong>.</p>
+            <p>Её мотивация проста и научна: <strong>понять Entropy, затем уничтожить</strong>. В правильном порядке. Никакого героизма. Только методология.</p>`,
+        quote: { text: '// "Тупицы. Я окружена тупицами. Ещё кофе. Немедленно."', attr: '— Kokonoe Mercury' },
+        skills: [
+            { icon:'🚀', name:'Grimalkin: Missile', type:'Ключевой', desc:'Выпускает самонаводящиеся ракеты. <strong>До 6 ракет одновременно</strong>, каждая отслеживает отдельную цель. При прямом попадании — +0.5 к Kill Streak.' },
+            { icon:'⚡', name:'Plasma Pillar', type:'Зональный', desc:'Лазерный столб в указанной точке. <strong>Остаётся активным 4 секунды</strong>. Враги в зоне получают постоянный урон и замедляются.' },
+            { icon:'🔧', name:'Orbital Turret', type:'Турель', desc:'Размещает автономную орбитальную турель. <strong>Атакует ближайшего врага</strong> самостоятельно 8 секунд. Максимум 2 турели одновременно.' },
+            { icon:'💥', name:'Overload Discharge', type:'Взрыв', desc:'Мощный энергетический взрыв по площади. <strong>Урон зависит от текущего Kill Streak</strong>. При ×3.0 и выше — оглушение всех врагов в зоне.' },
+            { icon:'🌀', name:'Grimalkin: Lock', type:'Контроль', desc:'Удерживающий луч, <strong>фиксирующий врага на месте</strong> на 2.5 сек. Все орбитальные системы автоматически фокусируются на зафиксированной цели.' },
+            { icon:'☢️', name:'CALAMITY — Ультимейт', type:'Ультимейт', desc:'Ядерный орбитальный удар по всему экрану. <strong>При Kill Streak ×4.0 — мгновенное уничтожение</strong> всех обычных врагов и снятие 80% HP с боссов.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Grimalkin Network & Kill Streak',
+            desc: `Кококоноэ — персонаж <strong>накопления и эскалации</strong>. Система Kill Streak: каждое убийство добавляет ×0.5 к множителю урона, максимум <code>×4.0</code>. Потеря множителя происходит только при <strong>смерти Кококоноэ</strong> — промахи его не сбрасывают. Grimalkin Network позволяет атаковать с нескольких направлений одновременно.`,
+            steps: [
+                { num:'01', title:'Разверни сеть', desc:'Размести турели и активируй Plasma Pillar — создай поле смерти.' },
+                { num:'02', title:'Grimalkin: Lock', desc:'Зафикси сильного врага — все системы сфокусируются на нём автоматически.' },
+                { num:'03', title:'Наращивай Kill Streak', desc:'Убивай врагов систематически. К боссу старайся иметь ×3.0+.' },
+                { num:'04', title:'CALAMITY', desc:'При ×4.0 ультимейт — абсолютное уничтожение. Не трать его раньше времени.' },
+            ]
+        },
+        mechs: [
+            { icon:'📈', title:'Kill Streak Escalation', desc:'×0.5 за каждое убийство, максимум <strong>×4.0</strong>. Не сбрасывается при промахах — только при смерти Кококоноэ.' },
+            { icon:'🔧', title:'Turret Persistence', desc:'Турели атакуют <strong>автономно</strong>. Пока они работают — Кококоноэ может концентрироваться на боссах.' },
+            { icon:'🌊', title:'Plasma Field Synergy', desc:'Враги в Plasma Pillar <strong>получают +30% урон от ракет Grimalkin</strong>. Лазер + ракеты = экспоненциальный урон.' },
+            { icon:'💻', title:'Roguelite: Overengineered', desc:'Апгрейд добавляет третью турель и ×0.75 за убийство вместо ×0.5. <strong>×4.0 достигается за 5-6 убийств</strong>.' },
+        ],
+        tips: [
+            '<strong>Никогда не умирай с высоким Kill Streak.</strong> Потеря ×4.0 — катастрофа. При опасности отступи и восстанови позицию.',
+            '<strong>Turrets первыми, затем Lock.</strong> Зафиксированный враг под огнём двух турелей + ракет = мгновенное убийство даже элиты.',
+            '<strong>CALAMITY только при ×4.0.</strong> При меньшем множителе лучше продолжать накапливать стак. Ультимейт без множителя — трата ресурса.',
+            '<strong>Plasma Pillar на входах и проходах.</strong> Враги обязаны пройти сквозь него — автоматически накапливает Kill Streak.',
+            '<strong>Grimalkin: Lock как инициатор фазы.</strong> Зафиксируй босса в начале уязвимой фазы, затем выгружай весь арсенал.',
+        ]
+    },
+
+    mai: {
+        name: 'Mai Natsume',
+        img: 'mai.jpg',
+        role: 'Контроль толпы',
+        tag: 'SPEAR MAIDEN',
+        color: '#4a0020',
+        glow: '#e84393',
+        stats: { ATK:75, DEF:60, SPD:70, HP:70, RANGE:65, SKILL:70 },
+        diff: '★★☆',
+        diffText: 'Средняя — AoE комбо требуют позиционирования',
+        badges: ['AoE-атаки','Торнадо','Толпоконтроль'],
+        heroDesc: `Маи Нацуме — мастер магического копья <strong>Gallia Sphyra: Outseal</strong>, генерирующего торнадо и ударные волны. 
+            Чем больше врагов в зоне атаки — тем эффективнее каждый удар. 
+            Мягкость снаружи — и совсем другое внутри.`,
+        dossier: [
+            ['Имя', 'Mai Natsume'],
+            ['Происхождение', 'BlazBlue: Remix Heart (манга, 2011)'],
+            ['Тип', 'Человек / Носительница Outseal'],
+            ['Оружие', 'Gallia Sphyra: Outseal — магическое копьё'],
+            ['Особенность', 'Бонус урона за количество целей'],
+            ['Роль в игре', 'AoE-контролёр толпы'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Академия и тайна', text: 'Маи поступила в Военную Академию NOL, скрывая свою истинную природу. Её принятие себя и <strong>обретение силы Outseal</strong> — история о том, как сила рождается из принятия, а не отрицания.' },
+            { num: 'II', title: 'Outseal', text: 'Копьё Outseal — реликвия с непростым характером. Оно резонирует с эмоциями носительницы: <em>гнев усиливает атаку, спокойствие — контроль</em>. Маи научилась использовать оба состояния.' },
+            { num: 'III', title: 'Защитница', text: 'Маи борется не за идеи и не за принципы. <strong>Она защищает конкретных людей</strong>, которые ей дороги. Эта конкретность делает её мотивацию сильнее и искреннее любой глобальной цели.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Маи находит, что некоторые из "дорогих людей" перестают узнавать её после сброса. Это больно. Но каждый раз она всё равно встаёт на их защиту. <strong>Память не нужна для того, чтобы любить</strong>.' },
+        ],
+        storyFull: `<p>Маи Нацуме — персонаж, чья сила измеряется не в цифрах характеристик, а в причинах, по которым она сражается. Outseal в её руках работает иначе, чем у других носителей копий: <strong>эмоциональный резонанс превращает каждый удар в личный акт защиты</strong>.</p>
+            <p>В BlazBlue: Entropy Effect циклы петель испытывают её на прочность: люди, которых она защищает, не помнят её после сброса. Некоторые встречают её как незнакомца. Но <em>Маи продолжает защищать их снова и снова</em>. Outseal резонирует с этой безусловной преданностью, становясь мощнее с каждым циклом.</p>`,
+        quote: { text: 'Я защищу тех, кто мне дорог. Любой ценой. Каждый раз, снова и снова.', attr: '— Mai Natsume' },
+        skills: [
+            { icon:'🌪️', name:'Tornado Spear', type:'Ключевой', desc:'Outseal генерирует <strong>торнадо вокруг удара</strong>. Захватывает и удерживает врагов в воздухе. Эффективность растёт с количеством целей.' },
+            { icon:'💥', name:'Shockwave Drive', type:'AoE', desc:'Мощная ударная волна по площади. <strong>+15% урона за каждого дополнительного врага</strong> в зоне (макс. +75% при 5 врагах).' },
+            { icon:'🌊', name:'Spear Rush', type:'Рывок', desc:'Стремительный рывок с копьём, пронизывающий всех врагов на пути. <strong>Оставляет энергетический след</strong>, наносящий урон ещё 2 сек.' },
+            { icon:'🛡️', name:'Force Field', type:'Защитный', desc:'Кратковременное <strong>силовое поле на 1.5 сек</strong>. Поглощает один удар любой силы. При активации отталкивает ближних врагов.' },
+            { icon:'✨', name:'Bloom Barrage', type:'Серийный', desc:'Серия из 5 быстрых ударов копьём с воздушным завершением. <strong>Каждое попадание накапливает заряды</strong> для усиления Tornado Spear.' },
+            { icon:'🌸', name:'Outseal Storm — Ультимейт', type:'Ультимейт', desc:'Outseal входит в резонанс. <strong>Масштабный ураган на весь экран</strong> с многократными торнадо. Урон по всем врагам с эффектом поднятия в воздух.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Crowd Bonus & Tornado Control',
+            desc: `Маи — <strong>персонаж толпы</strong>. Её урон масштабируется от количества врагов в зоне атаки: Shockwave Drive получает <code>+15% за каждую дополнительную цель</code>. Идеальный стиль — позиционируйся так, чтобы в каждой атаке оказывалось максимум врагов. Tornado Spear контролирует позиционирование врагов, помогая сгруппировать их для следующей волны.`,
+            steps: [
+                { num:'01', title:'Группируй врагов', desc:'Используй Tornado Spear чтобы стянуть врагов в одну точку перед Shockwave.' },
+                { num:'02', title:'Shockwave в центр', desc:'Ударная волна в центр группы = максимальный Crowd Bonus.' },
+                { num:'03', title:'Force Field при контратаке', desc:'Если враги переходят в атаку — поставь поле, затем немедленно Spear Rush.' },
+                { num:'04', title:'Outseal Storm на волне', desc:'Ультимейт работает лучше всего в начале новой волны врагов — сразу сбивает всех.' },
+            ]
+        },
+        mechs: [
+            { icon:'📊', title:'Crowd Bonus', desc:'Shockwave Drive: <strong>базовый +15% за врага</strong>. При 5 целях = +75% к урону. Лучший персонаж против орд.' },
+            { icon:'🌪️', title:'Tornado Physics', desc:'Торнадо <strong>физически перемещает врагов</strong>. Можно загнать группу в угол, затем нанести AoE из прямой точки.' },
+            { icon:'🌊', title:'Trail Damage', desc:'Энергетический след Spear Rush <strong>наносит урон повторно</strong>. Против медленных врагов — двойной AoE.' },
+            { icon:'💡', title:'Roguelite: Outseal Resonance', desc:'При максимуме зарядов Bloom Barrage <strong>Tornado Spear автоматически создаёт второй торнадо</strong>. Двойной зональный контроль.' },
+        ],
+        tips: [
+            '<strong>Позиционирование — всё.</strong> Маи без толпы — обычный средний боец. С толпой — разрушитель. Всегда ищи скопления врагов.',
+            '<strong>Tornado Spear как prep, не как атака.</strong> Его главная задача — собрать врагов в одну точку для Shockwave.',
+            '<strong>Force Field не для блока, а для контрудара.</strong> После поглощения удара немедленно атакуй — враг ещё в анимации своей атаки.',
+            '<strong>Outseal Storm в начале волны.</strong> Ультимейт сбивает врагов с ног. Используй его как открывающий ход, а не финишер.',
+            '<strong>Bloom Barrage для накопления, не для урона.</strong> 5 зарядов = усиленный Tornado. Не используй Bloom как основную DPS-ротацию.',
+        ]
+    },
+
+    hibiki: {
+        name: 'Hibiki Kohaku',
+        img: 'hibiki.jpg',
+        role: 'Скрытный боец',
+        tag: 'PROTOTYPE',
+        color: '#0a1322',
+        glow: '#5d6d7e',
+        stats: { ATK:85, DEF:50, SPD:85, HP:65, RANGE:45, SKILL:80 },
+        diff: '★★★',
+        diffText: 'Высокая — управление клонами требует планирования наперёд',
+        badges: ['Теневые клоны','Крит из тени','Кольцо окружения'],
+        heroDesc: `Хибики Кохаку — дворецкий в тени. Создаёт <strong>теневые клоны с задержкой</strong>, 
+            атакующие из всех направлений. Внезапный удар из тени гарантирует критический бонус. 
+            Он уже рядом. Вы просто ещё не знаете.`,
+        dossier: [
+            ['Имя', 'Hibiki Kohaku'],
+            ['Звание', 'Первый дворецкий Нобиле / Прототип'],
+            ['Происхождение', 'BlazBlue: Central Fiction (2015)'],
+            ['Тип', 'Человек / Искусственно улучшенный'],
+            ['Оружие', 'Два кинжала + теневые клоны'],
+            ['Особенность', 'Shadow Clone с задержкой атаки'],
+            ['Роль в игре', 'Скрытный ассасин / Окружение'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Из тени', text: 'Хибики начал как простой слуга. Его аномальный талант к имитации и исчезновению заметил Нобиле — и превратил в <strong>идеальный инструмент устранения</strong>.' },
+            { num: 'II', title: 'Прототип', text: 'Его называют "Прототипом" из-за неестественного сочетания скоростных и маскировочных способностей. <em>Технология, лежащая в основе, засекречена</em>. Возможно, даже для него самого.' },
+            { num: 'III', title: 'Молчаливый убийца', text: 'Хибики немногословен не из-за скромности — он просто <strong>не видит смысла в словах, если есть действия</strong>. Каждое его движение несёт смысл. Лишних нет.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'В петлях Entropy Хибики — идеальный агент: <strong>помнит всё, говорит только нужное</strong>. Его теневые клоны в условиях Entropy приобрели способность атаковать из прошлых временных следов петли.' },
+        ],
+        storyFull: `<p>Хибики Кохаку — персонаж, который никогда не объясняет своих действий. Это не высокомерие: просто к моменту, когда другие задают вопросы, <strong>он уже завершил дело</strong>.</p>
+            <p>В BlazBlue: Entropy Effect его теневые клоны эволюционировали. В условиях петли они не просто имитируют движения — они атакуют из <em>временных следов прошлых итераций</em>. Враг видит один Хибики. Получает удары от шести.</p>
+            <p>Его цель в Entropy неизвестна даже союзникам. Он двигается параллельно их усилиям, убирает препятствия раньше, чем другие их замечают. <strong>Возможно, он единственный, кто уже знает ответ.</strong></p>`,
+        quote: { text: '...он уже рядом. Вы просто ещё не знаете. Теперь — никто не должен.', attr: '— Hibiki Kohaku' },
+        skills: [
+            { icon:'👥', name:'Shadow Clone', type:'Ключевой', desc:'Создаёт до 3 теневых клонов, <strong>атакующих с задержкой 0.4 сек</strong> в той же точке. Формирует кольцо попаданий вокруг врага.' },
+            { icon:'💨', name:'Shadowstep', type:'Мобильность', desc:'Мгновенное перемещение за спину врага. <strong>Следующий удар — гарантированный крит</strong>. Без кулдауна при убийстве.' },
+            { icon:'⚡', name:'Twin Fang', type:'Активный', desc:'Быстрая серия ударов двумя кинжалами. <strong>7 ударов за 0.6 сек</strong>. Накапливает заряды для усиления Shadow Clone.' },
+            { icon:'🌀', name:'Clone Circle', type:'Комбо', desc:'Хибики и все активные клоны одновременно атакуют <strong>из разных точек кольца</strong>. При 3 клонах — полный захват врага без возможности уклонения.' },
+            { icon:'🔪', name:'Phantom Strike', type:'Крит', desc:'Удар, игнорирующий <strong>50% защиты</strong> врага. Самое высокое разовое penetration в его арсенале. Хорошо против бронированных.' },
+            { icon:'☠️', name:'Execution Protocol — Ультимейт', type:'Ультимейт', desc:'Хибики создаёт 6 клонов и все атакуют синхронно. <strong>Мгновенное уничтожение</strong> при HP врага ниже 30%. Против боссов — снимает 45% HP.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Shadow Clone Delay & Critical System',
+            desc: `Хибики — персонаж <strong>отложенного урона и окружения</strong>. Shadow Clone создаёт клонов, повторяющих его атаку с задержкой 0.4 сек. Это создаёт эффект "серии из ниоткуда": враг блокирует первый удар — и получает три следующих без возможности ответа. Shadowstep — мгновенная телепортация за спину — <code>гарантирует крит</code> на следующий удар.`,
+            steps: [
+                { num:'01', title:'Активируй клонов', desc:'3 Shadow Clone расставлены. Начни атаку — они повторят её через 0.4 сек.' },
+                { num:'02', title:'Shadowstep', desc:'Телепортируйся за спину врага. Следующий удар = крит.' },
+                { num:'03', title:'Twin Fang', desc:'Серия из 7 ударов + 7×3 ударов от клонов. Суммарно 28 попаданий за 1 сек.' },
+                { num:'04', title:'Clone Circle', desc:'При 3 клонах — активируй одновременную атаку. Полное окружение без выхода.' },
+            ]
+        },
+        mechs: [
+            { icon:'👤', title:'Clone Precision', desc:'Клоны повторяют <strong>точно то движение</strong>, что делал Хибики. Playstyle без отступлений = более предсказуемые клоны = лучшие комбо.' },
+            { icon:'⚡', title:'Crit Multiplier', desc:'Удар после Shadowstep: <strong>крит ×1.8</strong>. При прокачке через roguelite достигает ×2.5.' },
+            { icon:'🌑', title:'Shadow Persistence', desc:'Клоны существуют <strong>10 секунд</strong>. Можно расставить трёх и отступить — они продолжат атаковать.' },
+            { icon:'💀', title:'Roguelite: Phantom Protocol', desc:'Апгрейд — Shadowstep не имеет кулдауна. <strong>Мгновенная телепортация без ограничений</strong>. Каждый удар может быть критическим.' },
+        ],
+        tips: [
+            '<strong>Расставь клонов ДО сближения.</strong> К моменту твоего удара клоны уже готовы добить.',
+            '<strong>Shadowstep = твоя главная DPS-кнопка.</strong> Используй каждые 3-4 удара для постоянного крит-урона.',
+            '<strong>Clone Circle против боссов в уязвимой фазе.</strong> 28 ударов за 1 сек в момент открытия = максимальный урон.',
+            '<strong>Phantom Strike для бронированных элит.</strong> -50% к защите меняет ситуацию против врагов с высокой бронёй.',
+            '<strong>Execution Protocol как добивание.</strong> Не используй ульт как стартер — береги для момента, когда враг ниже 30% HP.',
+        ]
+    },
+
+    lambda: {
+        name: 'Lambda-11',
+        img: 'lambda.jpg',
+        role: 'Зональный боец',
+        tag: 'PRIME FIELD',
+        color: '#04201a',
+        glow: '#17a589',
+        stats: { ATK:80, DEF:45, SPD:70, HP:65, RANGE:80, SKILL:75 },
+        diff: '★★☆',
+        diffText: 'Средняя — зональный контроль требует стратегического мышления',
+        badges: ['Парящие клинки','Phantom Edge','Зональный контроль'],
+        heroDesc: `Lambda-11 — PRIME FIELD DEVICE Λ-11. Призывает <strong>нематериальные клинки-ловушки</strong>, 
+            которые создают зоны поражения в пространстве. 
+            Phantom Edge — массовый залп всех лезвий одновременно — делает её мастером контроля поля.`,
+        dossier: [
+            ['Имя', 'Lambda-11 / Λ-11'],
+            ['Тип', 'Prime Field Device (11-й экземпляр)'],
+            ['Происхождение', 'BlazBlue: Continuum Shift (2009)'],
+            ['Основа', 'Клон / реинкарнация Ню-13'],
+            ['Оружие', 'Summoned Blades — нематериальные клинки'],
+            ['Особенность', 'Phantom Edge — залп всех клинков'],
+            ['Роль в игре', 'Зональный боец / Боец с ловушками'],
+            ['Разработчик', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Фрагментированная память', text: 'Lambda-11 — Prime Field Device с повреждённым ядром памяти. Она помнит <strong>фрагменты</strong>: тепло, лицо, голос — но не имена и не контекст. Эти обрывки она собирает как мозаику.' },
+            { num: 'II', title: 'Лямбда и Рагна', text: '<em>Рагна the Bloodedge</em> — одно из немногих лиц, которое Lambda помнит чётко. Почему — она не знает. Защищать его кажется ей правильным, хотя она не может объяснить логику этого чувства.' },
+            { num: 'III', title: 'Phantom Blades', text: 'Способность призывать нематериальные клинки — не оружие в обычном понимании. Это <strong>расширение её воли</strong>: где Lambda думает — там появляется лезвие.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'Петли Entropy дают Lambda нечто бесценное: <strong>новые фрагменты памяти с каждым циклом</strong>. Постепенно мозаика складывается. Она ещё не знает, что увидит, когда картина станет полной.' },
+        ],
+        storyFull: `<p>Lambda-11 — персонаж тихой меланхолии и невероятной силы. Её повреждённое ядро памяти не делает её слабее — напротив, <strong>каждый бой она ведёт полностью в настоящем</strong>, не обременённая прошлым.</p>
+            <p>В BlazBlue: Entropy Effect петли выполняют для неё функцию, которую не выполнило ничто другое: <em>постепенно возвращают память</em>. Каждый новый цикл добавляет кусочек. Иногда это больно. Иногда это тепло.</p>
+            <p>Её Phantom Blades в условиях Entropy приобрели способность <strong>висеть в пространстве петли</strong> между сбросами. Входя в новый цикл, Lambda иногда обнаруживает свои клинки уже расставленными — отголоском прошлой жизни.</p>`,
+        quote: { text: 'STATUS: OPERATIONAL. MEMORY CORE: FRAGMENTED. ...тепло. Что это такое?', attr: '— Lambda-11' },
+        skills: [
+            { icon:'🗡️', name:'Sword Summoner', type:'Ключевой', desc:'Призывает парящие клинки в указанных точках. <strong>До 5 клинков одновременно</strong>. Враг, входящий в зону, немедленно получает удар.' },
+            { icon:'💥', name:'Phantom Edge', type:'Залп', desc:'<strong>Все призванные клинки</strong> одновременно атакуют ближайшие цели. Чем больше клинков — тем разрушительнее залп.' },
+            { icon:'🌊', name:'Blade Storm', type:'AoE', desc:'Lambda создаёт <strong>вращающийся барьер из клинков</strong> вокруг себя. Поражает всех ближних врагов и отталкивает. 5 сек активности.' },
+            { icon:'🔮', name:'Void Spike', type:'Направленный', desc:'Быстрый прямолинейный клинок на большой дальности. <strong>Пронизывает несколько врагов</strong> в линии. Хорошо против строёв.' },
+            { icon:'🛡️', name:'Blade Barrier', type:'Защитный', desc:'2 клинка встают перед Lambda как <strong>пассивный щит</strong>. Поглощают один удар, затем контратакуют автоматически.' },
+            { icon:'✨', name:'Calamity Edge — Ультимейт', type:'Ультимейт', desc:'Lambda призывает <strong>20 клинков</strong>, создающих поле смерти на всей арене. Phantom Edge по всем одновременно. Массовое уничтожение.' },
+        ],
+        mechMain: {
+            sub: '◈ Ключевая система',
+            title: 'Phantom Blade Network',
+            desc: `Lambda — персонаж <strong>подготовки поля и залпа</strong>. Sword Summoner расставляет клинки-ловушки, которые немедленно атакуют любого входящего в зону врага. Phantom Edge запускает <strong>все активные клинки одновременно</strong>. Чем больше клинков расставлено перед залпом — тем катастрофичнее результат. 5 клинков + Phantom Edge = мгновенный высокий урон по широкой зоне.`,
+            steps: [
+                { num:'01', title:'Расставь клинки', desc:'5 клинков по периметру арены или вокруг предполагаемой позиции врага.' },
+                { num:'02', title:'Загони врага', desc:'Void Spike загоняет врага в зону клинков. Blade Storm держит ближний периметр чистым.' },
+                { num:'03', title:'Phantom Edge', desc:'Все 5 клинков одновременно атакуют — ни одно направление не безопасно.' },
+                { num:'04', title:'Добивание', desc:'Blade Storm + оставшиеся клинки для добивания ослабленных врагов.' },
+            ]
+        },
+        mechs: [
+            { icon:'🗡️', title:'Persistent Blades', desc:'Клинки существуют <strong>12 секунд</strong> или до срабатывания. Расставь их заранее — они будут ждать.' },
+            { icon:'💫', title:'Blade Count Scaling', desc:'Phantom Edge: <strong>урон растёт квадратично</strong> от количества клинков. 1 клинок = ×1, 3 = ×2, 5 = ×3.5 суммарно.' },
+            { icon:'🌊', title:'Blade Storm as Barrier', desc:'Вращающийся барьер также <strong>deflect'ит снаряды</strong> назад к атакующим. Двойная функция: защита + контратака.' },
+            { icon:'⚡', title:'Roguelite: Infinite Phantoms', desc:'Апгрейд — клинки не исчезают после срабатывания, <strong>перезаряжаются</strong> за 2 сек и атакуют снова.' },
+        ],
+        tips: [
+            '<strong>5 клинков всегда.</strong> Phantom Edge при меньшем количестве теряет катастрофический потенциал. Расставляй максимум.',
+            '<strong>Позиционируй клинки по путям движения врагов.</strong> У входов в комнату, у позиции босса — там, куда враг обязан прийти.',
+            '<strong>Blade Barrier перед сильной атакой.</strong> Щит + контратака без потери темпа расстановки клинков.',
+            '<strong>Void Spike для загона, не для урона.</strong> Его цель — направить врага в зону действия клинков.',
+            '<strong>Calamity Edge как зачистка волны.</strong> 20 клинков + Phantom Edge = ни один враг не выживет. Береги для больших волн.',
+        ]
+    },
+
+    icey: {
+        name: 'ICEY',
+        img: 'icey.jpg',
+        role: 'Гость: Стремительный боец',
+        tag: '★ GUEST',
+        color: '#352800',
+        glow: '#f4d03f',
+        stats: { ATK:85, DEF:55, SPD:95, HP:70, RANGE:50, SKILL:65 },
+        diff: '★☆☆',
+        diffText: 'Низкая — интуитивный стиль, рекомендован для начинающих',
+        badges: ['★ Гостевой','Infinite Dash','Разрушение брони'],
+        heroDesc: `★ ГОСТЕВОЙ ПЕРСОНАЖ — ВСЕЛЕННАЯ ICEY ★<br>
+            Фирменный <strong>Infinite Dash</strong> — рывок в любом направлении без кулдауна. 
+            Скорость наравне с Таокакой. Специализируется на сломе вражеской брони. 
+            <em>«SAI, следующая цель — там!»</em>`,
+        dossier: [
+            ['Имя', 'ICEY'],
+            ['Тип', '★ Гостевой персонаж из игры ICEY (2016)'],
+            ['Разработчик', 'FantaBlade Network (оригинал)'],
+            ['Роль в BBE', 'Гостевой персонаж с уникальной механикой'],
+            ['Оружие', 'Двуручный меч + кибернетические улучшения'],
+            ['SAI', 'Голосовой ИИ-навигатор ICEY'],
+            ['Особенность', 'Infinite Dash — нулевой кулдаун рывка'],
+            ['Разработчик BBE', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'ICEY Universe', text: 'ICEY — кибернетический андроид, созданный для уничтожения Ina и её армии. В своей игре она разрушает четвёртую стену, <strong>следуя за голосом рассказчика</strong> — или бунтуя против него.' },
+            { num: 'II', title: 'SAI', text: 'Голосовой ИИ SAI сопровождает ICEY постоянно. В BlazBlue: Entropy Effect SAI <em>комментирует ситуацию в реальном времени</em>, иногда давая тактические подсказки, иногда просто удивляясь происходящему.' },
+            { num: 'III', title: 'Infinite Dash', text: '<strong>Ключевая способность ICEY</strong> — рывок без кулдауна в любом направлении. В своей вселенной это базовая механика. В мире BlazBlue это делает её самым мобильным персонажем после Таокаки.' },
+            { num: 'IV', title: 'В Entropy Effect', text: 'ICEY не понимает концепцию петли Entropy так, как другие персонажи. Для неё это просто <strong>очередное задание SAI</strong>. Её прагматизм оказывается неожиданно эффективным.' },
+        ],
+        storyFull: `<p>ICEY — персонаж без излишеств. Нет сложных мотиваций, нет тёмного прошлого (или она его не помнит). Есть цель, есть SAI, есть меч. <strong>Этого достаточно.</strong></p>
+            <p>В BlazBlue: Entropy Effect она воспринимает петлю с философским спокойствием: петля сбрасывается — значит, задание ещё не выполнено. <em>Продолжаем</em>. SAI регулярно пытается объяснить ей более детально. Она регулярно игнорирует детали.</p>
+            <p>Против всех ожиданий, такой подход оказывается эффективным. Пока другие анализируют и сомневаются, <strong>ICEY уже уничтожает следующую цель</strong>.</p>`,
+        quote: { text: 'SAI, следующая цель — там! Не отставай. Потом поговорим о смысле жизни.', attr: '— ICEY' },
+        skills: [
+            { icon:'💨', name:'Infinite Dash', type:'Ключевой', desc:'Рывок в любом направлении. <strong>Нет кулдауна</strong>. Каждый рывок может отменить текущую анимацию атаки. Основа всей мобильности ICEY.' },
+            { icon:'⚔️', name:'Blade Burst', type:'Активный', desc:'Серия стремительных рубящих ударов с подшагиванием. <strong>6 ударов за 0.7 сек</strong>. Каждый удар при рывке до него — крит.' },
+            { icon:'💥', name:'Armor Break', type:'Специальный', desc:'Удар, специально нацеленный на броню. <strong>Мгновенно снимает любой слой брони</strong>. Против боссов с тремя слоями брони — незаменим.' },
+            { icon:'🌀', name:'Dash Strike', type:'Рывок-атака', desc:'Комбинация рывка и удара в один момент. <strong>Неуязвимость на время рывка</strong>. Хорошо для уходов из AoE с одновременной контратакой.' },
+            { icon:'✨', name:'SAI: Overdrive', type:'Усиление', desc:'SAI активирует режим Overdrive: <strong>все атаки следующие 6 сек — криты</strong>. ICEY ускоряется дополнительно.' },
+            { icon:'⚡', name:'Infinity Chain — Ультимейт', type:'Ультимейт', desc:'ICEY выполняет <strong>серию из 20 рывков-ударов</strong> по всем врагам на арене. SAI направляет каждый. Разрушает любую броню автоматически.' },
+        ],
+        mechMain: {
+            sub: '★ Ключевая система',
+            title: 'Infinite Dash Mobility',
+            desc: `Весь стиль ICEY — <strong>постоянное движение без остановок</strong>. Infinite Dash без кулдауна позволяет атаковать, уклоняться и снова атаковать в непрерывном потоке. Атака после рывка получает бонус к урону. <code>SAI: Overdrive</code> превращает 6 секунд в период абсолютного доминирования. Идеальный стиль для агрессивных игроков.`,
+            steps: [
+                { num:'01', title:'Dash → Атака', desc:'Рывок к врагу, сразу удар — бонус к урону. Повторяй без остановок.' },
+                { num:'02', title:'Armor Break', desc:'Против бронированных врагов — сначала Armor Break, затем основной урон.' },
+                { num:'03', title:'SAI Overdrive', desc:'Активируй Overdrive перед сложной фазой — 6 сек крит-атак на боссе.' },
+                { num:'04', title:'Infinity Chain', desc:'Ультимейт для зачистки нескольких врагов или добивания ослабленного босса.' },
+            ]
+        },
+        mechs: [
+            { icon:'⚡', title:'Post-Dash Bonus', desc:'Каждая атака после рывка получает <strong>+20% к урону</strong>. При Overdrive + рывок + атака = максимальный damage output.' },
+            { icon:'🛡️', title:'Universal Armor Break', desc:'Armor Break работает против <strong>любого типа брони</strong> — магической, физической, временной. Уникально для ICEY.' },
+            { icon:'📡', title:'SAI Guidance', desc:'SAI пассивно <strong>указывает уязвимые точки</strong> боссов — подсветка цели на 0.5 сек каждые 3 удара.' },
+            { icon:'🌀', title:'Roguelite: Overclock', desc:'Апгрейд — Infinite Dash даёт <strong>неуязвимость на всё время рывка</strong>. Уклонение становится абсолютным.' },
+        ],
+        tips: [
+            '<strong>Никогда не стой на месте.</strong> ICEY без движения теряет все бонусы. Постоянный рывок-удар-рывок-удар.',
+            '<strong>Armor Break сразу.</strong> Не пытайся пробить броню обычными ударами — это трата времени. Один Armor Break и переходи к DPS.',
+            '<strong>SAI Overdrive перед открытием босса.</strong> 6 сек крита в момент уязвимости босса = максимально возможный урон.',
+            '<strong>Dash Strike для AoE уклонений.</strong> Когда босс запускает зональную атаку — рывок + контрудар одновременно.',
+            '<strong>Infinity Chain добивает нескольких.</strong> Против группы ослабленных элит ультимейт эффективнее, чем добивать поодиночке.',
+        ]
+    },
+
+    prisoner: {
+        name: 'The Prisoner',
+        img: 'thePrisoner.jpg',
+        role: 'Гость: Dead Cells',
+        tag: '★ DEAD CELLS',
+        color: '#1c1c1c',
+        glow: '#aab7b8',
+        stats: { ATK:80, DEF:60, SPD:75, HP:80, RANGE:55, SKILL:75 },
+        diff: '★★☆',
+        diffText: 'Средняя — адаптация трёх наборов требует гибкости',
+        badges: ['★ Гостевой','3 набора','Тайминг-парирование'],
+        heroDesc: `★ ГОСТЕВОЙ ПЕРСОНАЖ — DEAD CELLS ★<br>
+            Узник без лица. Три набора снаряжения: <strong>Ближний, Дальний, Ловушечный</strong>. 
+            Тайминговое парирование даёт крит ×2. 
+            <em>«Ещё одна ячейка. Ещё одна попытка.»</em>`,
+        dossier: [
+            ['Имя', 'The Prisoner / Безголовый Узник'],
+            ['Тип', '★ Гостевой персонаж из Dead Cells (2018)'],
+            ['Разработчик', 'Motion Twin (оригинал)'],
+            ['Роль в BBE', 'Гостевой персонаж с адаптивным стилем'],
+            ['Оружие', 'Три набора: клинки / лук / ловушки'],
+            ['Особенность', 'Тайминг-парирование = крит ×2'],
+            ['Природа', 'Паразитная слизь в телесной оболочке'],
+            ['Разработчик BBE', '91Act / Arc System Works'],
+        ],
+        lore: [
+            { num: 'I', title: 'Ячейки и смерть', text: 'Узник — это <strong>паразитная слизь</strong>, захватывающая мёртвые тела. В Dead Cells смерть — не конец, а точка сброса. Эта концепция делает его идеальным персонажем для roguelite.' },
+            { num: 'II', title: 'Адаптивность', text: 'Три набора снаряжения отражают философию Dead Cells: <em>не специализируйся — адаптируйся</em>. Ближний бой против агрессивных врагов, дальний против зональных, ловушки против групп.' },
+            { num: 'III', title: 'Тайминг-парирование', text: 'Фирменная механика из Dead Cells: <strong>парирование в точный момент</strong> отменяет урон и удваивает следующий крит. Требует рефлекса, вознаграждает мастерство.' },
+            { num: 'IV', title: 'Entropy Effect', text: 'Узник воспринимает петли Entropy с <strong>профессиональным спокойствием</strong>: он пережил тысячи смертей и сбросов. Очередная петля — просто другая ячейка. Его тактический опыт накоплен через бесчисленные неудачи.' },
+        ],
+        storyFull: `<p>The Prisoner — существо без лица, имени и цели, понятной другим. Он действует. Он умирает. Он возрождается. <strong>Это всё, что ему нужно знать.</strong></p>
+            <p>В BlazBlue: Entropy Effect его философия сброса оказывается удивительно созвучна природе петель: <em>каждая смерть — информация, каждая попытка — улучшение</em>. Другие персонажи ищут способ разорвать цикл. Узник просто хочет пройти его лучше.</p>
+            <p>Его три набора снаряжения в условиях Entropy адаптируются к аномалиям петли. В некоторых циклах его ловушки работают через временные следы. В других его парирование поглощает само время. <strong>Entropy для него — просто новый уровень.</strong></p>`,
+        quote: { text: 'Ещё одна ячейка. Ещё одна попытка. Это нормально. Это привычно.', attr: '— The Prisoner' },
+        skills: [
+            { icon:'⚔️', name:'Набор Ближнего Боя', type:'Ближний', desc:'Два быстрых клинка. <strong>Высокая скорость удара, урон в ближней дистанции</strong>. Лучший набор против агрессивных врагов в ближнем бою.' },
+            { icon:'🏹', name:'Набор Дальнего Боя', type:'Дальний', desc:'Лук и метательные ножи. <strong>Атаки с безопасной дистанции</strong>. Хорошо против зональных врагов и снайперов. Стрелы пронизывают нескольких врагов.' },
+            { icon:'⚙️', name:'Набор Ловушек', type:'Ловушечный', desc:'Яды, капканы, шипы. <strong>Пассивный урон по площади</strong>. Лучший набор против групп врагов. Ловушки срабатывают автоматически.' },
+            { icon:'🛡️', name:'Perfect Parry', type:'Парирование', desc:'Тайминговое парирование: <strong>точный момент = крит ×2</strong> на следующий удар + отмена входящего урона. Доступен всегда, независимо от набора.' },
+            { icon:'💉', name:'Malaise Blade', type:'Яд', desc:'Удар с ядом Dead Cells. Враг получает <strong>10% HP в секунду</strong> в течение 6 сек. Против боссов суммарно наносит значительный урон.' },
+            { icon:'☠️', name:'Boss Cell — Ультимейт', type:'Ультимейт', desc:'Узник временно входит в режим Boss Cell. <strong>Все атаки критические</strong>, парирование не требует тайминга. 5 секунд абсолютного доминирования.' },
+        ],
+        mechMain: {
+            sub: '★ Ключевая система',
+            title: 'Arsenal Adaptation & Perfect Parry',
+            desc: `Узник — персонаж <strong>адаптивного мышления</strong>. Три набора снаряжения меняются налету — каждый оптимален для разных ситуаций. Perfect Parry требует точного тайминга: <code>в узком окне 0.2 сек</code> при входящей атаке — отмена урона и удвоенный крит следующего удара. Комбинация правильного набора + Perfect Parry = максимальный DPS в любой ситуации.`,
+            steps: [
+                { num:'01', title:'Оцени врага', desc:'Ближний боец? Ближний набор. Дальнобойный? Дальний. Толпа? Ловушечный.' },
+                { num:'02', title:'Perfect Parry', desc:'Ждёт атаки врага. В момент удара — парирование. Получи крит ×2.' },
+                { num:'03', title:'Смена набора', desc:'Если ситуация изменилась — смени набор без задержки. Нет кулдауна.' },
+                { num:'04', title:'Boss Cell', desc:'При опасной ситуации или начале уязвимой фазы — Boss Cell для 5 сек абсолютного урона.' },
+            ]
+        },
+        mechs: [
+            { icon:'🔄', title:'Seamless Switching', desc:'Смена набора <strong>без кулдауна</strong>. Можно менять в середине анимации атаки для максимальной гибкости.' },
+            { icon:'⏱️', title:'Parry Window', desc:'Окно Perfect Parry — <strong>0.2 секунды</strong>. Визуальная подсказка: лёгкая вспышка при входе врага в анимацию атаки.' },
+            { icon:'☠️', title:'Poison Stacking', desc:'Malaise Blade может быть применён <strong>несколько раз</strong>. Каждое наложение добавляет стак: 1 стак = 10%/сек, 3 стака = 30%/сек.' },
+            { icon:'💀', title:'Roguelite: Death is Temporary', desc:'Апгрейд — смерть даёт <strong>+15% ко всем характеристикам</strong> в текущем запуске. Погибни намеренно в начале — и получи усиление навсегда в этом цикле.' },
+        ],
+        tips: [
+            '<strong>Оценивай врага перед боем, не в процессе.</strong> Неправильный набор — потеря DPS. Правильный — доминирование.',
+            '<strong>Perfect Parry — главный приоритет обучения.</strong> 0.2 сек окно сначала сложно. Тренируй на рядовых. Крит ×2 меняет всё.',
+            '<strong>Ловушечный набор против орд, не боссов.</strong> Против одиночных боссов ловушки менее эффективны — используй ближний или дальний.',
+            '<strong>Boss Cell как спасательный инструмент.</strong> При критической ситуации — Boss Cell даёт 5 сек для выхода из трудного положения.',
+            '<strong>Roguelite: Death is Temporary — намеренная стратегия.</strong> Умри в первой комнате, получи +15%, начни сначала усиленным.',
+        ]
+    }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   ПОРЯДОК ПЕРСОНАЖЕЙ (для навигации пред/след)
+   ═══════════════════════════════════════════════════════════ */
+const CHAR_ORDER = [
+    'ragna','jin','noel','taokaka','rachel','hakumen',
+    'es','kokonoe','mai','hibiki','lambda','icey','prisoner'
+];
+
+/* ═══════════════════════════════════════════════════════════
+   ЧИТАЕМ ID ИЗ URL
+   ═══════════════════════════════════════════════════════════ */
+function getCharId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id') || 'es';
+}
+
+const charId = getCharId();
+const char   = CHARS_DATA[charId];
+
+if (!char) {
+    document.body.innerHTML = '<div style="color:#fff;text-align:center;padding:5rem;font-family:monospace;font-size:1.2rem;">Персонаж не найден. <a href="index.html" style="color:#74c0fc;">← На главную</a></div>';
+    throw new Error('Character not found: ' + charId);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ПРИМЕНЯЕМ ЦВЕТОВУЮ ТЕМУ
+   ═══════════════════════════════════════════════════════════ */
+const root = document.documentElement;
+root.style.setProperty('--cp',   char.glow);
+root.style.setProperty('--cpd',  char.color);
+root.style.setProperty('--cpg',  char.glow);
+root.style.setProperty('--cpa',  char.glow);
+root.style.setProperty('--cpdim', char.color);
+
+/* ═══════════════════════════════════════════════════════════
+   НАВИГАЦИЯ ПРЕД/СЛЕД
+   ═══════════════════════════════════════════════════════════ */
+const curIdx  = CHAR_ORDER.indexOf(charId);
+const prevId  = CHAR_ORDER[(curIdx - 1 + CHAR_ORDER.length) % CHAR_ORDER.length];
+const nextId  = CHAR_ORDER[(curIdx + 1) % CHAR_ORDER.length];
+const prevChar = CHARS_DATA[prevId];
+const nextChar = CHARS_DATA[nextId];
+
+function setNavLinks() {
+    const navBtns = [
+        ['navPrevChar', prevId, '◀ ' + prevChar.name.split(' ')[0]],
+        ['navNextChar', nextId, nextChar.name.split(' ')[0] + ' ▶'],
+        ['footerPrev',  prevId, '◀ ' + prevChar.name.split(' ')[0]],
+        ['footerNext',  nextId, nextChar.name.split(' ')[0] + ' ▶'],
+    ];
+    navBtns.forEach(([id, cid, label]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.href = 'character.html?id=' + cid;
+            el.textContent = label;
+        }
+    });
+}
+setNavLinks();
+
+/* ═══════════════════════════════════════════════════════════
+   УСТАНАВЛИВАЕМ ЗАГОЛОВОК
+   ═══════════════════════════════════════════════════════════ */
+document.title = char.name + ' — BlazBlue: Entropy Effect';
+document.getElementById('cpHeaderTitle').textContent = char.name.split(' ')[0] + ' — ' + char.tag;
+document.getElementById('cpFooterMain').textContent = char.name + ' — BlazBlue: Entropy Effect © 91Act / Arc System Works';
+
+/* ═══════════════════════════════════════════════════════════
+   УТИЛИТА: СЕКЦИЯ
+   ═══════════════════════════════════════════════════════════ */
+function makeSection(num, title, content) {
+    return `<section class="cp-section">
+        <div class="cp-section-inner">
+            <div class="cp-section-head">
+                <span class="cp-section-num">${num}</span>
+                <div class="cp-section-line rev"></div>
+                <h2 class="cp-section-title">${title}</h2>
+                <div class="cp-section-line"></div>
+            </div>
+            ${content}
+        </div>
+    </section>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   РЕНДЕР HERO-СЕКЦИИ
+   ═══════════════════════════════════════════════════════════ */
+function renderHero() {
+    const qsKeys = Object.keys(char.stats);
+    const qsHtml = qsKeys.map(k => `
+        <div class="cp-qs">
+            <div class="cp-qs-val">${char.stats[k]}</div>
+            <div class="cp-qs-lbl">${k}</div>
+        </div>`).join('');
+
+    const badgesHtml = char.badges.map(b =>
+        `<span class="cp-badge">${b}</span>`).join('');
+
+    return `<section style="position:relative;z-index:1;background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, color-mix(in srgb,var(--cp) 10%,transparent) 0%,transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, color-mix(in srgb,var(--cpd) 20%,transparent) 0%,transparent 60%);">
+        <div class="cp-hero">
+            <div>
+                <div class="cp-tag">◈ ${char.tag} · PLAYABLE</div>
+                <h1 class="cp-hero-name">${char.name.split(' ')[0]}<br>
+                    ${char.name.split(' ').slice(1).join(' ')}</h1>
+                <div class="cp-hero-role">${char.role}</div>
+                <div class="cp-quick-stats">${qsHtml}</div>
+                <p class="cp-hero-desc">${char.heroDesc}</p>
+                <div class="cp-tags-row">${badgesHtml}</div>
+            </div>
+            <div>
+                <div class="cp-char-frame">
+                    <div class="cp-deco-el" style="border:1.5px solid var(--cp);border-radius:2px;"></div>
+                    <div class="cp-deco-el" style="border:1.5px solid var(--cpg);border-radius:2px;"></div>
+                    <div class="cp-deco-el" style="border:1.5px solid var(--cp);border-radius:50%;"></div>
+                    <div class="cp-deco-el" style="border:1.5px solid var(--cpg);border-radius:2px;"></div>
+                    <img src="${char.img}" class="cp-char-img" alt="${char.name}">
+                    <div class="cp-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   РЕНДЕР ДОСЬЕ
+   ═══════════════════════════════════════════════════════════ */
+function renderDossier() {
+    const rows = char.dossier.map(([k, v]) => `
+        <div class="cp-dossier-row">
+            <div class="cp-dossier-key">${k}</div>
+            <div class="cp-dossier-val">${v}</div>
+        </div>`).join('');
+
+    const statKeys = Object.keys(char.stats);
+    const statBars = statKeys.map((k, i) => `
+        <div class="cp-stat-row">
+            <span class="cp-stat-label">${k}</span>
+            <div class="cp-stat-bar">
+                <div class="cp-stat-fill" data-width="${char.stats[k]}" style="transition-delay:${i*0.1}s"></div>
+            </div>
+            <span class="cp-stat-val">${char.stats[k]}</span>
+        </div>`).join('');
+
+    const stars = char.diff.length;
+    const starsHtml = char.diff.split('').map(s =>
+        `<span>${s}</span>`).join('');
+
+    return makeSection('01', 'Досье персонажа', `
+        <div class="cp-dossier">
+            <div class="cp-dossier-table">${rows}</div>
+            <div class="cp-stats-block">
+                <div style="font-family:var(--font-display);font-size:0.68rem;font-weight:800;
+                     letter-spacing:0.18em;text-transform:uppercase;color:var(--cpg);margin-bottom:0.5rem;">
+                    Боевые характеристики
+                </div>
+                ${statBars}
+                <div class="cp-diff-block">
+                    <div class="cp-diff-label">Рейтинг сложности</div>
+                    <div class="cp-diff-stars">
+                        ${starsHtml}
+                        <span class="cp-diff-text">${char.diffText}</span>
+                    </div>
+                </div>
+            </div>
+        </div>`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   РЕНДЕР ИСТОРИИ
+   ═══════════════════════════════════════════════════════════ */
+function renderStory() {
+    const cards = char.lore.map(l => `
+        <div class="cp-story-card">
+            <div class="cp-story-num">${l.num}</div>
+            <div class="cp-story-title">${l.title}</div>
+            <div class="cp-story-text">${l.text}</div>
+        </div>`).join('');
+
+    return makeSection('02', 'История персонажа', `
+        <div class="cp-story-grid">${cards}</div>
+        <div class="cp-story-full">${char.storyFull}</div>
+        <div class="cp-quote">
+            <div class="cp-quote-text">${char.quote.text.replace('\n','<br>')}</div>
+            <div class="cp-quote-attr">${char.quote.attr}</div>
+        </div>`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   РЕНДЕР НАВЫКОВ
+   ═══════════════════════════════════════════════════════════ */
+function renderSkills() {
+    const cards = char.skills.map(s => `
+        <div class="cp-skill-card">
+            <div class="cp-skill-icon">${s.icon}</div>
+            <div class="cp-skill-info">
+                <div class="cp-skill-name">${s.name}</div>
+                <div class="cp-skill-type">${s.type}</div>
+                <div class="cp-skill-desc">${s.desc}</div>
+            </div>
+        </div>`).join('');
+
+    return makeSection('03', 'Навыки и приёмы', `
+        <div class="cp-skills-grid">${cards}</div>`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   РЕНДЕР МЕХАНИК
+   ═══════════════════════════════════════════════════════════ */
+function renderMechanics() {
+    const m = char.mechMain;
+    const steps = m.steps.map(s => `
+        <div class="cp-mstep">
+            <div class="cp-mstep-num">${s.num}</div>
+            <div class="cp-mstep-title">${s.title}</div>
+            <div class="cp-mstep-desc">${s.desc}</div>
+        </div>`).join('');
+
+    const mechCards = char.mechs.map(mc => `
+        <div class="cp-mech-card">
+            <div class="cp-mech-head">
+                <div class="cp-mech-icon">${mc.icon}</div>
+                <div class="cp-mech-title">${mc.title}</div>
+            </div>
+            <div class="cp-mech-desc">${mc.desc}</div>
+        </div>`).join('');
+
+    return makeSection('04', 'Основные механики', `
+        <div class="cp-mechanic-hero">
+            <div class="cp-mechanic-hero-sub">${m.sub}</div>
+            <div class="cp-mechanic-hero-title">${m.title}</div>
+            <div class="cp-mechanic-hero-desc">${m.desc}</div>
+            <div class="cp-mech-steps">${steps}</div>
+        </div>
+        <div class="cp-mechs-grid">${mechCards}</div>`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   РЕНДЕР СОВЕТОВ
+   ═══════════════════════════════════════════════════════════ */
+function renderTips() {
+    const items = char.tips.map(t => `
+        <li>
+            <span class="cp-tip-bullet">◈</span>
+            <span>${t}</span>
+        </li>`).join('');
+
+    return makeSection('05', 'Советы по игре', `
+        <ul class="cp-tips">${items}</ul>`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   СОБИРАЕМ СТРАНИЦУ
+   ═══════════════════════════════════════════════════════════ */
+const main = document.getElementById('cpMain');
+main.innerHTML =
+    renderHero() +
+    renderDossier() +
+    renderStory() +
+    renderSkills() +
+    renderMechanics() +
+    renderTips();
+
+/* ═══════════════════════════════════════════════════════════
+   АНИМАЦИЯ ПОЯВЛЕНИЯ СЕКЦИЙ (Intersection Observer)
+   ═══════════════════════════════════════════════════════════ */
+(function() {
+    const sections = document.querySelectorAll('.cp-section');
+    // Hero-секция сразу видима
+    const heroSection = document.querySelector('section[style*="radial-gradient"]');
+    if (heroSection) heroSection.classList.add('visible');
+
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    sections.forEach(s => io.observe(s));
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   АНИМАЦИЯ ПОЛОС СТАТОВ
+   ═══════════════════════════════════════════════════════════ */
+(function() {
+    let animated = false;
+    const statsBlock = document.querySelector('.cp-stats-block');
+    if (!statsBlock) return;
+
+    const io = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !animated) {
+            animated = true;
+            document.querySelectorAll('.cp-stat-fill').forEach((fill, i) => {
+                const w = fill.getAttribute('data-width');
+                setTimeout(() => { fill.style.width = w + '%'; }, 150 + i * 100);
+            });
+            io.disconnect();
+        }
+    }, { threshold: 0.3 });
+    io.observe(statsBlock);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   ПРОГРЕСС-БАР СКРОЛЛА
+   ═══════════════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (scrolled / total * 100) : 0;
+    document.getElementById('scrollProgress').style.width = pct + '%';
+});
+
+/* ═══════════════════════════════════════════════════════════
+   КНОПКА НАВЕРХ
+   ═══════════════════════════════════════════════════════════ */
+document.getElementById('cpBackTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ═══════════════════════════════════════════════════════════
+   CANVAS ФОН (Neural Web в цветах персонажа)
+   ═══════════════════════════════════════════════════════════ */
+(function() {
+    const cv  = document.getElementById('charBg');
+    const ctx = cv.getContext('2d');
+
+    // Парсим glow-цвет персонажа в RGB
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1,3), 16);
+        const g = parseInt(hex.slice(3,5), 16);
+        const b = parseInt(hex.slice(5,7), 16);
+        return [r, g, b];
+    }
+
+    const rgb = hexToRgb(char.glow);
+    const darkRgb = hexToRgb(char.color);
+
+    function resize() {
+        cv.width  = window.innerWidth;
+        cv.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const N = 65, LINK = 145;
+    let t = 0;
+
+    const nodes = Array.from({length: N}, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random()-0.5)*0.4,
+        vy: (Math.random()-0.5)*0.4,
+        r:  1.5 + Math.random()*2,
+        phase: Math.random()*Math.PI*2
+    }));
+
+    function animate() {
+        const W = cv.width, H = cv.height;
+        ctx.clearRect(0,0,W,H);
+
+        // Фон с тёмным оттенком персонажа
+        ctx.fillStyle = `rgb(${darkRgb[0]*0.4|0},${darkRgb[1]*0.4|0},${darkRgb[2]*0.4|0})`;
+        ctx.fillRect(0,0,W,H);
+
+        // Радиальный глоу
+        const grd = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,H*0.6);
+        grd.addColorStop(0, `rgba(${darkRgb},0.25)`);
+        grd.addColorStop(1, 'transparent');
+        ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+
+        // Движение узлов
+        nodes.forEach(n => {
+            n.x+=n.vx; n.y+=n.vy;
+            if(n.x<0||n.x>W) n.vx*=-1;
+            if(n.y<0||n.y>H) n.vy*=-1;
+        });
+
+        // Связи
+        for(let i=0;i<nodes.length;i++) {
+            for(let j=i+1;j<nodes.length;j++) {
+                const a=nodes[i],b=nodes[j];
+                const d=Math.hypot(a.x-b.x,a.y-b.y);
+                if(d<LINK) {
+                    const alpha=(1-d/LINK)*0.2;
+                    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+                    ctx.strokeStyle=`rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+                    ctx.lineWidth=(1-d/LINK)*1.1; ctx.stroke();
+                }
+            }
+        }
+
+        // Узлы
+        nodes.forEach(nd => {
+            const pulse=(Math.sin(t*0.03+nd.phase)+1)/2;
+            const r=nd.r+pulse*1.5;
+            const g=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,r*3.5);
+            g.addColorStop(0,`rgba(${rgb[0]},${rgb[1]},${rgb[2]},${0.35+pulse*0.3})`);
+            g.addColorStop(1,`rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)`);
+            ctx.fillStyle=g;
+            ctx.beginPath();ctx.arc(nd.x,nd.y,r*3.5,0,Math.PI*2);ctx.fill();
+            ctx.fillStyle=`rgba(${rgb[0]},${rgb[1]},${rgb[2]},${0.6+pulse*0.4})`;
+            ctx.beginPath();ctx.arc(nd.x,nd.y,r,0,Math.PI*2);ctx.fill();
+        });
+
+        t++;
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
+</script>
+</body>
+</html>

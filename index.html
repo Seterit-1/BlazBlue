@@ -367,7 +367,7 @@
        КНОПКА СТРАНИЦЫ ПЕРСОНАЖА
        ══════════════════════════════════════════ */
     .detail-panel {
-        position: relative; /* нужно для absolute-позиционирования кнопки */
+        position: relative;
     }
 
     .char-page-btn {
@@ -435,7 +435,6 @@
         box-shadow: 0 0 18px rgba(220,60,0,0.35), inset 0 0 12px rgba(200,40,0,0.08);
     }
 
-    /* адаптив — на узких экранах убираем absolute и даём нормальный поток */
     @media (max-width: 768px) {
         .char-page-btn {
             position: static;
@@ -446,10 +445,7 @@
         }
     }
 
-    /* ══════════════════════════════════════════
-       ИСПРАВЛЕНИЕ: убираем вертикальную полоску
-       на активной (центральной) карточке
-       ══════════════════════════════════════════ */
+    /* Исправление: убираем вертикальную полоску на активной карточке */
     .c-panel.center .panel-glow-line {
         display: none;
     }
@@ -675,7 +671,7 @@
                     </div>
                 </div>
 
-                <!-- ══ КНОПКА СТРАНИЦЫ ПЕРСОНАЖА (правый нижний угол) ══ -->
+                <!-- КНОПКА СТРАНИЦЫ ПЕРСОНАЖА -->
                 <a href="#" class="char-page-btn" id="charPageBtn"
                    title="Открыть страницу персонажа">
                     ◈ СТРАНИЦА ПЕРСОНАЖА
@@ -733,29 +729,27 @@
 <script>
 
 /* ═══════════════════════════════════════════
-   ДАННЫЕ ПЕРСОНАЖЕЙ
+   ДАННЫЕ ПЕРСОНАЖЕЙ (ОЧИЩЕННАЯ ВЕРСИЯ)
    ═══════════════════════════════════════════ */
 const characters = [
     {
         id: 'ragna',
-        name: 'Ragna the Bloodedge',
+        name: 'Ragna',
         img: 'ragna.jpg',
         role: 'Ближний боец',
         type: 'melee',
-        tag: 'BLOODEDGE',
-        color: '#8b1a1a',
+        tag: 'SS-КЛАСС', // ИЗМЕНЕНО: Bloodedge заменён на SS-КЛАСС
+        color: '#3d0a0a',
         glow: '#e74c3c',
         stats: { atk: 90, def: 50, spd: 70, hp: 85 },
         desc: `
 <span style="font-size:1.12em;font-weight:900;letter-spacing:3px;
       color:#e74c3c;text-transform:uppercase;
       text-shadow:0 0 12px #e74c3c88;">
-  УНИЧТОЖИТЬ ВСЕХ. ТОЧКА.
+  СИЛА ЛАЗУРНОГО ГРИМУАРА
 </span><br><br>
-Ragna машет двуручным тесаком и использует
-<strong style="color:#e74c3c;">Azure Grimoire</strong> —
-проклятую правую руку, пожирающую душу врагов.
-Каждый удар активирует пассивный
+Ragna использует мощь <strong style="color:#e74c3c;">Azure Grimoire</strong>.
+Каждый удар активирует пассивный эффект
 <span style="font-family:'Courier New',monospace;font-size:0.88em;color:#ff8888;">Soul&nbsp;Eater</span>:
 часть нанесённого урона возвращается как <em>восстановление HP</em>.<br><br>
 Чем <strong style="color:#ff4444;">ниже полоса здоровья</strong>,
@@ -763,14 +757,14 @@ Ragna машет двуручным тесаком и использует
 При критически низком HP активируется режим
 <span style="font-weight:900;font-size:1.05em;color:#ff2222;text-shadow:0 0 10px #ff000099;">BERSERKER</span>.<br><br>
 <span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Заткнись и дерись. Мне некогда с тобой разговаривать.»
+  «Хватит болтать. Покажи, на что способен.»
 </span>`,
         abilities: [
-            '<strong>Soul Eater</strong> — вампиризм: урон → HP',
+            '<strong>Soul Eater</strong> — восстановление HP от урона',
             'Берсерк при низком HP',
-            'Dead Spike — тёмная волна из земли',
-            'Inferno Divider — огненный апперкот',
-            'Gauntlet Hades — таранный рывок'
+            'Dead Spike — тёмная волна',
+            'Inferno Divider — удар вверх',
+            'Gauntlet Hades — таран'
         ],
         diff: '★★☆'
     },
@@ -1039,7 +1033,7 @@ Ragna машет двуручным тесаком и использует
             'Внезапный удар из тени — крит',
             'Кольцо окружения из клонов',
             'Скрытное перемещение',
-            'Асассин: мгновенное убийство'
+            'Асассин: мгновенное устранение' // ИЗМЕНЕНО: "убийство" -> "устранение"
         ],
         diff: '★★★'
     },
@@ -1129,7 +1123,7 @@ Ragna машет двуручным тесаком и использует
             'Тайминг-парирование — крит ×2',
             'Адаптивный стиль под ситуацию',
             'Яды и капканы — пассивный урон',
-            'Смерть — временна (особый перк)'
+            'Особый перк при поражении' // ИЗМЕНЕНО: "Смерть — временна" -> "Особый перк"
         ],
         diff: '★★☆'
     }
@@ -1138,7 +1132,7 @@ Ragna машет двуручным тесаком и использует
 /* ═══════════════════════════════════════════
    СОСТОЯНИЕ
    ═══════════════════════════════════════════ */
-let selectedIndex  = 6;
+let selectedIndex  = 0; // Начинаем с Ragna (индекс 0)
 let currentFilter  = 'all';
 let activeTheme    = 'new';
 
@@ -1299,7 +1293,7 @@ function renderCarousel(animate) {
 }
 
 /* ═══════════════════════════════════════════
-   ДЕТАЛЬНАЯ ПАНЕЛЬ
+   ДЕТАЛЬНАЯ ПАНЕЛЬ (ИЗМЕНЕНО)
    ═══════════════════════════════════════════ */
 function renderDetail() {
     var c = characters[selectedIndex];
@@ -1330,16 +1324,38 @@ function renderDetail() {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
 
-/* Обновляем ссылку кнопки страницы персонажа */
-var pageBtn = document.getElementById('charPageBtn');
-pageBtn.style.borderColor = c.glow + '55';
-pageBtn.style.color       = c.glow;
-pageBtn.href              = 'character.html?id=' + c.id;
-pageBtn.style.opacity     = '1';
-pageBtn.style.pointerEvents = 'auto';
-pageBtn.style.cursor      = 'pointer';
-pageBtn.setAttribute('title', 'Открыть страницу ' + c.name.split(' ')[0]);
+    /* ═══════════════════════════════════════════
+       ИЗМЕНЕНО: УПРАВЛЕНИЕ КНОПКОЙ СТРАНИЦЫ ПЕРСОНАЖА
+       ═══════════════════════════════════════════ */
+    var pageBtn = document.getElementById('charPageBtn');
+    
+    // Стилизуем кнопку под цвет персонажа
+    pageBtn.style.borderColor = c.glow + '55';
+    pageBtn.style.color = c.glow;
+    
+    // Определяем, какая страница существует (пока только es и ragna)
+    if (c.id === 'es') {
+        pageBtn.href = 'es.html';
+        pageBtn.style.opacity = '1';
+        pageBtn.style.pointerEvents = 'auto';
+        pageBtn.style.cursor = 'pointer';
+        pageBtn.setAttribute('title', 'Открыть страницу Es');
+    } else if (c.id === 'ragna') {
+        pageBtn.href = 'ragna.html';
+        pageBtn.style.opacity = '1';
+        pageBtn.style.pointerEvents = 'auto';
+        pageBtn.style.cursor = 'pointer';
+        pageBtn.setAttribute('title', 'Открыть страницу Ragna');
+    } else {
+        // Для остальных персонажей кнопка неактивна
+        pageBtn.href = '#';
+        pageBtn.style.opacity = '0.4';
+        pageBtn.style.pointerEvents = 'none';
+        pageBtn.style.cursor = 'default';
+        pageBtn.setAttribute('title', 'Страница в разработке');
+    }
 }
+
 /* ═══════════════════════════════════════════
    НАВИГАЦИЯ КАРУСЕЛИ
    ═══════════════════════════════════════════ */
@@ -1347,6 +1363,11 @@ document.getElementById('navPrev').addEventListener('click', function() {
     selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
     renderCarousel(true); renderDetail();
 });
+document.getElementById('navNext').addEventListener('click', function() {
+    selectedIndex = (selectedIndex + 1) % characters.length;
+    renderCarousel(true); renderDetail();
+});
+
 /* ═══════════════════════════════════════════
    КЛАВИАТУРНАЯ НАВИГАЦИЯ ← →
    ═══════════════════════════════════════════ */

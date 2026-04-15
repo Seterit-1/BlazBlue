@@ -1324,48 +1324,59 @@ function renderDetail() {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
 
-    /* ═══════════════════════════════════════════
-       ИЗМЕНЕНО: УПРАВЛЕНИЕ КНОПКОЙ СТРАНИЦЫ ПЕРСОНАЖА
-       ═══════════════════════════════════════════ */
-    var pageBtn = document.getElementById('charPageBtn');
-    
-    // Стилизуем кнопку под цвет персонажа
-    pageBtn.style.borderColor = c.glow + '55';
-    pageBtn.style.color = c.glow;
-    
-    // Определяем, какая страница существует (пока только es и ragna)
-    if (c.id === 'es') {
-        pageBtn.href = 'es.html';
-        pageBtn.style.opacity = '1';
-        pageBtn.style.pointerEvents = 'auto';
-        pageBtn.style.cursor = 'pointer';
-        pageBtn.setAttribute('title', 'Открыть страницу Es');
-    } else if (c.id === 'ragna') {
-        pageBtn.href = 'ragna.html';
-        pageBtn.style.opacity = '1';
-        pageBtn.style.pointerEvents = 'auto';
-        pageBtn.style.cursor = 'pointer';
-        pageBtn.setAttribute('title', 'Открыть страницу Ragna');
-    } else if (c.id === 'rachel') {
-        pageBtn.href = 'rachel.html';
-        pageBtn.style.opacity = '1';
-        pageBtn.style.pointerEvents = 'auto';
-        pageBtn.style.cursor = 'pointer';
-        pageBtn.setAttribute('title', 'Открыть страницу Rachel');
-    } else if (c.id === 'taokaka') {
-        pageBtn.href = 'taokaka.html';
-        pageBtn.style.opacity = '1';
-        pageBtn.style.pointerEvents = 'auto';
-        pageBtn.style.cursor = 'pointer';
-        pageBtn.setAttribute('title', 'Открыть страницу Taokaka');
-    } else {
-        // Для остальных персонажей кнопка неактивна
-        pageBtn.href = '#';
-        pageBtn.style.opacity = '0.4';
-        pageBtn.style.pointerEvents = 'none';
-        pageBtn.style.cursor = 'default';
-        pageBtn.setAttribute('title', 'Страница в разработке');
-    }
+  /* ═══════════════════════════════════════════
+   ИЗМЕНЕНО: УПРАВЛЕНИЕ КНОПКОЙ СТРАНИЦЫ ПЕРСОНАЖА
+   ═══════════════════════════════════════════ */
+var pageBtn = document.getElementById('charPageBtn');
+
+// Стилизуем кнопку под цвет персонажа
+pageBtn.style.borderColor = c.glow + '55';
+pageBtn.style.color = c.glow;
+
+// Определяем, какая страница существует
+if (c.id === 'es') {
+    pageBtn.href = 'es.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Es');
+} else if (c.id === 'ragna') {
+    pageBtn.href = 'ragna.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Ragna');
+} else if (c.id === 'rachel') {
+    pageBtn.href = 'rachel.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Rachel');
+} else if (c.id === 'taokaka') {
+    pageBtn.href = 'taokaka.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Taokaka');
+} else if (c.id === 'noel') {        // <-- ДОБАВИТЬ
+    pageBtn.href = 'noel.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Noel');
+} else if (c.id === 'jin') {         // <-- ДОБАВИТЬ
+    pageBtn.href = 'jin.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Jin');
+} else {
+    pageBtn.href = '#';
+    pageBtn.style.opacity = '0.4';
+    pageBtn.style.pointerEvents = 'none';
+    pageBtn.style.cursor = 'default';
+    pageBtn.setAttribute('title', 'Страница в разработке');
+}
 }
 
 /* ═══════════════════════════════════════════

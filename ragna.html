@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ragna — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* Переменные темы Ragna */
+    :root {
+        --ragna-primary: #e74c3c;
+        --ragna-dark: #3d0a0a;
+        --ragna-glow: #ff6b6b;
+        --ragna-accent: #c0392b;
+        --ragna-dim: #7b241c;
+    }
+
+    html, body { scroll-behavior: smooth; background: #0a0505; }
+
+    #ragnaBg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Шапка */
+    .ragna-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: rgba(10, 3, 3, 0.95);
+        border-bottom: 2px solid var(--ragna-primary);
+        box-shadow: 0 2px 40px rgba(231, 76, 60, 0.3);
+    }
+    .ragna-header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+    .ragna-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1.2rem;
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ragna-glow);
+        border: 1px solid rgba(231, 76, 60, 0.35);
+        border-radius: var(--radius-sm);
+        background: rgba(231, 76, 60, 0.07);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .ragna-back-btn:hover {
+        background: rgba(231, 76, 60, 0.2);
+        border-color: var(--ragna-primary);
+        color: #fff;
+        box-shadow: 0 0 16px rgba(231, 76, 60, 0.4);
+        transform: translateX(-3px);
+    }
+    .ragna-header-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .ragna-header-logo svg {
+        width: 38px;
+        height: 34px;
+        filter: drop-shadow(0 0 6px rgba(231, 76, 60, 0.7));
+    }
+    .ragna-header-title {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 900;
+        color: var(--ragna-glow);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-shadow: 0 0 14px rgba(231, 76, 60, 0.6);
+    }
+    .ragna-breadcrumb {
+        font-family: var(--font-main);
+        font-size: 0.7rem;
+        color: var(--clr-text-dim);
+        letter-spacing: 0.12em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .ragna-breadcrumb span { color: rgba(136,146,176,0.35); }
+
+    /* Hero */
+    .ragna-hero {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 5rem 2rem 4rem;
+        gap: 4rem;
+    }
+    .ragna-hero-info { order: 1; }
+    .ragna-hero-visual { order: 2; display: flex; justify-content: center; }
+
+    .ragna-tag {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        font-family: var(--font-display);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--ragna-dim);
+        border: 1px solid var(--ragna-primary);
+        border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem;
+        box-shadow: 0 0 14px rgba(231, 76, 60, 0.4);
+    }
+    .ragna-hero-name {
+        font-family: var(--font-display);
+        font-size: clamp(3.5rem, 7vw, 6rem);
+        font-weight: 900;
+        color: #fff;
+        line-height: 0.9;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(231, 76, 60, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .ragna-hero-subtitle {
+        font-family: var(--font-logo);
+        font-size: 0.75rem;
+        letter-spacing: 0.35em;
+        color: var(--ragna-primary);
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+        margin-bottom: 2rem;
+    }
+
+    /* Статы */
+    .ragna-quick-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .ragna-qs-item {
+        padding: 0.9rem 0.75rem;
+        background: rgba(231, 76, 60, 0.06);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-md);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    .ragna-qs-item:hover {
+        background: rgba(231, 76, 60, 0.15);
+        border-color: var(--ragna-primary);
+        transform: translateY(-3px);
+    }
+    .ragna-qs-val {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: var(--ragna-glow);
+        line-height: 1;
+        text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+    }
+    .ragna-qs-lbl {
+        font-family: var(--font-main);
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--clr-text-dim);
+        text-transform: uppercase;
+        margin-top: 0.3rem;
+    }
+
+    .ragna-hero-desc {
+        font-family: var(--font-main);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        line-height: 1.8;
+        border-left: 2px solid var(--ragna-primary);
+        padding-left: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .ragna-char-frame {
+        position: relative;
+        width: 340px;
+        height: 420px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+    .ragna-char-frame::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(231, 76, 60, 0.25) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: ragnaGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes ragnaGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .ragna-char-img {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(231, 76, 60, 0.7)) drop-shadow(0 0 70px rgba(231, 76, 60, 0.3));
+        animation: ragnaFloat 4s ease-in-out infinite;
+    }
+    @keyframes ragnaFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+
+    .ragna-char-platform {
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 160px;
+        height: 6px;
+        background: linear-gradient(90deg, transparent, var(--ragna-primary), transparent);
+        border-radius: 50%;
+        filter: blur(4px);
+        opacity: 0.6;
+        animation: ragnaGlowPulse 3s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    /* Секции */
+    .ragna-section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 2rem;
+    }
+    .ragna-section:nth-child(even) {
+        background: rgba(60, 10, 10, 0.15);
+        border-top: 1px solid rgba(231, 76, 60, 0.15);
+        border-bottom: 1px solid rgba(231, 76, 60, 0.15);
+    }
+    .ragna-section-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .ragna-section-head {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        margin-bottom: 3rem;
+    }
+    .ragna-section-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, var(--ragna-primary), transparent);
+    }
+    .ragna-section-line.rev { background: linear-gradient(90deg, transparent, var(--ragna-primary)); }
+    .ragna-section-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ragna-glow);
+        text-shadow: 0 0 18px rgba(231, 76, 60, 0.5);
+        white-space: nowrap;
+    }
+
+    /* Досье */
+    .ragna-dossier {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    .ragna-dossier-table {
+        background: rgba(60, 10, 10, 0.3);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+    .ragna-dossier-row {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        border-bottom: 1px solid rgba(231, 76, 60, 0.1);
+    }
+    .ragna-dossier-row:last-child { border-bottom: none; }
+    .ragna-dossier-key {
+        padding: 0.85rem 1.2rem;
+        font-family: var(--font-display);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        color: var(--ragna-primary);
+        border-right: 1px solid rgba(231, 76, 60, 0.15);
+    }
+    .ragna-dossier-val {
+        padding: 0.85rem 1.2rem;
+        font-family: var(--font-main);
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--clr-text);
+    }
+
+    .ragna-stats-block {
+        background: rgba(60, 10, 10, 0.3);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 1.8rem;
+    }
+    .ragna-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .ragna-stat-label { width: 38px; color: var(--clr-text-dim); }
+    .ragna-stat-bar { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; }
+    .ragna-stat-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--ragna-dark), var(--ragna-primary)); box-shadow: 0 0 8px rgba(231, 76, 60, 0.6); width: 0%; }
+    .ragna-stat-val { width: 30px; color: var(--ragna-glow); }
+
+    /* История */
+    .ragna-story-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    .ragna-story-card {
+        background: rgba(60, 10, 10, 0.2);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 1.8rem;
+    }
+    .ragna-story-card-num {
+        font-family: var(--font-logo);
+        font-size: 2rem;
+        font-weight: 900;
+        color: rgba(231, 76, 60, 0.2);
+        line-height: 1;
+    }
+    .ragna-story-card-title {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--ragna-glow);
+        margin-bottom: 0.8rem;
+    }
+    .ragna-story-card-text {
+        font-family: var(--font-main);
+        font-size: 0.88rem;
+        color: var(--clr-text-dim);
+        line-height: 1.8;
+    }
+
+    .ragna-quote {
+        margin: 2.5rem 0;
+        padding: 1.5rem 2rem;
+        background: rgba(231, 76, 60, 0.05);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-md);
+        text-align: center;
+    }
+
+    /* Навыки */
+    .ragna-skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.2rem;
+    }
+    .ragna-skill-card {
+        background: rgba(60, 10, 10, 0.25);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        display: flex;
+        gap: 1.1rem;
+    }
+    .ragna-skill-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        background: rgba(231, 76, 60, 0.15);
+        border: 1px solid rgba(231, 76, 60, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+    .ragna-skill-name {
+        font-family: var(--font-display);
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: var(--ragna-glow);
+        margin-bottom: 0.4rem;
+    }
+    .ragna-skill-desc {
+        font-size: 0.83rem;
+        color: var(--clr-text-dim);
+        line-height: 1.7;
+    }
+
+    /* Футер */
+    .ragna-footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(4, 2, 2, 0.98);
+        border-top: 1px solid rgba(231, 76, 60, 0.2);
+    }
+
+    @media (max-width: 900px) {
+        .ragna-hero { grid-template-columns: 1fr; }
+        .ragna-dossier { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="ragnaBg"></canvas>
+
+<header class="ragna-header">
+    <div class="ragna-header-inner">
+        <a href="index.html" class="ragna-back-btn">← НАЗАД</a>
+        <div class="ragna-header-logo">
+            <svg viewBox="0 0 100 88"><polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(231,76,60,0.9)" stroke-width="3"/><line x1="4" y1="82" x2="96" y2="82" stroke="rgba(231,76,60,0.9)" stroke-width="3"/></svg>
+            <span class="ragna-header-title">Ragna — SS-класс</span>
+        </div>
+        <div class="ragna-breadcrumb">BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--ragna-glow)">Ragna</span></div>
+    </div>
+</header>
+
+<main>
+    <section style="position:relative; z-index:1;">
+        <div class="ragna-hero">
+            <div class="ragna-hero-info">
+                <div class="ragna-tag">◈ SS-КЛАСС · ПРЕСТУПНИК</div>
+                <h1 class="ragna-hero-name">Ragna</h1>
+                <div class="ragna-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+                <div class="ragna-quick-stats">
+                    <div class="ragna-qs-item"><div class="ragna-qs-val">90</div><div class="ragna-qs-lbl">Атака</div></div>
+                    <div class="ragna-qs-item"><div class="ragna-qs-val">50</div><div class="ragna-qs-lbl">Защита</div></div>
+                    <div class="ragna-qs-item"><div class="ragna-qs-val">70</div><div class="ragna-qs-lbl">Скорость</div></div>
+                    <div class="ragna-qs-item"><div class="ragna-qs-val">85</div><div class="ragna-qs-lbl">HP</div></div>
+                    <div class="ragna-qs-item"><div class="ragna-qs-val">★★☆</div><div class="ragna-qs-lbl">Сложность</div></div>
+                    <div class="ragna-qs-item"><div class="ragna-qs-val">Ближний</div><div class="ragna-qs-lbl">Тип боя</div></div>
+                </div>
+                <p class="ragna-hero-desc">
+                    Ragna — обладатель <strong style="color:var(--ragna-glow)">Azure Grimoire</strong> (Лазурного Гримуара). 
+                    Его сила позволяет наносить огромный урон и восстанавливать здоровье в бою. 
+                    Чем опаснее ситуация, тем разрушительнее его атаки.
+                </p>
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="border:1px solid rgba(231,76,60,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--ragna-glow);">Вампиризм</span>
+                    <span style="border:1px solid rgba(231,76,60,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--ragna-glow);">Берсерк</span>
+                    <span style="border:1px solid rgba(231,76,60,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--ragna-glow);">Тёмная энергия</span>
+                </div>
+            </div>
+            <div class="ragna-hero-visual">
+                <div class="ragna-char-frame">
+                    <img src="ragna.jpg" class="ragna-char-img" alt="Ragna">
+                    <div class="ragna-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Досье -->
+    <section class="ragna-section">
+        <div class="ragna-section-inner">
+            <div class="ragna-section-head"><h2 class="ragna-section-title">Досье</h2><div class="ragna-section-line"></div></div>
+            <div class="ragna-dossier">
+                <div class="ragna-dossier-table">
+                    <div class="ragna-dossier-row"><div class="ragna-dossier-key">Имя</div><div class="ragna-dossier-val">Ragna</div></div>
+                    <div class="ragna-dossier-row"><div class="ragna-dossier-key">Оружие</div><div class="ragna-dossier-val">Клинок-полуторник</div></div>
+                    <div class="ragna-dossier-row"><div class="ragna-dossier-key">Способность</div><div class="ragna-dossier-val">Azure Grimoire (Поглощение энергии)</div></div>
+                    <div class="ragna-dossier-row"><div class="ragna-dossier-key">Роль</div><div class="ragna-dossier-val">Агрессивный ближний бой</div></div>
+                </div>
+                <div class="ragna-stats-block">
+                    <div class="ragna-stat-row"><span class="ragna-stat-label">ATK</span><div class="ragna-stat-bar"><div class="ragna-stat-fill" style="width:90%"></div></div><span class="ragna-stat-val">90</span></div>
+                    <div class="ragna-stat-row"><span class="ragna-stat-label">DEF</span><div class="ragna-stat-bar"><div class="ragna-stat-fill" style="width:50%"></div></div><span class="ragna-stat-val">50</span></div>
+                    <div class="ragna-stat-row"><span class="ragna-stat-label">SPD</span><div class="ragna-stat-bar"><div class="ragna-stat-fill" style="width:70%"></div></div><span class="ragna-stat-val">70</span></div>
+                    <div class="ragna-stat-row"><span class="ragna-stat-label">HP</span><div class="ragna-stat-bar"><div class="ragna-stat-fill" style="width:85%"></div></div><span class="ragna-stat-val">85</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- История -->
+    <section class="ragna-section">
+        <div class="ragna-section-inner">
+            <div class="ragna-section-head"><h2 class="ragna-section-title">История</h2><div class="ragna-section-line"></div></div>
+            <div class="ragna-story-grid">
+                <div class="ragna-story-card"><div class="ragna-story-card-num">I</div><div class="ragna-story-card-title">Происхождение</div><div class="ragna-story-card-text">Ragna — знаменитый преступник с огромной наградой за голову. Его главная цель — уничтожение Библиотеки и её правителей.</div></div>
+                <div class="ragna-story-card"><div class="ragna-story-card-num">II</div><div class="ragna-story-card-title">Azure Grimoire</div><div class="ragna-story-card-text">Лазурный Гримуар заменил ему правую руку, дав силу поглощать энергию врагов и восстанавливать собственные силы.</div></div>
+                <div class="ragna-story-card"><div class="ragna-story-card-num">III</div><div class="ragna-story-card-title">Характер</div><div class="ragna-story-card-text">Грубый и прямолинейный, но обладает обострённым чувством справедливости. Ненавидит, когда слабых обижают.</div></div>
+                <div class="ragna-story-card"><div class="ragna-story-card-num">IV</div><div class="ragna-story-card-title">Entropy Effect</div><div class="ragna-story-card-text">В мире временных петель Ragna инстинктивно чувствует аномалии и прорывается сквозь них грубой силой.</div></div>
+            </div>
+            <div class="ragna-quote"><div class="ragna-quote-text" style="color:#fff; font-style:italic;">«Хватит болтать. Покажи, на что способен.»</div></div>
+        </div>
+    </section>
+
+    <!-- Навыки -->
+    <section class="ragna-section">
+        <div class="ragna-section-inner">
+            <div class="ragna-section-head"><h2 class="ragna-section-title">Навыки</h2><div class="ragna-section-line"></div></div>
+            <div class="ragna-skills-grid">
+                <div class="ragna-skill-card"><div class="ragna-skill-icon">⚔</div><div class="ragna-skill-info"><div class="ragna-skill-name">Soul Eater</div><div class="ragna-skill-desc">Пассивно: часть урона возвращается в виде восстановления HP.</div></div></div>
+                <div class="ragna-skill-card"><div class="ragna-skill-icon">🔥</div><div class="ragna-skill-info"><div class="ragna-skill-name">Inferno Divider</div><div class="ragna-skill-desc">Восходящий удар с тёмным пламенем, подбрасывает врага в воздух.</div></div></div>
+                <div class="ragna-skill-card"><div class="ragna-skill-icon">🌑</div><div class="ragna-skill-info"><div class="ragna-skill-name">Dead Spike</div><div class="ragna-skill-desc">Выпускает теневую волну, которая преследует противника.</div></div></div>
+                <div class="ragna-skill-card"><div class="ragna-skill-icon">💀</div><div class="ragna-skill-info"><div class="ragna-skill-name">Carnage Scissors</div><div class="ragna-skill-desc">Мощный захват с рывком и сокрушительным ударом.</div></div></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="ragna-footer">
+    <p>BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <button id="ragnaBackTop" style="margin-top:1.5rem; padding:0.5rem 1.5rem; border:1px solid var(--ragna-primary); color:var(--ragna-glow); background:none; cursor:pointer;">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+    (function() {
+        var cv = document.getElementById('ragnaBg');
+        var ctx = cv.getContext('2d');
+        function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+        resize(); window.addEventListener('resize', resize);
+        var nodes = Array.from({ length: 50 }, () => ({ x: Math.random()*cv.width, y: Math.random()*cv.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 }));
+        function animate() {
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            ctx.fillStyle = '#0a0505'; ctx.fillRect(0, 0, cv.width, cv.height);
+            for (var i = 0; i < nodes.length; i++) {
+                var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+                if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+                if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+                var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+                g.addColorStop(0, 'rgba(231, 76, 60, 0.15)'); g.addColorStop(1, 'transparent');
+                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'rgba(231, 76, 60, 0.4)'; ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2); ctx.fill();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+        document.getElementById('ragnaBackTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    })();
+</script>
+</body>
+</html>

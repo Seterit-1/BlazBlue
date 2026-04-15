@@ -6,7 +6,6 @@
     <title>Es — BlazBlue: Entropy Effect</title>
     <link rel="stylesheet" href="style.css">
     <style>
-
     /* ══════════════════════════════════════════
        ПЕРЕМЕННЫЕ ТЕМЫ Es
        ══════════════════════════════════════════ */
@@ -18,14 +17,8 @@
         --es-dim     : #0d5c47;
     }
 
-    /* ══════════════════════════════════════════
-       СТРАНИЦА
-       ══════════════════════════════════════════ */
     html, body { scroll-behavior: smooth; }
 
-    /* ══════════════════════════════════════════
-       ФОН CANVAS
-       ══════════════════════════════════════════ */
     #esBg {
         position: fixed;
         inset: 0;
@@ -33,9 +26,7 @@
         pointer-events: none;
     }
 
-    /* ══════════════════════════════════════════
-       ШАПКА
-       ══════════════════════════════════════════ */
+    /* ШАПКА */
     .es-header {
         position: sticky;
         top: 0;
@@ -110,9 +101,7 @@
     }
     .es-breadcrumb span { color: rgba(136,146,176,0.35); }
 
-    /* ══════════════════════════════════════════
-       HERO СЕКЦИЯ
-       ══════════════════════════════════════════ */
+    /* HERO СЕКЦИЯ */
     .es-hero {
         position: relative;
         z-index: 1;
@@ -128,7 +117,6 @@
     .es-hero-info { order: 1; }
     .es-hero-visual { order: 2; display: flex; justify-content: center; }
 
-    /* Тег */
     .es-tag {
         display: inline-block;
         padding: 0.3rem 1rem;
@@ -152,9 +140,7 @@
         line-height: 0.9;
         letter-spacing: 0.04em;
         text-transform: uppercase;
-        text-shadow:
-            0 0 40px rgba(26,188,156,0.5),
-            0 4px 20px rgba(0,0,0,0.8);
+        text-shadow: 0 0 40px rgba(26,188,156,0.5), 0 4px 20px rgba(0,0,0,0.8);
         margin-bottom: 0.4rem;
     }
     .es-hero-subtitle {
@@ -167,7 +153,6 @@
         margin-bottom: 2rem;
     }
 
-    /* Быстрые характеристики */
     .es-quick-stats {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -205,7 +190,6 @@
         margin-top: 0.3rem;
     }
 
-    /* Краткое описание */
     .es-hero-desc {
         font-family: var(--font-main);
         font-size: 0.95rem;
@@ -217,7 +201,6 @@
         margin-bottom: 2rem;
     }
 
-    /* Визуал персонажа */
     .es-char-frame {
         position: relative;
         width: 340px;
@@ -230,8 +213,7 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(ellipse 80% 90% at 50% 60%,
-            rgba(26,188,156,0.18) 0%, transparent 70%);
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(26,188,156,0.18) 0%, transparent 70%);
         border-radius: 50%;
         animation: esGlowPulse 3s ease-in-out infinite;
     }
@@ -246,9 +228,7 @@
         height: 100%;
         object-fit: contain;
         object-position: top center;
-        filter:
-            drop-shadow(0 0 30px rgba(26,188,156,0.6))
-            drop-shadow(0 0 70px rgba(26,188,156,0.25));
+        filter: drop-shadow(0 0 30px rgba(26,188,156,0.6)) drop-shadow(0 0 70px rgba(26,188,156,0.25));
         animation: esFloat 4s ease-in-out infinite;
     }
     @keyframes esFloat {
@@ -256,7 +236,6 @@
         50% { transform: translateY(-14px); }
     }
 
-    /* Декоративные кресты */
     .es-cross {
         position: absolute;
         width: 24px;
@@ -283,7 +262,6 @@
         30%,70% { opacity: 0.7; transform: scale(1) rotate(45deg); }
     }
 
-    /* Полоса под персонажем */
     .es-char-platform {
         position: absolute;
         bottom: -10px;
@@ -299,9 +277,7 @@
         z-index: 1;
     }
 
-    /* ══════════════════════════════════════════
-       РАЗДЕЛИТЕЛЬ СЕКЦИЙ
-       ══════════════════════════════════════════ */
+    /* РАЗДЕЛИТЕЛЬ СЕКЦИЙ */
     .es-section {
         position: relative;
         z-index: 1;
@@ -348,9 +324,7 @@
         white-space: nowrap;
     }
 
-    /* ══════════════════════════════════════════
-       БЛОК ДОСЬЕ
-       ══════════════════════════════════════════ */
+    /* ДОСЬЕ */
     .es-dossier {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -393,7 +367,6 @@
         line-height: 1.5;
     }
 
-    /* Статистика */
     .es-stats-block {
         background: rgba(8,61,48,0.2);
         border: 1px solid rgba(26,188,156,0.18);
@@ -448,9 +421,7 @@
         width: 30px;
     }
 
-    /* ══════════════════════════════════════════
-       ИСТОРИЯ
-       ══════════════════════════════════════════ */
+    /* ИСТОРИЯ */
     .es-story-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -496,7 +467,6 @@
     .es-story-card-text strong { color: var(--es-glow); font-weight: 700; }
     .es-story-card-text em    { color: var(--clr-text); font-style: italic; }
 
-    /* Полное описание истории */
     .es-story-full {
         margin-top: 2rem;
         padding: 2rem;
@@ -517,7 +487,6 @@
     .es-story-full strong { color: var(--es-glow); }
     .es-story-full em { color: var(--clr-text); }
 
-    /* Цитата */
     .es-quote {
         margin: 2.5rem 0;
         padding: 1.5rem 2rem;
@@ -542,9 +511,7 @@
         text-transform: uppercase;
     }
 
-    /* ══════════════════════════════════════════
-       НАВЫКИ
-       ══════════════════════════════════════════ */
+    /* НАВЫКИ */
     .es-skills-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -625,9 +592,7 @@
     }
     .es-skill-desc strong { color: var(--es-primary); }
 
-    /* ══════════════════════════════════════════
-       МЕХАНИКИ
-       ══════════════════════════════════════════ */
+    /* МЕХАНИКИ */
     .es-mechanic-hero {
         background: rgba(8,61,48,0.2);
         border: 1px solid rgba(26,188,156,0.25);
@@ -825,9 +790,7 @@
         text-align: right;
     }
 
-    /* ══════════════════════════════════════════
-       СОВЕТЫ / TIPS
-       ══════════════════════════════════════════ */
+    /* СОВЕТЫ / TIPS */
     .es-tips-list {
         list-style: none;
         display: flex;
@@ -861,9 +824,7 @@
     }
     .es-tips-list strong { color: var(--es-glow); }
 
-    /* ══════════════════════════════════════════
-       ФУТЕР
-       ══════════════════════════════════════════ */
+    /* ФУТЕР */
     .es-footer {
         position: relative;
         z-index: 1;
@@ -906,9 +867,7 @@
         box-shadow: 0 0 10px rgba(26,188,156,0.25);
     }
 
-    /* ══════════════════════════════════════════
-       АДАПТИВ
-       ══════════════════════════════════════════ */
+    /* АДАПТИВ */
     @media (max-width: 900px) {
         .es-hero { grid-template-columns: 1fr; text-align: center; padding: 3rem 1.5rem; }
         .es-hero-info { order: 2; }
@@ -929,38 +888,24 @@
     @media (max-width: 400px) {
         .es-mechanic-steps { grid-template-columns: 1fr; }
     }
-
     </style>
 </head>
 <body>
 
-<!-- ═══ ФОН ═══ -->
 <canvas id="esBg"></canvas>
 
-<!-- ═══════════════════════════════════════════
-     ШАПКА
-     ═══════════════════════════════════════════ -->
 <header class="es-header">
     <div class="es-header-inner">
-
-        <a href="index.html" class="es-back-btn">
-            ← НАЗАД
-        </a>
-
+        <a href="index.html" class="es-back-btn">← НАЗАД</a>
         <div class="es-header-logo">
             <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="50,4 96,82 4,82" fill="none"
-                    stroke="rgba(26,188,156,0.9)" stroke-width="3" stroke-linejoin="round"/>
-                <line x1="4" y1="82" x2="96" y2="82"
-                    stroke="rgba(26,188,156,0.9)" stroke-width="3"/>
-                <polyline points="50,22 68,64 32,64" fill="none"
-                    stroke="rgba(118,215,196,0.85)" stroke-width="2" stroke-linejoin="round"/>
-                <line x1="38" y1="53" x2="62" y2="53"
-                    stroke="rgba(118,215,196,0.85)" stroke-width="2"/>
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(26,188,156,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(26,188,156,0.9)" stroke-width="3"/>
+                <polyline points="50,22 68,64 32,64" fill="none" stroke="rgba(118,215,196,0.85)" stroke-width="2" stroke-linejoin="round"/>
+                <line x1="38" y1="53" x2="62" y2="53" stroke="rgba(118,215,196,0.85)" stroke-width="2"/>
             </svg>
             <span class="es-header-title">Es — Azure Shrine Maiden</span>
         </div>
-
         <div class="es-breadcrumb">
             BlazBlue: Entropy Effect
             <span>/</span>
@@ -968,108 +913,60 @@
             <span>/</span>
             <span style="color:var(--es-glow)">Es</span>
         </div>
-
     </div>
 </header>
 
 <main>
 
-    <!-- ═══════════════════════════════════════════
-         HERO
-         ═══════════════════════════════════════════ -->
     <section style="position:relative; z-index:1; background:
         radial-gradient(ellipse 60% 80% at 60% 50%, rgba(26,188,156,0.1) 0%, transparent 70%),
         radial-gradient(ellipse 40% 60% at 20% 40%, rgba(8,61,48,0.2) 0%, transparent 60%);">
 
         <div class="es-hero">
-
             <div class="es-hero-info">
                 <div class="es-tag">◈ AZURE SHRINE MAIDEN · PLAYABLE</div>
                 <h1 class="es-hero-name">Es</h1>
                 <div class="es-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
 
                 <div class="es-quick-stats">
-                    <div class="es-qs-item">
-                        <div class="es-qs-val">80</div>
-                        <div class="es-qs-lbl">Атака</div>
-                    </div>
-                    <div class="es-qs-item">
-                        <div class="es-qs-val">65</div>
-                        <div class="es-qs-lbl">Защита</div>
-                    </div>
-                    <div class="es-qs-item">
-                        <div class="es-qs-val">65</div>
-                        <div class="es-qs-lbl">Скорость</div>
-                    </div>
-                    <div class="es-qs-item">
-                        <div class="es-qs-val">75</div>
-                        <div class="es-qs-lbl">HP</div>
-                    </div>
-                    <div class="es-qs-item">
-                        <div class="es-qs-val">★★★</div>
-                        <div class="es-qs-lbl">Сложность</div>
-                    </div>
-                    <div class="es-qs-item">
-                        <div class="es-qs-val">Ближний</div>
-                        <div class="es-qs-lbl">Тип боя</div>
-                    </div>
+                    <div class="es-qs-item"><div class="es-qs-val">80</div><div class="es-qs-lbl">Атака</div></div>
+                    <div class="es-qs-item"><div class="es-qs-val">65</div><div class="es-qs-lbl">Защита</div></div>
+                    <div class="es-qs-item"><div class="es-qs-val">65</div><div class="es-qs-lbl">Скорость</div></div>
+                    <div class="es-qs-item"><div class="es-qs-val">75</div><div class="es-qs-lbl">HP</div></div>
+                    <div class="es-qs-item"><div class="es-qs-val">★★★</div><div class="es-qs-lbl">Сложность</div></div>
+                    <div class="es-qs-item"><div class="es-qs-val">Ближний</div><div class="es-qs-lbl">Тип боя</div></div>
                 </div>
 
                 <p class="es-hero-desc">
-                    Es — искусственно созданный боевой юнит и Хранительница Лазурного Алтаря.
-                    Её уникальная боевая система основана на <strong style="color:var(--es-glow)">точном
-                    тайминге</strong> — размещении крестообразных символов в пространстве
-                    и их активации в строго определённый момент. Чем точнее синхронизация,
-                    тем мощнее атака.
+                    Es танцует по экрану плавными движениями, позволяющими избегать урона и оставаться в воздухе невероятно долго.
+                    С огромным мечом в руках и мастерским владением техникой «Crests» (печатей), Es наносит огромный урон,
+                    оставляя за собой дополнительную зону поражения с каждым ударом.[reference:0]
                 </p>
 
                 <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
-                    <span style="display:inline-block;padding:0.3rem 0.9rem;
-                          font-family:var(--font-display);font-size:0.65rem;font-weight:800;
-                          letter-spacing:0.12em;text-transform:uppercase;
-                          color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);
-                          border-radius:3px;">Тайминг-система</span>
-                    <span style="display:inline-block;padding:0.3rem 0.9rem;
-                          font-family:var(--font-display);font-size:0.65rem;font-weight:800;
-                          letter-spacing:0.12em;text-transform:uppercase;
-                          color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);
-                          border-radius:3px;">Зональный контроль</span>
-                    <span style="display:inline-block;padding:0.3rem 0.9rem;
-                          font-family:var(--font-display);font-size:0.65rem;font-weight:800;
-                          letter-spacing:0.12em;text-transform:uppercase;
-                          color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);
-                          border-radius:3px;">Запечатывание</span>
-                    <span style="display:inline-block;padding:0.3rem 0.9rem;
-                          font-family:var(--font-display);font-size:0.65rem;font-weight:800;
-                          letter-spacing:0.12em;text-transform:uppercase;
-                          color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);
-                          border-radius:3px;">Высокая сложность</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);border-radius:3px;">Печати (Crests)</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);border-radius:3px;">Воздушный бой</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--es-glow);border:1px solid rgba(26,188,156,0.3);border-radius:3px;">Контроль зон</span>
                 </div>
             </div>
 
             <div class="es-hero-visual">
                 <div class="es-char-frame">
-                    <!-- Декоративные кресты -->
                     <div class="es-cross es-cross-1"></div>
                     <div class="es-cross es-cross-2"></div>
                     <div class="es-cross es-cross-3"></div>
                     <div class="es-cross es-cross-4"></div>
                     <div class="es-cross es-cross-5"></div>
-
                     <img src="es-new.jpg" class="es-char-img" alt="Es — Azure Shrine Maiden">
                     <div class="es-char-platform"></div>
                 </div>
             </div>
-
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         ДОСЬЕ
-         ═══════════════════════════════════════════ -->
+    <!-- ДОСЬЕ -->
     <section class="es-section">
         <div class="es-section-inner">
-
             <div class="es-section-head">
                 <span class="es-section-num">01</span>
                 <div class="es-section-line rev"></div>
@@ -1078,554 +975,223 @@
             </div>
 
             <div class="es-dossier">
-
                 <div class="es-dossier-table">
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Имя</div>
-                        <div class="es-dossier-val">Es (ЭС)</div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Прозвище</div>
-                        <div class="es-dossier-val">Azure Shrine Maiden<br>
-                            <span style="font-size:0.78em;color:var(--clr-text-dim);">Хранительница Лазурного Алтаря</span>
-                        </div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Происхождение</div>
-                        <div class="es-dossier-val">XBlaze: Code Embryo (2013)<br>
-                            <span style="font-size:0.78em;color:var(--clr-text-dim);">Впервые в BlazBlue: Centralfiction (2015)</span>
-                        </div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Тип</div>
-                        <div class="es-dossier-val">Искусственный боевой юнит</div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Оружие</div>
-                        <div class="es-dossier-val">Kerykeion<br>
-                            <span style="font-size:0.78em;color:var(--clr-text-dim);">Меч-жезл с крестообразной гардой</span>
-                        </div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Миссия</div>
-                        <div class="es-dossier-val">Запечатывание Кристаллов Предела</div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Роль в игре</div>
-                        <div class="es-dossier-val">Пространственный боец / Timing-Fighter</div>
-                    </div>
-                    <div class="es-dossier-row">
-                        <div class="es-dossier-key">Разработчик</div>
-                        <div class="es-dossier-val">91Act / Arc System Works</div>
-                    </div>
+                    <div class="es-dossier-row"><div class="es-dossier-key">Имя</div><div class="es-dossier-val">Es (ЭС)</div></div>
+                    <div class="es-dossier-row"><div class="es-dossier-key">Прозвище</div><div class="es-dossier-val">Azure Shrine Maiden</div></div>
+                    <div class="es-dossier-row"><div class="es-dossier-key">Оружие</div><div class="es-dossier-val">Огромный меч, оставляющий печати (Crests)</div></div>
+                    <div class="es-dossier-row"><div class="es-dossier-key">Уникальная механика</div><div class="es-dossier-val">The Power of Crests — генерация печатей при уклонении</div></div>
+                    <div class="es-dossier-row"><div class="es-dossier-key">Роль</div><div class="es-dossier-val">Воздушный боец / Зональный контроль</div></div>
+                    <div class="es-dossier-row"><div class="es-dossier-key">Особенность</div><div class="es-dossier-val">Сбрасывает лимит воздушных атак, может бесконечно комбить в воздухе[reference:1]</div></div>
                 </div>
 
                 <div class="es-stats-block">
                     <div class="es-stats-title">Боевые характеристики</div>
-                    <div class="es-stat-row">
-                        <span class="es-stat-label">ATK</span>
-                        <div class="es-stat-bar"><div class="es-stat-fill" data-width="80"></div></div>
-                        <span class="es-stat-val">80</span>
-                    </div>
-                    <div class="es-stat-row">
-                        <span class="es-stat-label">DEF</span>
-                        <div class="es-stat-bar"><div class="es-stat-fill" data-width="65"></div></div>
-                        <span class="es-stat-val">65</span>
-                    </div>
-                    <div class="es-stat-row">
-                        <span class="es-stat-label">SPD</span>
-                        <div class="es-stat-bar"><div class="es-stat-fill" data-width="65"></div></div>
-                        <span class="es-stat-val">65</span>
-                    </div>
-                    <div class="es-stat-row">
-                        <span class="es-stat-label">HP</span>
-                        <div class="es-stat-bar"><div class="es-stat-fill" data-width="75"></div></div>
-                        <span class="es-stat-val">75</span>
-                    </div>
-                    <div class="es-stat-row">
-                        <span class="es-stat-label">RANGE</span>
-                        <div class="es-stat-bar"><div class="es-stat-fill" data-width="55"></div></div>
-                        <span class="es-stat-val">55</span>
-                    </div>
-                    <div class="es-stat-row">
-                        <span class="es-stat-label">SKILL</span>
-                        <div class="es-stat-bar"><div class="es-stat-fill" data-width="90"></div></div>
-                        <span class="es-stat-val">90</span>
-                    </div>
+                    <div class="es-stat-row"><span class="es-stat-label">ATK</span><div class="es-stat-bar"><div class="es-stat-fill" data-width="80"></div></div><span class="es-stat-val">80</span></div>
+                    <div class="es-stat-row"><span class="es-stat-label">DEF</span><div class="es-stat-bar"><div class="es-stat-fill" data-width="65"></div></div><span class="es-stat-val">65</span></div>
+                    <div class="es-stat-row"><span class="es-stat-label">SPD</span><div class="es-stat-bar"><div class="es-stat-fill" data-width="65"></div></div><span class="es-stat-val">65</span></div>
+                    <div class="es-stat-row"><span class="es-stat-label">HP</span><div class="es-stat-bar"><div class="es-stat-fill" data-width="75"></div></div><span class="es-stat-val">75</span></div>
+                    <div class="es-stat-row"><span class="es-stat-label">RANGE</span><div class="es-stat-bar"><div class="es-stat-fill" data-width="55"></div></div><span class="es-stat-val">55</span></div>
+                    <div class="es-stat-row"><span class="es-stat-label">SKILL</span><div class="es-stat-bar"><div class="es-stat-fill" data-width="90"></div></div><span class="es-stat-val">90</span></div>
 
                     <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(26,188,156,0.1);">
-                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;
-                                    letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);
-                                    margin-bottom:0.7rem;">Рейтинг сложности</div>
-                        <div style="display:flex;gap:0.4rem;align-items:center;">
-                            <span style="font-size:1.4rem;color:var(--es-primary);">★</span>
-                            <span style="font-size:1.4rem;color:var(--es-primary);">★</span>
-                            <span style="font-size:1.4rem;color:var(--es-primary);">★</span>
-                            <span style="font-family:var(--font-main);font-size:0.78rem;
-                                         color:var(--clr-text-dim);margin-left:0.5rem;">
-                                Высокая — требует точного тайминга
-                            </span>
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--es-glow);line-height:1.6;">
+                            <strong style="color:var(--es-primary);">The Power of Crests</strong><br>
+                            При уклонении создаёт печать (Crest) на месте уклонения. Наносит небольшой урон и обеспечивает контроль зоны.[reference:2]
                         </div>
                     </div>
                 </div>
-
-            </div><!-- /es-dossier -->
-
+            </div>
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         ИСТОРИЯ
-         ═══════════════════════════════════════════ -->
+    <!-- НАВЫКИ (ОСНОВНОЙ АКЦЕНТ) -->
     <section class="es-section">
         <div class="es-section-inner">
-
             <div class="es-section-head">
                 <span class="es-section-num">02</span>
-                <div class="es-section-line rev"></div>
-                <h2 class="es-section-title">История персонажа</h2>
-                <div class="es-section-line"></div>
-            </div>
-
-            <div class="es-story-grid">
-                <div class="es-story-card">
-                    <div class="es-story-card-num">I</div>
-                    <div class="es-story-card-title">Рождение юнита</div>
-                    <div class="es-story-card-text">
-                        Es была создана как <strong>специализированный боевой юнит</strong>
-                        для работы с аномалиями Predator Crystal — опасными
-                        кристаллическими образованиями, угрожающими реальности.
-                        Изначально лишённая личности и эмоций, она воспринимала
-                        свою миссию как единственный смысл существования.
-                    </div>
-                </div>
-                <div class="es-story-card">
-                    <div class="es-story-card-num">II</div>
-                    <div class="es-story-card-title">XBlaze: Code Embryo</div>
-                    <div class="es-story-card-text">
-                        Встреча с <strong>Тоя Дзибики</strong> перевернула
-                        запрограммированное существование Es. Человеческое тепло и
-                        искренность юноши пробудили в ней нечто, о чём создатели
-                        не предполагали — <em>зачатки собственного «я»</em> и
-                        способность испытывать чувства.
-                    </div>
-                </div>
-                <div class="es-story-card">
-                    <div class="es-story-card-num">III</div>
-                    <div class="es-story-card-title">Centralfiction</div>
-                    <div class="es-story-card-text">
-                        В BlazBlue: Centralfiction Es предстаёт уже как
-                        <strong>полноправный боец</strong>, осознающий своё место
-                        в мире. Меч Kerykeion стал символом её власти над
-                        пространством — оружием, способным <em>запечатывать
-                        саму реальность</em>.
-                    </div>
-                </div>
-                <div class="es-story-card">
-                    <div class="es-story-card-num">IV</div>
-                    <div class="es-story-card-title">Entropy Effect</div>
-                    <div class="es-story-card-text">
-                        В петлях Entropy — аномалии, перезапускающей реальность —
-                        Es оказывается ключевой фигурой. Её способность к
-                        <strong>запечатыванию</strong> и понимание природы
-                        границ делают её незаменимой в раскрытии тайны
-                        <em>бесконечного цикла</em>.
-                    </div>
-                </div>
-            </div>
-
-            <div class="es-story-full">
-                <p>
-                    В мире <strong>BlazBlue: Entropy Effect</strong> реальность охвачена загадочным явлением —
-                    петлями Entropy, которые стирают события и перезапускают время. Единицы сохраняют
-                    воспоминания между итерациями. Es — одна из таких редких личностей, чья природа
-                    искусственного юнита парадоксальным образом позволяет ей удерживать опыт прошлых
-                    циклов.
-                </p>
-                <p>
-                    Вооружённая мечом <strong>Kerykeion</strong> и способностью создавать
-                    пространственные <em>печати-кресты</em>, Es не просто сражается с врагами —
-                    она методично собирает фрагменты истины, скрытые за каждым новым витком петли.
-                    Её холодная логика боевого юнита теперь служит не просто выполнению приказов,
-                    а собственной цели: понять, <em>кто или что запустило Entropy</em>.
-                </p>
-                <p>
-                    Внешне невозмутимая и немногословная, Es несёт в себе тихую решимость.
-                    Годы, проведённые рядом с людьми, научили её ценить то, что невозможно
-                    запрограммировать. И именно эта <strong>человечность, рождённая из данных</strong>,
-                    делает её самой опасной переменной в уравнении Entropy.
-                </p>
-            </div>
-
-            <div class="es-quote">
-                <div class="es-quote-text">
-                    «Я выполняю свою миссию. Этого достаточно.<br>
-                    ...Или нет? Я больше не уверена.»
-                </div>
-                <div class="es-quote-attr">— Es, BlazBlue: Entropy Effect</div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         НАВЫКИ
-         ═══════════════════════════════════════════ -->
-    <section class="es-section">
-        <div class="es-section-inner">
-
-            <div class="es-section-head">
-                <span class="es-section-num">03</span>
                 <div class="es-section-line rev"></div>
                 <h2 class="es-section-title">Навыки и приёмы</h2>
                 <div class="es-section-line"></div>
             </div>
 
             <div class="es-skills-grid">
-
-                <div class="es-skill-card">
-                    <div class="es-skill-icon">✛</div>
-                    <div class="es-skill-info">
-                        <div class="es-skill-name">Cross Combination</div>
-                        <div class="es-skill-type">Ключевой навык</div>
-                        <div class="es-skill-desc">
-                            Размещает крестообразный символ в указанной точке пространства.
-                            При повторной активации в <strong>точный тайминг</strong>
-                            — взрыв наносит значительный урон. Промах тайминга —
-                            базовый урон. Можно удерживать до 3 крестов одновременно.
-                        </div>
-                    </div>
-                </div>
-
+                <!-- БАЗОВАЯ АТАКА (НАЗЕМНАЯ) -->
                 <div class="es-skill-card">
                     <div class="es-skill-icon">⚔</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Sealing Blade</div>
-                        <div class="es-skill-type">Активный</div>
+                        <div class="es-skill-name">[Ground] Attack — 4-hit Combo</div>
+                        <div class="es-skill-type">Базовая атака</div>
                         <div class="es-skill-desc">
-                            Серия быстрых ударов парящими мечами вокруг Es.
-                            Каждое попадание накапливает <strong>заряды печати</strong>,
-                            которые усиливают следующий Cross Combination.
-                            Отлично работает как стартер комбо.
+                            <strong>Комбо из 4 ударов:</strong> 1-й — рубящий сверху вниз (подвигает вперёд), 2-й — удар вперёд (продолжает движение), 3-й — удар сверху вниз (не двигает Es), 4-й — круговой удар, поражающий спереди и сзади, оставляющий <strong>печать (Crest)</strong>, которая почти мгновенно расцветает. Отлично подходит для переноса врагов и зацикливания комбо.[reference:3]
                         </div>
                     </div>
                 </div>
 
+                <!-- БАЗОВАЯ АТАКА (ВОЗДУШНАЯ) -->
                 <div class="es-skill-card">
-                    <div class="es-skill-icon">💠</div>
+                    <div class="es-skill-icon">🪽</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Cross Impact</div>
-                        <div class="es-skill-type">Усиленный удар</div>
+                        <div class="es-skill-name">[Airborne] Attack — 2-hit Combo</div>
+                        <div class="es-skill-type">Воздушная атака</div>
                         <div class="es-skill-desc">
-                            Мощный точечный удар в зону активного креста.
-                            При <strong>Perfect Timing</strong> урон увеличивается
-                            на 50% и снимает защитный барьер врага.
-                            При накоплении 3 зарядов — выпускает дополнительный
-                            лазерный луч.
+                            <strong>1-й удар:</strong> удар вперёд, позволяющий зависнуть в воздухе. <strong>2-й удар:</strong> мощный удар сверху вниз с огромным хитбоксом, который <strong>притягивает врагов издалека и забрасывает их за спину Es</strong>. Один из лучших приёмов для переноса врагов во всей игре — можно сбрасывать врагов в пропасть или ловушки, не подвергая себя опасности.[reference:4]
                         </div>
                     </div>
                 </div>
 
+                <!-- DASH ATTACK / DODGE -->
                 <div class="es-skill-card">
-                    <div class="es-skill-icon">🔒</div>
+                    <div class="es-skill-icon">💨</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Azure Seal</div>
-                        <div class="es-skill-type">Дебафф / Контроль</div>
+                        <div class="es-skill-name">Dash Attack / Dodge</div>
+                        <div class="es-skill-type">Рывок / Уклонение</div>
                         <div class="es-skill-desc">
-                            Запечатывает врага Лазурной Печатью — накладывает
-                            <strong>замедление на 3 секунды</strong> и снижает
-                            его защиту на 20%. Запечатанный враг получает
-                            повышенный урон от всех атак Es.
+                            <strong>Dash Attack:</strong> удар вперёд, выпускающий печать (Crest) и скользящий Es вперёд. <strong>Dodge (Уклонение):</strong> при успешном уклонении от атаки Es выпускает печать на месте уклонения, которая сохраняется до истечения времени или активации врагом.[reference:5]
                         </div>
                     </div>
                 </div>
 
+                <!-- LEGACY SKILL 1: CREST ARTS -->
+                <div class="es-skill-card">
+                    <div class="es-skill-icon">✛</div>
+                    <div class="es-skill-info">
+                        <div class="es-skill-name">Crest Arts</div>
+                        <div class="es-skill-type">Наследуемый навык 1</div>
+                        <div class="es-skill-desc">
+                            Создаёт печать (Crest) на месте прототипа. Когда враг входит в зону действия, печать <strong>расцветает</strong>, нанося <strong>816 ед. урона</strong> и <strong>снимая неуязвимость на 6 секунд</strong>. Урон и длительность снятия неуязвимости увеличиваются с уровнем. Отлично подходит для установки ловушек или мгновенного вызова печати на враге.[reference:6]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEGACY SKILL 2: TYPE:ASSAULTER "TRISTAN" -->
                 <div class="es-skill-card">
                     <div class="es-skill-icon">⬆</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Trance Edge</div>
-                        <div class="es-skill-type">Мобильность</div>
+                        <div class="es-skill-name">Type: Assaulter "Tristan" [EX]</div>
+                        <div class="es-skill-type">Наследуемый навык 2 (EX)</div>
                         <div class="es-skill-desc">
-                            Стремительный воздушный рывок с ударом в конце траектории.
-                            Позволяет Es быстро сблизиться с противником или уйти
-                            из зоны атаки. <strong>В воздухе</strong> активирует
-                            дополнительную серию из трёх скользящих клинков.
+                            <strong>Сбрасывает лимит воздушных атак [Airborne] Attack.</strong> При приземлении создаёт печати (Crests) на земле, которые наносят тем больше урона, чем дольше вы находились в воздухе после использования навыка. Превращает прототип в «псевдо-Es клона», позволяя выполнять дополнительную серию воздушных атак. Особенно полезно против боссов вроде Tree of Origin.[reference:7]
                         </div>
                     </div>
                 </div>
 
+                <!-- POTENTIAL: [GROUND] HOLD ATTACK -->
                 <div class="es-skill-card">
-                    <div class="es-skill-icon">✦</div>
+                    <div class="es-skill-icon">🛡</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Blade Formation</div>
-                        <div class="es-skill-type">Зональный</div>
+                        <div class="es-skill-name">[Ground] Hold Attack</div>
+                        <div class="es-skill-type">Потенциал</div>
                         <div class="es-skill-desc">
-                            Призывает 4 парящих клинка, которые вращаются вокруг
-                            Es, создавая <strong>защитный барьер</strong>.
-                            При контакте с врагом — наносят урон и отталкивают.
-                            Клинки исчезают через 8 секунд или при получении
-                            сильного удара.
+                            Выполняет 4-й удар наземной комбо-серии. Во время действия Es обладает <strong>Super Armor</strong> (супер-бронёй). Позволяет пробивать атаки врагов, не прерываясь.[reference:8]
                         </div>
                     </div>
                 </div>
 
+                <!-- POTENTIAL: TYPE: ENCHANTER "PELLINORE" -->
                 <div class="es-skill-card">
-                    <div class="es-skill-icon">🌀</div>
+                    <div class="es-skill-icon">✨</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Kerykeion Slash</div>
-                        <div class="es-skill-type">Спецудар</div>
+                        <div class="es-skill-name">Type: Enchanter "Pellinore"</div>
+                        <div class="es-skill-type">Потенциал</div>
                         <div class="es-skill-desc">
-                            Широкий горизонтальный рубящий удар мечом Kerykeion,
-                            создающий <strong>разрез в пространстве</strong>.
-                            Удар проходит сквозь препятствия и задевает
-                            нескольких врагов. Хорошо снимает броню.
+                            [Ground] Down + Attack: Es выполняет <strong>новую комбо-серию из 3 ударов</strong>, которая создаёт дополнительные печати (Crests), наносящие дополнительный урон. При удержании атаки печать наносит урон несколько раз.[reference:9]
                         </div>
                     </div>
                 </div>
 
+                <!-- POTENTIAL: CREST ARTS [LIBERATE] -->
                 <div class="es-skill-card">
-                    <div class="es-skill-icon">⬡</div>
+                    <div class="es-skill-icon">🔓</div>
                     <div class="es-skill-info">
-                        <div class="es-skill-name">Grand Cross — Ультимейт</div>
-                        <div class="es-skill-type">Ультимейт</div>
+                        <div class="es-skill-name">Crest Arts [Liberate]</div>
+                        <div class="es-skill-type">Потенциал (Over-Exhaust)</div>
                         <div class="es-skill-desc">
-                            Es размещает гигантский крест во всю ширину экрана.
-                            После задержки в 1.5 секунды — <strong>взрывная
-                            детонация</strong> по всей области. При накоплении
-                            Perfect-очков — добавляется вторая волна урона.
+                            Позволяет Es использовать <strong>Over-Exhaust MP</strong> — тратить MP сверх лимита для усиления навыков. Увеличивает количество создаваемых печатей и их урон.[reference:10]
                         </div>
                     </div>
                 </div>
-
-            </div><!-- /skills-grid -->
-
+            </div>
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         МЕХАНИКИ
-         ═══════════════════════════════════════════ -->
+    <!-- МЕХАНИКИ -->
     <section class="es-section">
         <div class="es-section-inner">
-
             <div class="es-section-head">
-                <span class="es-section-num">04</span>
+                <span class="es-section-num">03</span>
                 <div class="es-section-line rev"></div>
                 <h2 class="es-section-title">Основные механики</h2>
                 <div class="es-section-line"></div>
             </div>
 
-            <!-- Cross Combination — главная механика -->
             <div class="es-mechanic-hero">
-                <div class="es-mechanic-hero-sub">◈ Ключевая система</div>
-                <div class="es-mechanic-hero-title">Cross Combination System</div>
+                <div class="es-mechanic-hero-sub">◈ УНИКАЛЬНАЯ СИСТЕМА</div>
+                <div class="es-mechanic-hero-title">Система Печатей (Crests)</div>
                 <div class="es-mechanic-hero-desc">
-                    Вся боевая философия Es строится вокруг одной концепции:
-                    <strong>расставь — подожди — активируй в нужный момент</strong>.
-                    Система Cross Combination требует от игрока размещения
-                    крестообразных символов <code>✛</code> в пространстве с последующей
-                    детонацией в точный временной интервал. Чем точнее тайминг,
-                    тем <strong>разрушительнее результат</strong>. Промах создаёт базовый
-                    урон, точное попадание в окно <code>PERFECT</code> — до <strong>+50%</strong>
-                    к урону и дополнительные эффекты.
-                </div>
-
-                <div class="es-mechanic-steps">
-                    <div class="es-mstep">
-                        <div class="es-mstep-num">01</div>
-                        <div class="es-mstep-title">Размещение</div>
-                        <div class="es-mstep-desc">Используй Cross Combination, чтобы разместить крест рядом с врагом или в точке его движения</div>
-                    </div>
-                    <div class="es-mstep">
-                        <div class="es-mstep-num">02</div>
-                        <div class="es-mstep-title">Заряд</div>
-                        <div class="es-mstep-desc">Крест начинает пульсировать. Его цвет меняется с белого на бирюзовый по мере приближения к окну Perfect</div>
-                    </div>
-                    <div class="es-mstep">
-                        <div class="es-mstep-num">03</div>
-                        <div class="es-mstep-title">Тайминг</div>
-                        <div class="es-mstep-desc">Нажми кнопку атаки в момент полного свечения — это окно Perfect Timing (~0.3 секунды)</div>
-                    </div>
-                    <div class="es-mstep">
-                        <div class="es-mstep-num">04</div>
-                        <div class="es-mstep-title">Детонация</div>
-                        <div class="es-mstep-desc">Взрыв наносит урон ×1.5 и накапливает заряды для следующих навыков. Цепочка усиливается</div>
-                    </div>
+                    Es использует <strong>печати (Crests)</strong> — круговые ловушки, которые появляются после определённых атак.
+                    Печати расцветают, когда враг приближается к ним, нанося высокий урон.
+                    Печати крайне полезны для <strong>продления комбо</strong> и <strong>зацикливания атак (looping)</strong>.[reference:11]
+                    Каждый удар мечом оставляет за собой след энергии, который затем превращается в новую атаку — эта техника уникальна для Es.[reference:12]
                 </div>
             </div>
 
-            <!-- Схема тайминга -->
-            <div class="es-timing-diagram">
-                <div class="es-timing-title">// Схема тайминговых окон Cross Combination</div>
-
-                <div class="es-timing-row">
-                    <span class="es-timing-label">MISS</span>
-                    <div class="es-timing-bar-wrap">
-                        <div class="es-timing-zone miss" style="left:0%;width:30%"></div>
-                        <div class="es-timing-zone miss" style="left:70%;width:30%"></div>
-                    </div>
-                    <span class="es-timing-info" style="color:rgba(231,76,60,0.6)">×1.0 урон</span>
-                </div>
-                <div class="es-timing-row">
-                    <span class="es-timing-label">GOOD</span>
-                    <div class="es-timing-bar-wrap">
-                        <div class="es-timing-zone good" style="left:25%;width:15%"></div>
-                        <div class="es-timing-zone good" style="left:60%;width:15%"></div>
-                    </div>
-                    <span class="es-timing-info" style="color:rgba(243,156,18,0.7)">×1.25 урон</span>
-                </div>
-                <div class="es-timing-row">
-                    <span class="es-timing-label">PERFECT</span>
-                    <div class="es-timing-bar-wrap">
-                        <div class="es-timing-zone perfect" style="left:42%;width:16%"></div>
-                    </div>
-                    <span class="es-timing-info" style="color:var(--es-primary)">×1.5 урон ✦</span>
-                </div>
-            </div>
-
-            <!-- Остальные механики -->
             <div class="es-mechanics-grid">
-
                 <div class="es-mech-card">
-                    <div class="es-mech-card-head">
-                        <div class="es-mech-icon">🔢</div>
-                        <div class="es-mech-title">Cross Stack — Накопление зарядов</div>
-                    </div>
+                    <div class="es-mech-card-head"><div class="es-mech-icon">🔄</div><div class="es-mech-title">Сброс лимита воздушных атак</div></div>
                     <div class="es-mech-desc">
-                        Каждый успешный Perfect Timing накапливает <strong>заряд Cross Stack</strong>.
-                        При 3 зарядах все атаки Es получают дополнительный эффект:
-                        Cross Impact выпускает лазер, Sealing Blade добавляет
-                        взрывную волну. <strong>Стак сбрасывается при получении урона</strong>
-                        — берегите накопления.
+                        Es обладает аномальным количеством атак, сбрасывающих лимит её [Airborne] Attack.
+                        Это делает её особенно искусной в избегании урона и наказании ошибок врагов, оставаясь в воздухе сколь угодно долго.[reference:13]
                     </div>
                 </div>
-
                 <div class="es-mech-card">
-                    <div class="es-mech-card-head">
-                        <div class="es-mech-icon">⬡</div>
-                        <div class="es-mech-title">Spatial Control — Зональный контроль</div>
-                    </div>
+                    <div class="es-mech-card-head"><div class="es-mech-icon">🎯</div><div class="es-mech-title">Контр-атака при уклонении</div></div>
                     <div class="es-mech-desc">
-                        Es может держать одновременно <strong>до 3 активных крестов</strong>
-                        на арене. Грамотно расставленные в разных точках, они создают
-                        «поле смерти» — противник вынужден постоянно двигаться,
-                        а Es контролирует зоны его движения.
+                        Единственный персонаж, способный проводить контр-атаку при уклонении от вражеских атак, сохраняя дистанцию.
+                        Это вознаграждает игрока за точное уклонение и позволяет немедленно переходить в наступление.[reference:14]
                     </div>
                 </div>
-
                 <div class="es-mech-card">
-                    <div class="es-mech-card-head">
-                        <div class="es-mech-icon">🔒</div>
-                        <div class="es-mech-title">Seal Amplification — Усиление печатью</div>
-                    </div>
+                    <div class="es-mech-card-head"><div class="es-mech-icon">⬆</div><div class="es-mech-title">Воздушное жонглирование</div></div>
                     <div class="es-mech-desc">
-                        Враг под действием <strong>Azure Seal</strong> получает
-                        повышенный урон от всех источников Es.
-                        Комбинация Seal + Perfect Cross Impact —
-                        наиболее разрушительное сочетание в её арсенале,
-                        способное снести 40–60% HP обычного врага.
+                        Es — единственный персонаж, способный комбинировать врагов в воздухе без необходимости в потенциалах (Potentials).
+                        Это делает её чрезвычайно сильной в контроле толпы и босс-файтах.[reference:15]
                     </div>
                 </div>
-
                 <div class="es-mech-card">
-                    <div class="es-mech-card-head">
-                        <div class="es-mech-icon">⚡</div>
-                        <div class="es-mech-title">Roguelite — Апгрейды и синергии</div>
-                    </div>
+                    <div class="es-mech-card-head"><div class="es-mech-icon">🔗</div><div class="es-mech-title">Наследование (Inheritance)</div></div>
                     <div class="es-mech-desc">
-                        В режиме roguelite Es может усилить систему крестов:
-                        <strong>увеличить количество одновременных крестов</strong>,
-                        расширить окно Perfect Timing, добавить цепную реакцию
-                        между соседними крестами или автоматическую детонацию.
-                        Синергии кардинально меняют стиль игры.
+                        При наследовании Evotype Es на другого персонажа, тот получает талант <strong>«The Power of Crests»</strong> и навык <strong>«Crest Arts»</strong>.
+                        Это позволяет Hibiki или любому другому прототипу создавать печати при уклонении и использовать фирменную атаку Es.[reference:16]
                     </div>
                 </div>
-
-                <div class="es-mech-card">
-                    <div class="es-mech-card-head">
-                        <div class="es-mech-icon">🌀</div>
-                        <div class="es-mech-title">Воздушный бой — Air Combos</div>
-                    </div>
-                    <div class="es-mech-desc">
-                        Trance Edge переводит Es в воздух, где открываются
-                        уникальные продолжения комбо. <strong>Воздушные кресты</strong>
-                        падают вертикально — что создаёт дополнительный
-                        вектор контроля пространства, недоступный у других
-                        персонажей.
-                    </div>
-                </div>
-
-                <div class="es-mech-card">
-                    <div class="es-mech-card-head">
-                        <div class="es-mech-icon">🛡</div>
-                        <div class="es-mech-title">Blade Formation — Активная защита</div>
-                    </div>
-                    <div class="es-mech-desc">
-                        Барьер из <strong>4 вращающихся клинков</strong> не просто
-                        защищает — он активно отталкивает врагов и прерывает
-                        их атаки. При правильном использовании превращает
-                        момент защиты в контратаку, не теряя накопленных
-                        Cross Stack.
-                    </div>
-                </div>
-
-            </div><!-- /mechanics-grid -->
-
+            </div>
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         СОВЕТЫ
-         ═══════════════════════════════════════════ -->
+    <!-- СОВЕТЫ -->
     <section class="es-section">
         <div class="es-section-inner">
-
             <div class="es-section-head">
-                <span class="es-section-num">05</span>
+                <span class="es-section-num">04</span>
                 <div class="es-section-line rev"></div>
                 <h2 class="es-section-title">Советы по игре</h2>
                 <div class="es-section-line"></div>
             </div>
 
             <ul class="es-tips-list">
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>Расставляй кресты заранее.</strong> Не жди, пока враг окажется в нужной точке — предугадывай его движение. Идеально размещать крест перед рывком босса.</span>
-                </li>
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>Тренируй тайминг Perfect на слабых врагах.</strong> Новичкам сложно сразу попасть в узкое окно. Прокачивай рефлекс на рядовых противниках — там ошибка не критична.</span>
-                </li>
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>Не теряй Cross Stack под давлением.</strong> 3 накопленных заряда — это ваш главный ресурс. Если видишь сильную атаку врага — уклоняйся, не блокируй стоя.</span>
-                </li>
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>Комбо: Seal → Sealing Blade → Perfect Cross Impact.</strong> Это базовый «ротационный» цикл Es, дающий максимум урона при правильном исполнении. Заучи его первым.</span>
-                </li>
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>Размещай кресты тройками.</strong> Три активных креста рядом с боссом — это гарантированное поражение при детонации. Начни с одного, освой цепочку, затем переходи к синхронной тройной детонации.</span>
-                </li>
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>В roguelite выбирай апгрейды на расширение тайминга.</strong> «Extended Perfect Window» — один из лучших апгрейдов Es для начинающих. Даёт +0.15 сек к окну Perfect, что ощутимо снижает требования к рефлексу.</span>
-                </li>
-                <li>
-                    <span class="es-tip-bullet">✛</span>
-                    <span><strong>Blade Formation — не только атака.</strong> Включай барьер перед атаками с широкой зоной поражения. Клинки поглотят часть урона и могут прервать атаку врага.</span>
-                </li>
+                <li><span class="es-tip-bullet">✛</span><span><strong>Es — лучший персонаж для новичков.</strong> Её механики интуитивно понятны, а урон высок даже без глубокого понимания комбо.[reference:17]</span></li>
+                <li><span class="es-tip-bullet">✛</span><span><strong>Используй воздушную атаку (2-й удар) для сброса врагов в пропасть.</strong> Она притягивает врагов издалека и забрасывает их за спину Es — идеально для этапов с ловушками и обрывами.[reference:18]</span></li>
+                <li><span class="es-tip-bullet">✛</span><span><strong>Приоритетные улучшения: Ice и Shadow тактики.</strong> Ice Spikes отлично подходят для отстрела дальних врагов, а новые движения и мобильность важнее усиления печатей.[reference:19]</span></li>
+                <li><span class="es-tip-bullet">✛</span><span><strong>Третье улучшение (Universal Enhancement) — обязательно к получению.</strong> Оно значительно увеличивает урон и контроль толпы, генерируя больше печатей с каждым ударом.[reference:20]</span></li>
+                <li><span class="es-tip-bullet">✛</span><span><strong>Комбинируй Dash Attack с воздушными атаками.</strong> Dash Attack выпускает печать и скользит Es вперёд, позволяя быстро сокращать дистанцию и продолжать комбо.[reference:21]</span></li>
+                <li><span class="es-tip-bullet">✛</span><span><strong>Используй Type: Assaulter "Tristan" против боссов с воздушной фазой.</strong> Сброс лимита воздушных атак позволяет оставаться в воздухе бесконечно, избегая наземных атак босса.[reference:22]</span></li>
             </ul>
-
         </div>
     </section>
 
-</main><!-- /main -->
+</main>
 
-<!-- ═══════════════════════════════════════════
-     ФУТЕР
-     ═══════════════════════════════════════════ -->
 <footer class="es-footer">
     <p>Es — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
     <p class="es-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
@@ -1633,168 +1199,88 @@
 </footer>
 
 <script>
-
-/* ═══════════════════════════════════════════
-   АНИМИРОВАННЫЙ ФОН — Neural Web в тонах Es
-   ═══════════════════════════════════════════ */
 (function () {
     var cv  = document.getElementById('esBg');
     var ctx = cv.getContext('2d');
-
-    function resize() {
-        cv.width  = window.innerWidth;
-        cv.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    var NODE_COUNT = 70;
-    var LINK_DIST  = 150;
-    var t = 0;
-
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var NODE_COUNT = 70, LINK_DIST = 150, t = 0;
     var nodes = Array.from({ length: NODE_COUNT }, function () {
-        return {
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.4,
-            r: 1.5 + Math.random() * 2,
-            phase: Math.random() * Math.PI * 2
-        };
+        return { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+                 vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+                 r: 1.5 + Math.random() * 2, phase: Math.random() * Math.PI * 2 };
     });
-
-    /* Кресты */
     var crosses = Array.from({ length: 8 }, function () {
-        return {
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            size: 12 + Math.random() * 16,
-            phase: Math.random() * Math.PI * 2,
-            speed: 0.008 + Math.random() * 0.006,
-            vx: (Math.random() - 0.5) * 0.25,
-            vy: (Math.random() - 0.5) * 0.25
-        };
+        return { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+                 size: 12 + Math.random() * 16, phase: Math.random() * Math.PI * 2,
+                 speed: 0.008 + Math.random() * 0.006, vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25 };
     });
-
     function drawCross(ctx, x, y, size, alpha) {
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.strokeStyle = 'rgba(26,188,156,1)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(x - size / 2, y); ctx.lineTo(x + size / 2, y);
-        ctx.moveTo(x, y - size / 2); ctx.lineTo(x, y + size / 2);
-        ctx.stroke();
-        ctx.restore();
+        ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = 'rgba(26,188,156,1)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x - size / 2, y); ctx.lineTo(x + size / 2, y);
+        ctx.moveTo(x, y - size / 2); ctx.lineTo(x, y + size / 2); ctx.stroke(); ctx.restore();
     }
-
     function animate() {
-        var W = cv.width, H = cv.height;
-        ctx.clearRect(0, 0, W, H);
-        ctx.fillStyle = '#070b17';
-        ctx.fillRect(0, 0, W, H);
-
-        /* Радиальный глоу в центре */
+        var W = cv.width, H = cv.height; ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#070b17'; ctx.fillRect(0, 0, W, H);
         var cx = W / 2, cy = H / 2;
         var grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * 0.6);
-        grd.addColorStop(0, 'rgba(8,61,48,0.3)');
-        grd.addColorStop(1, 'transparent');
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, W, H);
-
-        /* Движение узлов */
+        grd.addColorStop(0, 'rgba(8,61,48,0.3)'); grd.addColorStop(1, 'transparent');
+        ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
         for (var i = 0; i < nodes.length; i++) {
-            var n = nodes[i];
-            n.x += n.vx; n.y += n.vy;
-            if (n.x < 0 || n.x > W) n.vx *= -1;
-            if (n.y < 0 || n.y > H) n.vy *= -1;
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > W) n.vx *= -1; if (n.y < 0 || n.y > H) n.vy *= -1;
         }
-
-        /* Связи */
         for (var i = 0; i < nodes.length; i++) {
             for (var j = i + 1; j < nodes.length; j++) {
-                var a = nodes[i], b = nodes[j];
-                var dist = Math.hypot(a.x - b.x, a.y - b.y);
+                var a = nodes[i], b = nodes[j]; var dist = Math.hypot(a.x - b.x, a.y - b.y);
                 if (dist < LINK_DIST) {
                     var alpha = (1 - dist / LINK_DIST) * 0.22;
-                    ctx.beginPath();
-                    ctx.moveTo(a.x, a.y);
-                    ctx.lineTo(b.x, b.y);
-                    ctx.strokeStyle = 'rgba(26,188,156,' + alpha + ')';
-                    ctx.lineWidth = (1 - dist / LINK_DIST) * 1.1;
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+                    ctx.strokeStyle = 'rgba(26,188,156,' + alpha + ')'; ctx.lineWidth = (1 - dist / LINK_DIST) * 1.1; ctx.stroke();
                 }
             }
         }
-
-        /* Узлы */
         for (var i = 0; i < nodes.length; i++) {
-            var nd = nodes[i];
-            var pulse = (Math.sin(t * 0.03 + nd.phase) + 1) / 2;
-            var r = nd.r + pulse * 1.5;
+            var nd = nodes[i]; var pulse = (Math.sin(t * 0.03 + nd.phase) + 1) / 2; var r = nd.r + pulse * 1.5;
             var g = ctx.createRadialGradient(nd.x, nd.y, 0, nd.x, nd.y, r * 3.5);
-            g.addColorStop(0, 'rgba(26,188,156,' + (0.35 + pulse * 0.3) + ')');
-            g.addColorStop(1, 'rgba(26,188,156,0)');
-            ctx.fillStyle = g;
-            ctx.beginPath(); ctx.arc(nd.x, nd.y, r * 3.5, 0, Math.PI * 2); ctx.fill();
+            g.addColorStop(0, 'rgba(26,188,156,' + (0.35 + pulse * 0.3) + ')'); g.addColorStop(1, 'rgba(26,188,156,0)');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(nd.x, nd.y, r * 3.5, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = 'rgba(118,215,196,' + (0.6 + pulse * 0.4) + ')';
             ctx.beginPath(); ctx.arc(nd.x, nd.y, r, 0, Math.PI * 2); ctx.fill();
         }
-
-        /* Плавающие кресты */
         for (var ci = 0; ci < crosses.length; ci++) {
-            var cr = crosses[ci];
-            cr.x += cr.vx; cr.y += cr.vy;
-            if (cr.x < -40) cr.x = W + 40;
-            if (cr.x > W + 40) cr.x = -40;
-            if (cr.y < -40) cr.y = H + 40;
-            if (cr.y > H + 40) cr.y = -40;
+            var cr = crosses[ci]; cr.x += cr.vx; cr.y += cr.vy;
+            if (cr.x < -40) cr.x = W + 40; if (cr.x > W + 40) cr.x = -40;
+            if (cr.y < -40) cr.y = H + 40; if (cr.y > H + 40) cr.y = -40;
             var crossAlpha = (Math.sin(t * cr.speed + cr.phase) + 1) / 2 * 0.18;
             drawCross(ctx, cr.x, cr.y, cr.size, crossAlpha);
         }
-
-        t++;
-        requestAnimationFrame(animate);
+        t++; requestAnimationFrame(animate);
     }
     animate();
 })();
 
-/* ═══════════════════════════════════════════
-   АНИМАЦИЯ ПОЛОС СТАТОВ
-   ═══════════════════════════════════════════ */
 (function () {
-    var fills = document.querySelectorAll('.es-stat-fill');
-    var observed = false;
-
+    var fills = document.querySelectorAll('.es-stat-fill'); var observed = false;
     function animateBars() {
-        if (observed) return;
-        observed = true;
+        if (observed) return; observed = true;
         fills.forEach(function (fill, i) {
             var target = fill.getAttribute('data-width') + '%';
-            setTimeout(function () {
-                fill.style.width = target;
-            }, 150 + i * 120);
+            setTimeout(function () { fill.style.width = target; }, 150 + i * 120);
         });
     }
-
-    /* Запускаем при скролле до секции */
     var statsBlock = document.querySelector('.es-stats-block');
     if (!statsBlock) { animateBars(); return; }
-
     var io = new IntersectionObserver(function (entries) {
         if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
     }, { threshold: 0.3 });
     io.observe(statsBlock);
 })();
 
-/* ═══════════════════════════════════════════
-   КНОПКА "НАВЕРХ"
-   ═══════════════════════════════════════════ */
 document.getElementById('esBackTop').addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
-
 </script>
 </body>
 </html>
-

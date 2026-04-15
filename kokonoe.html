@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kokonoe — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Kokonoe
+       ══════════════════════════════════════════ */
+    :root {
+        --koko-primary : #e67e22;
+        --koko-dark    : #6e2a00;
+        --koko-glow    : #f0b27a;
+        --koko-accent  : #d35400;
+        --koko-dim     : #a04000;
+    }
+
+    html, body { scroll-behavior: smooth; background: #1a0e00; }
+
+    #kokoBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .koko-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(26, 14, 0, 0.95); border-bottom: 2px solid var(--koko-primary);
+        box-shadow: 0 2px 40px rgba(230, 126, 34, 0.3);
+    }
+    .koko-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .koko-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--koko-glow);
+        border: 1px solid rgba(230, 126, 34, 0.35); border-radius: var(--radius-sm);
+        background: rgba(230, 126, 34, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .koko-back-btn:hover {
+        background: rgba(230, 126, 34, 0.2); border-color: var(--koko-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(230, 126, 34, 0.4); transform: translateX(-3px);
+    }
+    .koko-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .koko-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(230, 126, 34, 0.7));
+    }
+    .koko-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--koko-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(230, 126, 34, 0.6);
+    }
+    .koko-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .koko-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .koko-hero-info { order: 1; } .koko-hero-visual { order: 2; display: flex; justify-content: center; }
+    .koko-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--koko-dim); border: 1px solid var(--koko-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(230, 126, 34, 0.4);
+    }
+    .koko-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(230, 126, 34, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .koko-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--koko-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .koko-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .koko-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(230, 126, 34, 0.06);
+        border: 1px solid rgba(230, 126, 34, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .koko-qs-item:hover {
+        background: rgba(230, 126, 34, 0.15); border-color: var(--koko-primary); transform: translateY(-3px);
+    }
+    .koko-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--koko-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
+    }
+    .koko-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .koko-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--koko-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .koko-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .koko-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(230, 126, 34, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: kokoGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes kokoGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .koko-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(230, 126, 34, 0.7)) drop-shadow(0 0 70px rgba(230, 126, 34, 0.3));
+        animation: kokoFloat 4s ease-in-out infinite;
+    }
+    @keyframes kokoFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .koko-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--koko-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: kokoGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .koko-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .koko-section:nth-child(even) {
+        background: rgba(110, 42, 0, 0.15); border-top: 1px solid rgba(230, 126, 34, 0.15);
+        border-bottom: 1px solid rgba(230, 126, 34, 0.15);
+    }
+    .koko-section-inner { max-width: 1100px; margin: 0 auto; }
+    .koko-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .koko-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--koko-primary), transparent); }
+    .koko-section-line.rev { background: linear-gradient(90deg, transparent, var(--koko-primary)); }
+    .koko-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--koko-glow); text-shadow: 0 0 18px rgba(230, 126, 34, 0.5);
+        white-space: nowrap;
+    }
+    .koko-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(230, 126, 34, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .koko-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .koko-dossier-table {
+        background: rgba(110, 42, 0, 0.3); border: 1px solid rgba(230, 126, 34, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .koko-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(230, 126, 34, 0.1);
+    }
+    .koko-dossier-row:last-child { border-bottom: none; }
+    .koko-dossier-row:hover { background: rgba(230, 126, 34, 0.05); }
+    .koko-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--koko-primary);
+        border-right: 1px solid rgba(230, 126, 34, 0.15);
+    }
+    .koko-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .koko-stats-block {
+        background: rgba(110, 42, 0, 0.3); border: 1px solid rgba(230, 126, 34, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .koko-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--koko-glow); margin-bottom: 1rem;
+    }
+    .koko-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .koko-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .koko-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .koko-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--koko-dark), var(--koko-primary));
+        box-shadow: 0 0 8px rgba(230, 126, 34, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .koko-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--koko-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .koko-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .koko-skill-card {
+        background: rgba(110, 42, 0, 0.25); border: 1px solid rgba(230, 126, 34, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .koko-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(230, 126, 34, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .koko-skill-card:hover::before { opacity: 1; }
+    .koko-skill-card:hover {
+        border-color: rgba(230, 126, 34, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(230, 126, 34, 0.1);
+    }
+    .koko-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(230, 126, 34, 0.15);
+        border: 1px solid rgba(230, 126, 34, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(230, 126, 34, 0.2);
+    }
+    .koko-skill-info { flex: 1; }
+    .koko-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--koko-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .koko-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--koko-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .koko-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .koko-mechanic-hero {
+        background: rgba(110, 42, 0, 0.3); border: 1px solid rgba(230, 126, 34, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .koko-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--koko-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(230, 126, 34, 0.4);
+    }
+    .koko-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .koko-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .koko-mech-card {
+        background: rgba(110, 42, 0, 0.2); border: 1px solid rgba(230, 126, 34, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .koko-mech-card:hover {
+        border-color: rgba(230, 126, 34, 0.35); background: rgba(230, 126, 34, 0.07);
+        transform: translateY(-3px);
+    }
+    .koko-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .koko-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(230, 126, 34, 0.1); border-radius: var(--radius-sm);
+    }
+    .koko-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--koko-glow);
+    }
+    .koko-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .koko-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .koko-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(110, 42, 0, 0.15); border: 1px solid rgba(230, 126, 34, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .koko-tips-list li:hover {
+        border-color: rgba(230, 126, 34, 0.28); background: rgba(230, 126, 34, 0.06);
+    }
+    .koko-tip-bullet { color: var(--koko-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .koko-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(10, 5, 0, 0.98); border-top: 1px solid rgba(230, 126, 34, 0.2);
+    }
+    .koko-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .koko-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .koko-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(230, 126, 34, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .koko-back-top:hover {
+        border-color: var(--koko-primary); color: var(--koko-glow);
+        box-shadow: 0 0 10px rgba(230, 126, 34, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .koko-hero { grid-template-columns: 1fr; }
+        .koko-dossier { grid-template-columns: 1fr; }
+        .koko-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="kokoBg"></canvas>
+
+<header class="koko-header">
+    <div class="koko-header-inner">
+        <a href="index.html" class="koko-back-btn">← НАЗАД</a>
+        <div class="koko-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(230,126,34,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(230,126,34,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="koko-header-title">Kokonoe — Mad Scientist</span>
+        </div>
+        <div class="koko-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--koko-glow)">Kokonoe</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(230,126,34,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(110,42,0,0.2) 0%, transparent 60%);">
+
+        <div class="koko-hero">
+            <div class="koko-hero-info">
+                <div class="koko-tag">◈ SECTOR SEVEN · ZONER</div>
+                <h1 class="koko-hero-name">Kokonoe</h1>
+                <div class="koko-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="koko-quick-stats">
+                    <div class="koko-qs-item"><div class="koko-qs-val">90</div><div class="koko-qs-lbl">Атака</div></div>
+                    <div class="koko-qs-item"><div class="koko-qs-val">40</div><div class="koko-qs-lbl">Защита</div></div>
+                    <div class="koko-qs-item"><div class="koko-qs-val">55</div><div class="koko-qs-lbl">Скорость</div></div>
+                    <div class="koko-qs-item"><div class="koko-qs-val">60</div><div class="koko-qs-lbl">HP</div></div>
+                    <div class="koko-qs-item"><div class="koko-qs-val">★★☆</div><div class="koko-qs-lbl">Сложность</div></div>
+                    <div class="koko-qs-item"><div class="koko-qs-val">Зональный</div><div class="koko-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="koko-hero-desc">
+                    Kokonoe — гениальный учёный из Sector Seven, контролирующая каждый дюйм экрана с помощью
+                    своих многочисленных устройств. Лазеры, ракеты, элементальные атаки и взрывы — нигде не
+                    спрятаться от машин Kokonoe. Если вам нравится заполнять экран эффектами и подавлять
+                    врагов высоким уроном, Kokonoe — ваш выбор.[reference:0]
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--koko-glow);border:1px solid rgba(230,126,34,0.3);border-radius:3px;">Ace Hunter</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--koko-glow);border:1px solid rgba(230,126,34,0.3);border-radius:3px;">Components</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--koko-glow);border:1px solid rgba(230,126,34,0.3);border-radius:3px;">Banishing Rays</span>
+                </div>
+            </div>
+
+            <div class="koko-hero-visual">
+                <div class="koko-char-frame">
+                    <img src="kokonoe.jpg" class="koko-char-img" alt="Kokonoe">
+                    <div class="koko-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="koko-section">
+        <div class="koko-section-inner">
+            <div class="koko-section-head">
+                <span class="koko-section-num">01</span>
+                <div class="koko-section-line rev"></div>
+                <h2 class="koko-section-title">Досье персонажа</h2>
+                <div class="koko-section-line"></div>
+            </div>
+
+            <div class="koko-dossier">
+                <div class="koko-dossier-table">
+                    <div class="koko-dossier-row"><div class="koko-dossier-key">Имя</div><div class="koko-dossier-val">Kokonoe (ココノエ)</div></div>
+                    <div class="koko-dossier-row"><div class="koko-dossier-key">Организация</div><div class="koko-dossier-val">Sector Seven</div></div>
+                    <div class="koko-dossier-row"><div class="koko-dossier-key">Оружие</div><div class="koko-dossier-val">Многочисленные устройства (Armaments)</div></div>
+                    <div class="koko-dossier-row"><div class="koko-dossier-key">База HP / Атака</div><div class="koko-dossier-val">1350 / 210 (30 потенциалов, +600%)[reference:1]</div></div>
+                    <div class="koko-dossier-row"><div class="koko-dossier-key">Роль</div><div class="koko-dossier-val">Zoner / Контроль зон</div></div>
+                    <div class="koko-dossier-row"><div class="koko-dossier-key">Особенность</div><div class="koko-dossier-val">Компоненты, Killstreak-бафф, телепортация</div></div>
+                </div>
+
+                <div class="koko-stats-block">
+                    <div class="koko-stats-title">Боевые характеристики</div>
+                    <div class="koko-stat-row"><span class="koko-stat-label">ATK</span><div class="koko-stat-bar"><div class="koko-stat-fill" data-width="90"></div></div><span class="koko-stat-val">90</span></div>
+                    <div class="koko-stat-row"><span class="koko-stat-label">DEF</span><div class="koko-stat-bar"><div class="koko-stat-fill" data-width="40"></div></div><span class="koko-stat-val">40</span></div>
+                    <div class="koko-stat-row"><span class="koko-stat-label">SPD</span><div class="koko-stat-bar"><div class="koko-stat-fill" data-width="55"></div></div><span class="koko-stat-val">55</span></div>
+                    <div class="koko-stat-row"><span class="koko-stat-label">HP</span><div class="koko-stat-bar"><div class="koko-stat-fill" data-width="60"></div></div><span class="koko-stat-val">60</span></div>
+                    <div class="koko-stat-row"><span class="koko-stat-label">RANGE</span><div class="koko-stat-bar"><div class="koko-stat-fill" data-width="95"></div></div><span class="koko-stat-val">95</span></div>
+                    <div class="koko-stat-row"><span class="koko-stat-label">SKILL</span><div class="koko-stat-bar"><div class="koko-stat-fill" data-width="85"></div></div><span class="koko-stat-val">85</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(230,126,34,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--koko-glow);line-height:1.6;">
+                            <strong style="color:var(--koko-primary);">Ace Hunter</strong><br>
+                            При killstreak 10 или выше урон навыков увеличивается на <strong>+90%</strong>.
+                            Счётчик killstreak отображается в левом нижнем углу с иконкой черепа.
+                            Killstreak определяется количеством врагов, побеждённых без получения урона.[reference:2]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="koko-section">
+        <div class="koko-section-inner">
+            <div class="koko-section-head">
+                <span class="koko-section-num">02</span>
+                <div class="koko-section-line rev"></div>
+                <h2 class="koko-section-title">Навыки и приёмы</h2>
+                <div class="koko-section-line"></div>
+            </div>
+
+            <div class="koko-skills-grid">
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🚀</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">Armament No.8EE "Meteor Carpet Storm vE.24"</div>
+                        <div class="koko-skill-type">Legacy Skill 1</div>
+                        <div class="koko-skill-desc">
+                            Запускает 5 самонаводящихся ракет. Количество ракет увеличивается с каждым уровнем.
+                            Ракеты появляются над прототипом и нацеливаются на ближайших врагов.[reference:3]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🌀</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">Armament No.6β "Planar Haze v1.00"</div>
+                        <div class="koko-skill-type">Legacy Skill 2</div>
+                        <div class="koko-skill-desc">
+                            Открывает портал для телепортации прототипа в удерживаемом направлении.
+                            Расстояние телепортации увеличивается с каждым уровнем. Даёт дополнительный Dash
+                            с большим количеством кадров неуязвимости.[reference:4]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">⚙️</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">Components (Компоненты)</div>
+                        <div class="koko-skill-type">Уникальная механика</div>
+                        <div class="koko-skill-desc">
+                            После получения Universal Enhancement большинство действий Kokonoe оставляют
+                            сломанные устройства (Components) на земле. Их можно детонировать вручную (Down + Attack)
+                            или использовать с Banishing Rays для создания дополнительных лазеров.[reference:5]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🔫</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">[Ground] Attack — 3-hit Combo</div>
+                        <div class="koko-skill-type">Базовая атака</div>
+                        <div class="koko-skill-desc">
+                            Комбо из 3 ударов: выстрел водяными каплями, короткая волна искр, затем залп ракет.
+                            Удержание Attack продолжает стрельбу водяными снарядами. С потенциалами: ракеты,
+                            ледяные шипы с замедлением, Super Armor.[reference:6]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🔥</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">[Airborne] Attack</div>
+                        <div class="koko-skill-type">Воздушная атака</div>
+                        <div class="koko-skill-desc">
+                            Kokonoe вращается в воздухе, извергая огонь по кругу. С потенциалами: атака льдом
+                            (замедление), "Splashes" с увеличенным уроном, разрушение Super Armor, тройной прыжок.[reference:7]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🛵</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">Unique Dash / "Planar Haze v3.09"</div>
+                        <div class="koko-skill-type">Уникальный Dash</div>
+                        <div class="koko-skill-desc">
+                            Kokonoe делает быстрый рывок и едет на скутере, пока удерживается Dash.
+                            Сначала имеет очень мало Dodge Frames. С "Planar Haze v3.09" Dash превращается
+                            в телепорт на короткое расстояние с полной неуязвимостью.[reference:8]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">💥</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">"Furious Decimator Avalanche v2.19"</div>
+                        <div class="koko-skill-type">[Ground] / [Airborne] Skill</div>
+                        <div class="koko-skill-desc">
+                            [Ground] Skill: запускает несколько ракет вперёд (MP:100). [Airborne] Skill: ракеты летят к земле
+                            и летят прямо после приземления (MP:100). С потенциалами: двойное количество ракет,
+                            разрушение Super Armor, оставление клона.[reference:9]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">👊</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">"Broken Bunker Assault v3.13"</div>
+                        <div class="koko-skill-type">[Ground] Up + Attack</div>
+                        <div class="koko-skill-desc">
+                            Бежит вперёд и наносит апперкот. Повторное нажатие Attack — прямой удар.
+                            Оба удара выпускают ракету, которая запускает противника. С потенциалами:
+                            лазерный луч, "Splashes", захват врагов при удержании.[reference:10]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">☀️</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">"Banishing Rays v7.10"</div>
+                        <div class="koko-skill-type">[Ground] Down + Skill</div>
+                        <div class="koko-skill-desc">
+                            Устанавливает Banishing Ray — устройство, периодически стреляющее лазерами и
+                            разряжающее электричество рядом (MP:35). При использовании рядом с Components
+                            дополнительные лазеры появляются из них.[reference:11]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">⬆️</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">"Heaven's Judgement vE.83"</div>
+                        <div class="koko-skill-type">Up + Skill</div>
+                        <div class="koko-skill-desc">
+                            Призывает гигантский лазерный столб, медленно движущийся вперёд (MP:100).
+                            С потенциалами: удвоенная длительность, увеличенная толщина и урон,
+                            ускоренное движение и отслеживание врагов.[reference:12]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🌠</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">"Meteor Carpet Storm vE.24" (SP)</div>
+                        <div class="koko-skill-type">[Ground] Hold Action</div>
+                        <div class="koko-skill-desc">
+                            Призывает множество ракет, падающих с неба в течение нескольких секунд (SP:100).
+                            SP зарабатывается тратой MP. С потенциалами: удвоение ракет, отбрасывание и
+                            оглушение врагов, увеличенные взрывы.[reference:13]
+                        </div>
+                    </div>
+                </div>
+                <div class="koko-skill-card">
+                    <div class="koko-skill-icon">🔷</div>
+                    <div class="koko-skill-info">
+                        <div class="koko-skill-name">Universal Enhancement: Components</div>
+                        <div class="koko-skill-type">Универсальное улучшение</div>
+                        <div class="koko-skill-desc">
+                            Устройства Kokonoe оставляют Components. Три компонента в форме треугольника
+                            создают энергетические лучи между ними, наносящие постоянный урон врагам.
+                            С улучшениями: больше компонентов, лучи между 4 компонентами, огненный ковёр при детонации.[reference:14]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="koko-section">
+        <div class="koko-section-inner">
+            <div class="koko-section-head">
+                <span class="koko-section-num">03</span>
+                <div class="koko-section-line rev"></div>
+                <h2 class="koko-section-title">Основные механики</h2>
+                <div class="koko-section-line"></div>
+            </div>
+
+            <div class="koko-mechanic-hero">
+                <div class="koko-mechanic-hero-title">Components — основа урона Kokonoe</div>
+                <div class="koko-mechanic-hero-desc">
+                    После получения Universal Enhancement большинство действий Kokonoe оставляют Components —
+                    сломанные устройства, лежащие на земле. Их можно детонировать вручную (Down + Attack) или
+                    использовать как усилители для Banishing Rays. При размещении трёх Components в форме
+                    треугольника между ними появляются энергетические лучи, наносящие постоянный урон врагам.
+                    С дополнительными улучшениями лучи могут соединять 4 компонента и даже любые фигуры.
+                    Подготовка нескольких Components перед боем с боссом — один из самых простых способов
+                    нанести колоссальный урон за первые секунды боя.[reference:15]
+                </div>
+            </div>
+
+            <div class="koko-mechanics-grid">
+                <div class="koko-mech-card">
+                    <div class="koko-mech-card-head"><div class="koko-mech-icon">🎯</div><div class="koko-mech-title">Ace Hunter</div></div>
+                    <div class="koko-mech-desc">
+                        Талант Kokonoe даёт <strong>+90% к урону навыков</strong> при killstreak 10+.
+                        Счётчик сбрасывается при получении урона. Убейте 10 врагов без урона перед боссом,
+                        чтобы сохранить бафф на всю битву.[reference:16]
+                    </div>
+                </div>
+                <div class="koko-mech-card">
+                    <div class="koko-mech-card-head"><div class="koko-mech-icon">🌀</div><div class="koko-mech-title">Телепортация</div></div>
+                    <div class="koko-mech-desc">
+                        С "Planar Haze v3.09" Dash Kokonoe превращается в телепорт с полной неуязвимостью.
+                        Однако после телепорта есть задержка перед возможностью использовать другие действия.
+                        Освоение этой механики критически важно для выживания.[reference:17]
+                    </div>
+                </div>
+                <div class="koko-mech-card">
+                    <div class="koko-mech-card-head"><div class="koko-mech-icon">💥</div><div class="koko-mech-title">Зональный контроль</div></div>
+                    <div class="koko-mech-desc">
+                        Kokonoe контролирует каждый дюйм экрана: ракеты, лазеры, молнии, взрывы.
+                        С правильными потенциалами она превращается в армию одного человека,
+                        способную расправиться с боссами ещё до того, как они нанесут 10 атак.[reference:18]
+                    </div>
+                </div>
+                <div class="koko-mech-card">
+                    <div class="koko-mech-card-head"><div class="koko-mech-icon">🔗</div><div class="koko-mech-title">Синергия Components</div></div>
+                    <div class="koko-mech-desc">
+                        Components взаимодействуют с Banishing Rays (дополнительные лазеры) и создают
+                        энергетические лучи между собой. Правильная расстановка компонентов экспоненциально
+                        увеличивает урон Kokonoe.[reference:19]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="koko-section">
+        <div class="koko-section-inner">
+            <div class="koko-section-head">
+                <span class="koko-section-num">04</span>
+                <div class="koko-section-line rev"></div>
+                <h2 class="koko-section-title">Советы по игре</h2>
+                <div class="koko-section-line"></div>
+            </div>
+
+            <ul class="koko-tips-list">
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>Поддерживай killstreak 10+ перед боссом.</strong> +90% к урону навыков — огромный бафф. Убей 10 слабых врагов без получения урона перед ареной босса.</span></li>
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>Расставляй Components перед боем.</strong> Несколько компонентов + Banishing Rays = лавина лазеров. Особенно эффективно против больших боссов.</span></li>
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>Освой телепортацию.</strong> "Planar Haze v3.09" даёт неуязвимость, но имеет задержку. Тренируйся отменять телепорт Dash Attack или другим Dash.</span></li>
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>Universal Enhancement: Components обязателен.</strong> Это открывает всю механику Components и энергетических лучей, без которых урон Kokonoe сильно падает.</span></li>
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>Используй "Furious Decimator Avalanche" для AoE.</strong> Ракеты покрывают большую площадь и отлично подходят для зачистки волн врагов.</span></li>
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>"Heaven's Judgement" против неподвижных боссов.</strong> Медленный лазерный столб наносит колоссальный урон, если босс стоит на месте или оглушён.</span></li>
+                <li><span class="koko-tip-bullet">🚀</span><span><strong>Детонируй Components вручную (Down + Attack).</strong> Если враги не заходят в зону лучей, взорви компоненты для мгновенного урона и огненного ковра.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="koko-footer">
+    <p>Kokonoe — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="koko-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="koko-back-top" id="kokoBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('kokoBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#1a0e00'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(230,126,34,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(230,126,34,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.koko-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.koko-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('kokoBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

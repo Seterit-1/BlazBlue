@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hakumen — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Hakumen
+       ══════════════════════════════════════════ */
+    :root {
+        --haku-primary : #bdc3c7;
+        --haku-dark    : #2c3e50;
+        --haku-glow    : #ecf0f1;
+        --haku-accent  : #95a5a6;
+        --haku-dim     : #7f8c8d;
+    }
+
+    html, body { scroll-behavior: smooth; background: #0a0a0f; }
+
+    #hakuBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .haku-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(10, 10, 15, 0.95); border-bottom: 2px solid var(--haku-primary);
+        box-shadow: 0 2px 40px rgba(189, 195, 199, 0.3);
+    }
+    .haku-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .haku-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--haku-glow);
+        border: 1px solid rgba(189, 195, 199, 0.35); border-radius: var(--radius-sm);
+        background: rgba(189, 195, 199, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .haku-back-btn:hover {
+        background: rgba(189, 195, 199, 0.2); border-color: var(--haku-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(189, 195, 199, 0.4); transform: translateX(-3px);
+    }
+    .haku-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .haku-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(189, 195, 199, 0.7));
+    }
+    .haku-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--haku-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(189, 195, 199, 0.6);
+    }
+    .haku-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .haku-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .haku-hero-info { order: 1; } .haku-hero-visual { order: 2; display: flex; justify-content: center; }
+    .haku-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--haku-dim); border: 1px solid var(--haku-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(189, 195, 199, 0.4);
+    }
+    .haku-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(189, 195, 199, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .haku-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--haku-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .haku-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .haku-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(189, 195, 199, 0.06);
+        border: 1px solid rgba(189, 195, 199, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .haku-qs-item:hover {
+        background: rgba(189, 195, 199, 0.15); border-color: var(--haku-primary); transform: translateY(-3px);
+    }
+    .haku-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--haku-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(189, 195, 199, 0.5);
+    }
+    .haku-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .haku-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--haku-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .haku-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .haku-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(189, 195, 199, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: hakuGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes hakuGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .haku-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(189, 195, 199, 0.7)) drop-shadow(0 0 70px rgba(189, 195, 199, 0.3));
+        animation: hakuFloat 4s ease-in-out infinite;
+    }
+    @keyframes hakuFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .haku-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--haku-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: hakuGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .haku-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .haku-section:nth-child(even) {
+        background: rgba(44, 62, 80, 0.15); border-top: 1px solid rgba(189, 195, 199, 0.15);
+        border-bottom: 1px solid rgba(189, 195, 199, 0.15);
+    }
+    .haku-section-inner { max-width: 1100px; margin: 0 auto; }
+    .haku-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .haku-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--haku-primary), transparent); }
+    .haku-section-line.rev { background: linear-gradient(90deg, transparent, var(--haku-primary)); }
+    .haku-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--haku-glow); text-shadow: 0 0 18px rgba(189, 195, 199, 0.5);
+        white-space: nowrap;
+    }
+    .haku-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(189, 195, 199, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .haku-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .haku-dossier-table {
+        background: rgba(44, 62, 80, 0.3); border: 1px solid rgba(189, 195, 199, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .haku-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(189, 195, 199, 0.1);
+    }
+    .haku-dossier-row:last-child { border-bottom: none; }
+    .haku-dossier-row:hover { background: rgba(189, 195, 199, 0.05); }
+    .haku-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--haku-primary);
+        border-right: 1px solid rgba(189, 195, 199, 0.15);
+    }
+    .haku-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .haku-stats-block {
+        background: rgba(44, 62, 80, 0.3); border: 1px solid rgba(189, 195, 199, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .haku-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--haku-glow); margin-bottom: 1rem;
+    }
+    .haku-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .haku-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .haku-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .haku-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--haku-dark), var(--haku-primary));
+        box-shadow: 0 0 8px rgba(189, 195, 199, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .haku-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--haku-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .haku-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .haku-skill-card {
+        background: rgba(44, 62, 80, 0.25); border: 1px solid rgba(189, 195, 199, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .haku-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(189, 195, 199, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .haku-skill-card:hover::before { opacity: 1; }
+    .haku-skill-card:hover {
+        border-color: rgba(189, 195, 199, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(189, 195, 199, 0.1);
+    }
+    .haku-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(189, 195, 199, 0.15);
+        border: 1px solid rgba(189, 195, 199, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(189, 195, 199, 0.2);
+    }
+    .haku-skill-info { flex: 1; }
+    .haku-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--haku-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .haku-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--haku-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .haku-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .haku-mechanic-hero {
+        background: rgba(44, 62, 80, 0.3); border: 1px solid rgba(189, 195, 199, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .haku-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--haku-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(189, 195, 199, 0.4);
+    }
+    .haku-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .haku-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .haku-mech-card {
+        background: rgba(44, 62, 80, 0.2); border: 1px solid rgba(189, 195, 199, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .haku-mech-card:hover {
+        border-color: rgba(189, 195, 199, 0.35); background: rgba(189, 195, 199, 0.07);
+        transform: translateY(-3px);
+    }
+    .haku-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .haku-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(189, 195, 199, 0.1); border-radius: var(--radius-sm);
+    }
+    .haku-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--haku-glow);
+    }
+    .haku-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .haku-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .haku-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(44, 62, 80, 0.15); border: 1px solid rgba(189, 195, 199, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .haku-tips-list li:hover {
+        border-color: rgba(189, 195, 199, 0.28); background: rgba(189, 195, 199, 0.06);
+    }
+    .haku-tip-bullet { color: var(--haku-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .haku-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(5, 5, 8, 0.98); border-top: 1px solid rgba(189, 195, 199, 0.2);
+    }
+    .haku-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .haku-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .haku-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(189, 195, 199, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .haku-back-top:hover {
+        border-color: var(--haku-primary); color: var(--haku-glow);
+        box-shadow: 0 0 10px rgba(189, 195, 199, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .haku-hero { grid-template-columns: 1fr; }
+        .haku-dossier { grid-template-columns: 1fr; }
+        .haku-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="hakuBg"></canvas>
+
+<header class="haku-header">
+    <div class="haku-header-inner">
+        <a href="index.html" class="haku-back-btn">← НАЗАД</a>
+        <div class="haku-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(189,195,199,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(189,195,199,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="haku-header-title">Hakumen — Void Warrior</span>
+        </div>
+        <div class="haku-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--haku-glow)">Hakumen</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(189,195,199,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(44,62,80,0.2) 0%, transparent 60%);">
+
+        <div class="haku-hero">
+            <div class="haku-hero-info">
+                <div class="haku-tag">◈ SIX HEROES · PARRY MASTER</div>
+                <h1 class="haku-hero-name">Hakumen</h1>
+                <div class="haku-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="haku-quick-stats">
+                    <div class="haku-qs-item"><div class="haku-qs-val">85</div><div class="haku-qs-lbl">Атака</div></div>
+                    <div class="haku-qs-item"><div class="haku-qs-val">95</div><div class="haku-qs-lbl">Защита</div></div>
+                    <div class="haku-qs-item"><div class="haku-qs-val">45</div><div class="haku-qs-lbl">Скорость</div></div>
+                    <div class="haku-qs-item"><div class="haku-qs-val">95</div><div class="haku-qs-lbl">HP</div></div>
+                    <div class="haku-qs-item"><div class="haku-qs-val">★★☆</div><div class="haku-qs-lbl">Сложность</div></div>
+                    <div class="haku-qs-item"><div class="haku-qs-val">Ближний</div><div class="haku-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="haku-hero-desc">
+                    Hakumen — персонаж, специализирующийся на парировании. Он способен парировать практически любую атаку
+                    и возвращать её десятикратно. С навыком Kokuujin: Yukikaze Hakumen принимает защитную стойку,
+                    которая контратакует любой полученный урон, отправляя его вперёд с чрезвычайно длинным горизонтальным
+                    разрезом. С улучшениями потенциалов Hakumen превращается из медленного в одного из самых мобильных
+                    персонажей в игре.[reference:20]
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--haku-glow);border:1px solid rgba(189,195,199,0.3);border-radius:3px;">Kokuujin: Yukikaze</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--haku-glow);border:1px solid rgba(189,195,199,0.3);border-radius:3px;">Battle Hardened</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--haku-glow);border:1px solid rgba(189,195,199,0.3);border-radius:3px;">Super Armor</span>
+                </div>
+            </div>
+
+            <div class="haku-hero-visual">
+                <div class="haku-char-frame">
+                    <img src="hakumen.jpg" class="haku-char-img" alt="Hakumen">
+                    <div class="haku-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="haku-section">
+        <div class="haku-section-inner">
+            <div class="haku-section-head">
+                <span class="haku-section-num">01</span>
+                <div class="haku-section-line rev"></div>
+                <h2 class="haku-section-title">Досье персонажа</h2>
+                <div class="haku-section-line"></div>
+            </div>
+
+            <div class="haku-dossier">
+                <div class="haku-dossier-table">
+                    <div class="haku-dossier-row"><div class="haku-dossier-key">Имя</div><div class="haku-dossier-val">Hakumen (ハクメン)</div></div>
+                    <div class="haku-dossier-row"><div class="haku-dossier-key">Титул</div><div class="haku-dossier-val">Лидер Шести Героев / Void Warrior</div></div>
+                    <div class="haku-dossier-row"><div class="haku-dossier-key">Оружие</div><div class="haku-dossier-val">Interfectum Malus: Ookami</div></div>
+                    <div class="haku-dossier-row"><div class="haku-dossier-key">База HP / Атака</div><div class="haku-dossier-val">1240 / 320 (30 потенциалов, +600%)[reference:21]</div></div>
+                    <div class="haku-dossier-row"><div class="haku-dossier-key">Роль</div><div class="haku-dossier-val">Parry / Танк / Контратакер</div></div>
+                    <div class="haku-dossier-row"><div class="haku-dossier-key">Особенность</div><div class="haku-dossier-val">Парирование, Super Armor, Blink (телепорт)</div></div>
+                </div>
+
+                <div class="haku-stats-block">
+                    <div class="haku-stats-title">Боевые характеристики</div>
+                    <div class="haku-stat-row"><span class="haku-stat-label">ATK</span><div class="haku-stat-bar"><div class="haku-stat-fill" data-width="85"></div></div><span class="haku-stat-val">85</span></div>
+                    <div class="haku-stat-row"><span class="haku-stat-label">DEF</span><div class="haku-stat-bar"><div class="haku-stat-fill" data-width="95"></div></div><span class="haku-stat-val">95</span></div>
+                    <div class="haku-stat-row"><span class="haku-stat-label">SPD</span><div class="haku-stat-bar"><div class="haku-stat-fill" data-width="45"></div></div><span class="haku-stat-val">45</span></div>
+                    <div class="haku-stat-row"><span class="haku-stat-label">HP</span><div class="haku-stat-bar"><div class="haku-stat-fill" data-width="95"></div></div><span class="haku-stat-val">95</span></div>
+                    <div class="haku-stat-row"><span class="haku-stat-label">RANGE</span><div class="haku-stat-bar"><div class="haku-stat-fill" data-width="70"></div></div><span class="haku-stat-val">70</span></div>
+                    <div class="haku-stat-row"><span class="haku-stat-label">SKILL</span><div class="haku-stat-bar"><div class="haku-stat-fill" data-width="75"></div></div><span class="haku-stat-val">75</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(189,195,199,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--haku-glow);line-height:1.6;">
+                            <strong style="color:var(--haku-primary);">Battle Hardened</strong><br>
+                            При получении или блокировании удара даёт <strong>Super Armor на 6 секунд</strong>.
+                            Super Armor предотвращает прерывание и подбрасывание атаками. Не стоит полагаться на него
+                            постоянно, но он помогает добить врагов, не будучи отброшенным.[reference:22]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="haku-section">
+        <div class="haku-section-inner">
+            <div class="haku-section-head">
+                <span class="haku-section-num">02</span>
+                <div class="haku-section-line rev"></div>
+                <h2 class="haku-section-title">Навыки и приёмы</h2>
+                <div class="haku-section-line"></div>
+            </div>
+
+            <div class="haku-skills-grid">
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🛡️</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Kokuujin: Yukikaze</div>
+                        <div class="haku-skill-type">Основной навык (Skill)</div>
+                        <div class="haku-skill-desc">
+                            Принимает блокирующую стойку. При блокировании урона выполняет Blink (телепорт)
+                            с огромным горизонтальным разрезом. Можно активировать вручную (Skill > Attack) за 100 MP.
+                            С потенциалами: блок сзади, множественные попадания, до 5 последовательных Blinks.[reference:23]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">⚡</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Kokuujin: Jinrai</div>
+                        <div class="haku-skill-type">Legacy Skill 1</div>
+                        <div class="haku-skill-desc">
+                            Принимает блокирующую стойку. При успешном блоке призывает мощную молнию, наносящую
+                            огромный урон вокруг прототипа. Не может быть активирован вручную. Даёт кадры неуязвимости
+                            при активации.[reference:24]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🛡️</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Kongou</div>
+                        <div class="haku-skill-type">Legacy Skill 2</div>
+                        <div class="haku-skill-desc">
+                            Входит в состояние Super Armor на 7 секунд, снижая получаемый урон на 55%.
+                            Снижение урона увеличивается с каждым уровнем. Рекомендуется избегать получения урона
+                            вместо полагания на этот навык.[reference:25]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">⚔️</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">[Ground] Attack — 3-hit Combo</div>
+                        <div class="haku-skill-type">Базовая атака</div>
+                        <div class="haku-skill-desc">
+                            Комбо из 3 ударов: рубящий удар сверху, топот, затем широкий разрез.
+                            С потенциалами: Super Armor во время атаки, возможность выполнить третий удар после Dash,
+                            новая 5-hit комбо Renka (Down + Attack x5).[reference:26]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🕊️</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">[Airborne] Attack</div>
+                        <div class="haku-skill-type">Воздушная атака</div>
+                        <div class="haku-skill-desc">
+                            Разрез вперёд, затем plunging attack (удар вниз). С потенциалами: ударная волна по диагонали,
+                            увеличенная ударная волна, тройной прыжок с восстановлением и неуязвимостью на 1 секунду,
+                            Hotaru (Up + Attack) — подлёт с ударом ногой и Super Armor.[reference:27]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">💨</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Dash / Isaha</div>
+                        <div class="haku-skill-type">Уникальный Dash</div>
+                        <div class="haku-skill-desc">
+                            Короткий плечевой таран с Super Armor и очень малой неуязвимостью. Нет Dodge Frames —
+                            вместо этого Super Armor для танкования атак. С потенциалами: дальше, разрушение Super Armor,
+                            Triple Dash, больше кадров неуязвимости.[reference:28]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🔪</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Zantetsu (Заряженная атака)</div>
+                        <div class="haku-skill-type">[Ground] Hold Attack</div>
+                        <div class="haku-skill-desc">
+                            Быстрый рубящий удар вниз, затем зарядка мощного разреза вперёд. Во время зарядки —
+                            Super Armor. Полностью заряженный разрушает вражеский Super Armor. С потенциалами:
+                            дополнительная ударная волна, пропуск начального удара, Sekka (Down + Hold Attack) —
+                            горизонтальный разрез в обе стороны.[reference:29]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">⬆️</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Kishuu (Захват)</div>
+                        <div class="haku-skill-type">[Ground] Up + Dash</div>
+                        <div class="haku-skill-desc">
+                            Рывок вперёд с захватом врага и ударом о землю. С потенциалами: дальше и с кадрами
+                            неуязвимости, увеличенный урон и область, возможность удара ладонью перед захватом.[reference:30]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🌀</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Shiden (Blink)</div>
+                        <div class="haku-skill-type">Down + Dash</div>
+                        <div class="haku-skill-desc">
+                            Выполняет Blink (телепорт). С потенциалами: множественные попадания, дальше,
+                            до 3 раз подряд, смена направления удержанием Down + left/right. Может сбрасывать
+                            лимит воздушных атак.[reference:31]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🌊</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Kokuujin: Shippu</div>
+                        <div class="haku-skill-type">[Ground] Up + Hold Skill</div>
+                        <div class="haku-skill-desc">
+                            Заряжается и посылает ударные волны вперёд (MP:50). Можно послать сразу без зарядки.
+                            Удержание Skill тратит MP (до 110) и посылает дополнительные ударные волны с меньшим уроном.
+                            С потенциалами: больше урона и область.[reference:32]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">☀️</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Kokuujin: Jinrai (SP)</div>
+                        <div class="haku-skill-type">Down + Skill</div>
+                        <div class="haku-skill-desc">
+                            Принимает специальную блокирующую стойку. При блокировании урона выпускает Jinrai —
+                            огромный луч света, наносящий колоссальный урон (SP:50). Можно активировать вручную
+                            за SP:100. SP зарабатывается при блокировании Kokuujin: Yukikaze.[reference:33]
+                        </div>
+                    </div>
+                </div>
+                <div class="haku-skill-card">
+                    <div class="haku-skill-icon">🔰</div>
+                    <div class="haku-skill-info">
+                        <div class="haku-skill-name">Universal Enhancement: Super Armor</div>
+                        <div class="haku-skill-type">Универсальное улучшение</div>
+                        <div class="haku-skill-desc">
+                            Hakumen получает меньше урона, пока активен Super Armor. С улучшением: ещё меньше урона.
+                            Влияет на множество движений Hakumen, делая его ещё более живучим.[reference:34]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="haku-section">
+        <div class="haku-section-inner">
+            <div class="haku-section-head">
+                <span class="haku-section-num">03</span>
+                <div class="haku-section-line rev"></div>
+                <h2 class="haku-section-title">Основные механики</h2>
+                <div class="haku-section-line"></div>
+            </div>
+
+            <div class="haku-mechanic-hero">
+                <div class="haku-mechanic-hero-title">Kokuujin: Yukikaze — искусство парирования</div>
+                <div class="haku-mechanic-hero-desc">
+                    Ключевой навык Hakumen. Он принимает защитную стойку, которая контратакует любой полученный урон,
+                    отправляя его вперёд с чрезвычайно длинным горизонтальным разрезом. Контратака, при которой он
+                    телепортируется через экран, называется Blink. Во время Blink Hakumen полностью неуязвим.
+                    С улучшениями потенциалов можно выполнять до 5 последовательных Blinks, нанося колоссальный урон
+                    и оставаясь неуязвимым длительное время. Чтобы выполнить последовательные Blinks, нужно нажимать
+                    Attack в момент характерной "вспышки" на Hakumen в конце каждого Blink.[reference:35]
+                </div>
+            </div>
+
+            <div class="haku-mechanics-grid">
+                <div class="haku-mech-card">
+                    <div class="haku-mech-card-head"><div class="haku-mech-icon">🛡️</div><div class="haku-mech-title">Super Armor вместо Dodge Frames</div></div>
+                    <div class="haku-mech-desc">
+                        В отличие от других персонажей, Dash Hakumen не имеет Dodge Frames. Вместо этого он использует
+                        Super Armor для танкования атак. Он может триггерить тактики Dash, но будет получать урон,
+                        пока не получит улучшения потенциалов.[reference:36]
+                    </div>
+                </div>
+                <div class="haku-mech-card">
+                    <div class="haku-mech-card-head"><div class="haku-mech-icon">🌀</div><div class="haku-mech-title">Blink (Телепортация)</div></div>
+                    <div class="haku-mech-desc">
+                        Многие движения Hakumen используют Blink — быстрый телепорт с полной неуязвимостью.
+                        Shiden (Down + Dash) позволяет использовать Blink как движение, а с потенциалами —
+                        до 3 раз подряд и смену направления.[reference:37]
+                    </div>
+                </div>
+                <div class="haku-mech-card">
+                    <div class="haku-mech-card-head"><div class="haku-mech-icon">⬆️</div><div class="haku-mech-title">Сброс воздушных атак</div></div>
+                    <div class="haku-mech-desc">
+                        С определёнными потенциалами Hakumen может использовать Jump или Dash в воздухе для сброса
+                        лимита воздушных атак. Это позволяет ему выполнять бесконечные воздушные комбо,
+                        несмотря на его медлительность.[reference:38]
+                    </div>
+                </div>
+                <div class="haku-mech-card">
+                    <div class="haku-mech-card-head"><div class="haku-mech-icon">⚡</div><div class="haku-mech-title">Battle Hardened</div></div>
+                    <div class="haku-mech-desc">
+                        Талант Hakumen даёт Super Armor на 6 секунд при получении или блокировании удара.
+                        Это позволяет ему не прерываться и продолжать атаку, даже если он пропустил удар.
+                        Не стоит полагаться на него постоянно, но он спасает в критических ситуациях.[reference:39]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="haku-section">
+        <div class="haku-section-inner">
+            <div class="haku-section-head">
+                <span class="haku-section-num">04</span>
+                <div class="haku-section-line rev"></div>
+                <h2 class="haku-section-title">Советы по игре</h2>
+                <div class="haku-section-line"></div>
+            </div>
+
+            <ul class="haku-tips-list">
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Запомни ритм Blinks.</strong> Чтобы выполнить последовательные Blinks в Yukikaze, нажимай Attack в момент "вспышки" на Hakumen. Ритм одинаков для каждого Blink.</span></li>
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Не бойся активировать Yukikaze вручную.</strong> Хотя это стоит 100 MP, ручная активация позволяет безопасно начать комбо, не дожидаясь атаки врага.</span></li>
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Hakumen — отличный выбор для новичков.</strong> Высокий урон и здоровье с самого начала, мощное парирование и Super Armor делают его forgiving для изучения игры.[reference:40]</span></li>
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Используй Zantetsu против врагов с Super Armor.</strong> Полностью заряженный Zantetsu разрушает вражеский Super Armor, позволяя прерывать их атаки.</span></li>
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Не полагайся на Kongou.</strong> Снижение урона полезно, но всегда лучше полностью избегать атак. Бери Kokuujin: Jinrai вместо него.</span></li>
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Shiden (Down + Dash) — твой инструмент мобильности.</strong> С потенциалами можно использовать до 3 раз подряд для быстрого перемещения и уклонения.</span></li>
+                <li><span class="haku-tip-bullet">🛡️</span><span><strong>Kokuujin: Jinrai (SP) наносит колоссальный урон.</strong> Копи SP через блокирование Yukikaze, чтобы использовать этот луч света против боссов.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="haku-footer">
+    <p>Hakumen — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="haku-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="haku-back-top" id="hakuBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('hakuBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 50 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(189,195,199,0.1)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(189,195,199,0.4)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.haku-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.haku-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('hakuBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

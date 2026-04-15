@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jin — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Jin
+       ══════════════════════════════════════════ */
+    :root {
+        --jin-primary : #5dade2;
+        --jin-dark    : #0d3b6e;
+        --jin-glow    : #a9cce3;
+        --jin-accent  : #3498db;
+        --jin-dim     : #1a5276;
+    }
+
+    html, body { scroll-behavior: smooth; background: #0a1420; }
+
+    #jinBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .jin-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(10, 20, 32, 0.95); border-bottom: 2px solid var(--jin-primary);
+        box-shadow: 0 2px 40px rgba(93, 173, 226, 0.3);
+    }
+    .jin-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .jin-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--jin-glow);
+        border: 1px solid rgba(93, 173, 226, 0.35); border-radius: var(--radius-sm);
+        background: rgba(93, 173, 226, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .jin-back-btn:hover {
+        background: rgba(93, 173, 226, 0.2); border-color: var(--jin-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(93, 173, 226, 0.4); transform: translateX(-3px);
+    }
+    .jin-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .jin-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(93, 173, 226, 0.7));
+    }
+    .jin-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--jin-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(93, 173, 226, 0.6);
+    }
+    .jin-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .jin-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .jin-hero-info { order: 1; } .jin-hero-visual { order: 2; display: flex; justify-content: center; }
+    .jin-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--jin-dim); border: 1px solid var(--jin-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(93, 173, 226, 0.4);
+    }
+    .jin-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(93, 173, 226, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .jin-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--jin-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .jin-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .jin-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(93, 173, 226, 0.06);
+        border: 1px solid rgba(93, 173, 226, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .jin-qs-item:hover {
+        background: rgba(93, 173, 226, 0.15); border-color: var(--jin-primary); transform: translateY(-3px);
+    }
+    .jin-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--jin-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(93, 173, 226, 0.5);
+    }
+    .jin-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .jin-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--jin-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .jin-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .jin-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(93, 173, 226, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: jinGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes jinGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .jin-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(93, 173, 226, 0.7)) drop-shadow(0 0 70px rgba(93, 173, 226, 0.3));
+        animation: jinFloat 4s ease-in-out infinite;
+    }
+    @keyframes jinFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .jin-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--jin-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: jinGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .jin-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .jin-section:nth-child(even) {
+        background: rgba(13, 59, 110, 0.15); border-top: 1px solid rgba(93, 173, 226, 0.15);
+        border-bottom: 1px solid rgba(93, 173, 226, 0.15);
+    }
+    .jin-section-inner { max-width: 1100px; margin: 0 auto; }
+    .jin-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .jin-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--jin-primary), transparent); }
+    .jin-section-line.rev { background: linear-gradient(90deg, transparent, var(--jin-primary)); }
+    .jin-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--jin-glow); text-shadow: 0 0 18px rgba(93, 173, 226, 0.5);
+        white-space: nowrap;
+    }
+    .jin-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(93, 173, 226, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .jin-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .jin-dossier-table {
+        background: rgba(13, 59, 110, 0.3); border: 1px solid rgba(93, 173, 226, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .jin-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(93, 173, 226, 0.1);
+    }
+    .jin-dossier-row:last-child { border-bottom: none; }
+    .jin-dossier-row:hover { background: rgba(93, 173, 226, 0.05); }
+    .jin-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--jin-primary);
+        border-right: 1px solid rgba(93, 173, 226, 0.15);
+    }
+    .jin-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .jin-stats-block {
+        background: rgba(13, 59, 110, 0.3); border: 1px solid rgba(93, 173, 226, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .jin-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--jin-glow); margin-bottom: 1rem;
+    }
+    .jin-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .jin-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .jin-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .jin-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--jin-dark), var(--jin-primary));
+        box-shadow: 0 0 8px rgba(93, 173, 226, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .jin-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--jin-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .jin-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .jin-skill-card {
+        background: rgba(13, 59, 110, 0.25); border: 1px solid rgba(93, 173, 226, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .jin-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(93, 173, 226, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .jin-skill-card:hover::before { opacity: 1; }
+    .jin-skill-card:hover {
+        border-color: rgba(93, 173, 226, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(93, 173, 226, 0.1);
+    }
+    .jin-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(93, 173, 226, 0.15);
+        border: 1px solid rgba(93, 173, 226, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(93, 173, 226, 0.2);
+    }
+    .jin-skill-info { flex: 1; }
+    .jin-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--jin-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .jin-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--jin-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .jin-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .jin-mechanic-hero {
+        background: rgba(13, 59, 110, 0.3); border: 1px solid rgba(93, 173, 226, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .jin-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--jin-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(93, 173, 226, 0.4);
+    }
+    .jin-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .jin-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .jin-mech-card {
+        background: rgba(13, 59, 110, 0.2); border: 1px solid rgba(93, 173, 226, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .jin-mech-card:hover {
+        border-color: rgba(93, 173, 226, 0.35); background: rgba(93, 173, 226, 0.07);
+        transform: translateY(-3px);
+    }
+    .jin-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .jin-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(93, 173, 226, 0.1); border-radius: var(--radius-sm);
+    }
+    .jin-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--jin-glow);
+    }
+    .jin-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .jin-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .jin-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(13, 59, 110, 0.15); border: 1px solid rgba(93, 173, 226, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .jin-tips-list li:hover {
+        border-color: rgba(93, 173, 226, 0.28); background: rgba(93, 173, 226, 0.06);
+    }
+    .jin-tip-bullet { color: var(--jin-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .jin-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(5, 10, 16, 0.98); border-top: 1px solid rgba(93, 173, 226, 0.2);
+    }
+    .jin-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .jin-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .jin-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(93, 173, 226, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .jin-back-top:hover {
+        border-color: var(--jin-primary); color: var(--jin-glow);
+        box-shadow: 0 0 10px rgba(93, 173, 226, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .jin-hero { grid-template-columns: 1fr; }
+        .jin-dossier { grid-template-columns: 1fr; }
+        .jin-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="jinBg"></canvas>
+
+<header class="jin-header">
+    <div class="jin-header-inner">
+        <a href="index.html" class="jin-back-btn">← НАЗАД</a>
+        <div class="jin-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(93,173,226,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(93,173,226,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="jin-header-title">Jin — Frost Blade</span>
+        </div>
+        <div class="jin-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--jin-glow)">Jin</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(93,173,226,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(13,59,110,0.2) 0%, transparent 60%);">
+
+        <div class="jin-hero">
+            <div class="jin-hero-info">
+                <div class="jin-tag">◈ NOL MAJOR · FROST BLADE</div>
+                <h1 class="jin-hero-name">Jin</h1>
+                <div class="jin-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="jin-quick-stats">
+                    <div class="jin-qs-item"><div class="jin-qs-val">80</div><div class="jin-qs-lbl">Атака</div></div>
+                    <div class="jin-qs-item"><div class="jin-qs-val">60</div><div class="jin-qs-lbl">Защита</div></div>
+                    <div class="jin-qs-item"><div class="jin-qs-val">75</div><div class="jin-qs-lbl">Скорость</div></div>
+                    <div class="jin-qs-item"><div class="jin-qs-val">70</div><div class="jin-qs-lbl">HP</div></div>
+                    <div class="jin-qs-item"><div class="jin-qs-val">★★★</div><div class="jin-qs-lbl">Сложность</div></div>
+                    <div class="jin-qs-item"><div class="jin-qs-val">Ближний</div><div class="jin-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="jin-hero-desc">
+                    Jin Kisaragi — майор NOL и обладатель Nox Nyctores
+                    <strong style="color:var(--jin-glow)">Mucro Algesco: Yukianesa</strong>.
+                    Он контролирует лёд, замедляя и замораживая врагов, и использует уникальную механику
+                    Sheathing (вкладывания меча в ножны) для усиления атак. Jin считается одним из самых
+                    сложных персонажей для освоения, но его контроль темпа боя через Time Stasis и
+                    заморозку делает его невероятно сильным.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--jin-glow);border:1px solid rgba(93,173,226,0.3);border-radius:3px;">Time Stasis</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--jin-glow);border:1px solid rgba(93,173,226,0.3);border-radius:3px;">Freeze/Slow</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--jin-glow);border:1px solid rgba(93,173,226,0.3);border-radius:3px;">Sheathing</span>
+                </div>
+            </div>
+
+            <div class="jin-hero-visual">
+                <div class="jin-char-frame">
+                    <img src="jin.jpg" class="jin-char-img" alt="Jin">
+                    <div class="jin-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="jin-section">
+        <div class="jin-section-inner">
+            <div class="jin-section-head">
+                <span class="jin-section-num">01</span>
+                <div class="jin-section-line rev"></div>
+                <h2 class="jin-section-title">Досье персонажа</h2>
+                <div class="jin-section-line"></div>
+            </div>
+
+            <div class="jin-dossier">
+                <div class="jin-dossier-table">
+                    <div class="jin-dossier-row"><div class="jin-dossier-key">Имя</div><div class="jin-dossier-val">Jin Kisaragi</div></div>
+                    <div class="jin-dossier-row"><div class="jin-dossier-key">Титул</div><div class="jin-dossier-val">Frost Blade / NOL Major</div></div>
+                    <div class="jin-dossier-row"><div class="jin-dossier-key">Оружие</div><div class="jin-dossier-val">Mucro Algesco: Yukianesa (ледяной клинок)</div></div>
+                    <div class="jin-dossier-row"><div class="jin-dossier-key">Роль</div><div class="jin-dossier-val">Контроль / Комбо-специалист</div></div>
+                    <div class="jin-dossier-row"><div class="jin-dossier-key">Особенность</div><div class="jin-dossier-val">Time Stasis, заморозка, Sheathing</div></div>
+                </div>
+
+                <div class="jin-stats-block">
+                    <div class="jin-stats-title">Боевые характеристики</div>
+                    <div class="jin-stat-row"><span class="jin-stat-label">ATK</span><div class="jin-stat-bar"><div class="jin-stat-fill" data-width="80"></div></div><span class="jin-stat-val">80</span></div>
+                    <div class="jin-stat-row"><span class="jin-stat-label">DEF</span><div class="jin-stat-bar"><div class="jin-stat-fill" data-width="60"></div></div><span class="jin-stat-val">60</span></div>
+                    <div class="jin-stat-row"><span class="jin-stat-label">SPD</span><div class="jin-stat-bar"><div class="jin-stat-fill" data-width="75"></div></div><span class="jin-stat-val">75</span></div>
+                    <div class="jin-stat-row"><span class="jin-stat-label">HP</span><div class="jin-stat-bar"><div class="jin-stat-fill" data-width="70"></div></div><span class="jin-stat-val">70</span></div>
+                    <div class="jin-stat-row"><span class="jin-stat-label">RANGE</span><div class="jin-stat-bar"><div class="jin-stat-fill" data-width="55"></div></div><span class="jin-stat-val">55</span></div>
+                    <div class="jin-stat-row"><span class="jin-stat-label">SKILL</span><div class="jin-stat-bar"><div class="jin-stat-fill" data-width="90"></div></div><span class="jin-stat-val">90</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(93,173,226,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--jin-glow);line-height:1.6;">
+                            <strong style="color:var(--jin-primary);">Time Stasis</strong><br>
+                            После успешного уклонения враги замедляются на <strong>3.5 секунды</strong>.
+                            Уклонение — это использование Dash с правильным таймингом для избегания атаки.
+                            Во время Time Stasis враги и их снаряды двигаются медленно, а Jin остаётся на полной скорости
+                            и <strong>полностью неуязвим</strong>. Это позволяет наносить урон без риска.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="jin-section">
+        <div class="jin-section-inner">
+            <div class="jin-section-head">
+                <span class="jin-section-num">02</span>
+                <div class="jin-section-line rev"></div>
+                <h2 class="jin-section-title">Навыки и приёмы</h2>
+                <div class="jin-section-line"></div>
+            </div>
+
+            <div class="jin-skills-grid">
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">❄️</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Reitou (Frost Bite)</div>
+                        <div class="jin-skill-type">Legacy Skill 1</div>
+                        <div class="jin-skill-desc">
+                            Атака льдом, которая замораживает врагов на короткое время.
+                            Урон и длительность заморозки растут с уровнем. Эффективно против боссов и групп врагов.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">⚔️</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Hishousetsu (Pillar of Ice)</div>
+                        <div class="jin-skill-type">Legacy Skill 2</div>
+                        <div class="jin-skill-desc">
+                            Jin создаёт ледяной столб, наносящий урон и замораживающий врагов в области.
+                            Можно использовать в воздухе. Отличный инструмент для зонального контроля и прерывания атак.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">🔷</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Musou Senshouzan (Crystal Strike)</div>
+                        <div class="jin-skill-type">SP Skill</div>
+                        <div class="jin-skill-desc">
+                            Мощная атака льдом с дополнительным ударом (нажмите C для продолжения).
+                            Наносит высокий урон и замораживает врагов. Один из основных инструментов для burst-урона.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">⏱️</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Sheathing</div>
+                        <div class="jin-skill-type">Уникальная механика</div>
+                        <div class="jin-skill-desc">
+                            После каждой атаки Jin вкладывает меч в ножны. При появлении "вспышки" на рукояти
+                            нужно вовремя нажать следующую атаку. Успешное выполнение увеличивает размер атаки
+                            и наносит больше урона. Требует точного тайминга.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">💨</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">[Ground] Attack — 3-hit Combo</div>
+                        <div class="jin-skill-type">Базовая атака</div>
+                        <div class="jin-skill-desc">
+                            Быстрая комбинация из 3 ударов мечом. После второго удара можно удерживать Attack
+                            для немедленного начала зарядки Hyouten Danka (при наличии Universal Enhancement I).
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">🕊️</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">[Airborne] Attack</div>
+                        <div class="jin-skill-type">Воздушная атака</div>
+                        <div class="jin-skill-desc">
+                            Jin обнажает меч и выполняет удар вниз, затем горизонтальный разрез.
+                            Можно комбинировать с Sheathing для усиления воздушных комбо.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">🔥</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Hyouten Danka</div>
+                        <div class="jin-skill-type">Заряженная атака</div>
+                        <div class="jin-skill-desc">
+                            Заряжаемая атака льдом. При полной зарядке наносит огромный урон и замораживает врагов.
+                            С Universal Enhancement I можно начать зарядку сразу после 2-го удара комбо.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">❄️</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Freezing / Slowing</div>
+                        <div class="jin-skill-type">Пассивная механика</div>
+                        <div class="jin-skill-desc">
+                            Все атаки Jin могут замедлять и замораживать врагов. Замедление снижает скорость
+                            передвижения и атаки, заморозка полностью останавливает врага.
+                            С Universal Enhancement 2 все атаки получают этот эффект.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">🛡️</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Universal Enhancement I: Sheathing Attacks</div>
+                        <div class="jin-skill-type">Универсальное улучшение</div>
+                        <div class="jin-skill-desc">
+                            Позволяет удерживать Attack после 2-го удара комбо для немедленной зарядки Hyouten Danka.
+                            Значительно ускоряет выполнение заряженных атак и повышает DPS.
+                        </div>
+                    </div>
+                </div>
+                <div class="jin-skill-card">
+                    <div class="jin-skill-icon">🧊</div>
+                    <div class="jin-skill-info">
+                        <div class="jin-skill-name">Universal Enhancement II: Freeze/Slow</div>
+                        <div class="jin-skill-type">Универсальное улучшение</div>
+                        <div class="jin-skill-desc">
+                            Добавляет эффект замедления и заморозки ко всем атакам Jin.
+                            Превращает его в машину контроля, позволяя постоянно держать врагов под дебаффами.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="jin-section">
+        <div class="jin-section-inner">
+            <div class="jin-section-head">
+                <span class="jin-section-num">03</span>
+                <div class="jin-section-line rev"></div>
+                <h2 class="jin-section-title">Основные механики</h2>
+                <div class="jin-section-line"></div>
+            </div>
+
+            <div class="jin-mechanic-hero">
+                <div class="jin-mechanic-hero-title">Sheathing — искусство тайминга</div>
+                <div class="jin-mechanic-hero-desc">
+                    После каждой атаки или навыка Jin вкладывает меч в ножны. В этот момент на рукояти появляется
+                    "вспышка". Если нажать следующую атаку точно в момент вспышки, вы услышите характерный звук,
+                    и атака станет больше и нанесёт больше урона. Эта механика требует точного тайминга и делает
+                    Jin одним из самых сложных персонажей для освоения, но награда стоит усилий.
+                </div>
+            </div>
+
+            <div class="jin-mechanics-grid">
+                <div class="jin-mech-card">
+                    <div class="jin-mech-card-head"><div class="jin-mech-icon">⏱️</div><div class="jin-mech-title">Time Stasis</div></div>
+                    <div class="jin-mech-desc">
+                        После успешного уклонения враги замедляются, а Jin становится неуязвимым.
+                        Это позволяет безопасно наносить урон и контролировать темп боя.
+                        Одна из самых сильных способностей в игре.
+                    </div>
+                </div>
+                <div class="jin-mech-card">
+                    <div class="jin-mech-card-head"><div class="jin-mech-icon">❄️</div><div class="jin-mech-title">Заморозка и замедление</div></div>
+                    <div class="jin-mech-desc">
+                        Пассивные эффекты, которые Jin накладывает на врагов. Замедление снижает их скорость,
+                        заморозка полностью останавливает. С Universal Enhancement II все атаки получают эти эффекты.
+                    </div>
+                </div>
+                <div class="jin-mech-card">
+                    <div class="jin-mech-card-head"><div class="jin-mech-icon">⚔️</div><div class="jin-mech-title">Комбо-потенциал</div></div>
+                    <div class="jin-mech-desc">
+                        Jin — комбо-ориентированный персонаж. Большинство его способностей раскрываются
+                        при плетении комбинаций. Sheathing и заморозка позволяют продлевать комбо и
+                        наносить огромный урон.
+                    </div>
+                </div>
+                <div class="jin-mech-card">
+                    <div class="jin-mech-card-head"><div class="jin-mech-icon">💨</div><div class="jin-mech-title">Уклонение и мобильность</div></div>
+                    <div class="jin-mech-desc">
+                        Dash Jin имеет кадры уклонения (Dodge Frames), которые триггерят Time Stasis.
+                        Многие движения также получают Dodge Frames через потенциалы, увеличивая выживаемость.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="jin-section">
+        <div class="jin-section-inner">
+            <div class="jin-section-head">
+                <span class="jin-section-num">04</span>
+                <div class="jin-section-line rev"></div>
+                <h2 class="jin-section-title">Советы по игре</h2>
+                <div class="jin-section-line"></div>
+            </div>
+
+            <ul class="jin-tips-list">
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Тренируй Sheathing.</strong> Это ключевая механика Jin. Начни с простых комбо и постепенно привыкай к таймингу вспышки.</span></li>
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Используй Time Stasis агрессивно.</strong> После успешного уклонения у тебя есть 3.5 секунды неуязвимости — идеальное время для нанесения урона.</span></li>
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Universal Enhancement II обязателен.</strong> Добавление замедления/заморозки ко всем атакам превращает Jin в машину контроля.</span></li>
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Hishousetsu отлично подходит для зонального контроля.</strong> Используй его для блокирования проходов и защиты от групп врагов.</span></li>
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Hyouten Danka — твой основной источник урона.</strong> С Universal Enhancement I ты можешь заряжать его сразу после 2-го удара комбо.</span></li>
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Reitou эффективен против боссов.</strong> Заморозка даёт окно для безопасного нанесения урона даже самым опасным врагам.</span></li>
+                <li><span class="jin-tip-bullet">❄️</span><span><strong>Jin требователен к MP (meter hungry).</strong> Следи за ресурсами и не трать MP впустую — многие его сильные способности требуют MP.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="jin-footer">
+    <p>Jin — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="jin-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="jin-back-top" id="jinBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('jinBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#0a1420'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(93,173,226,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(93,173,226,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.jin-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.jin-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('jinBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

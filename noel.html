@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noel — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Noel
+       ══════════════════════════════════════════ */
+    :root {
+        --noel-primary : #2ecc71;
+        --noel-dark    : #0e5a2a;
+        --noel-glow    : #82e0aa;
+        --noel-accent  : #27ae60;
+        --noel-dim     : #1a7a3a;
+    }
+
+    html, body { scroll-behavior: smooth; background: #0a1a0f; }
+
+    #noelBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .noel-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(10, 26, 15, 0.95); border-bottom: 2px solid var(--noel-primary);
+        box-shadow: 0 2px 40px rgba(46, 204, 113, 0.3);
+    }
+    .noel-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .noel-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--noel-glow);
+        border: 1px solid rgba(46, 204, 113, 0.35); border-radius: var(--radius-sm);
+        background: rgba(46, 204, 113, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .noel-back-btn:hover {
+        background: rgba(46, 204, 113, 0.2); border-color: var(--noel-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(46, 204, 113, 0.4); transform: translateX(-3px);
+    }
+    .noel-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .noel-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(46, 204, 113, 0.7));
+    }
+    .noel-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--noel-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(46, 204, 113, 0.6);
+    }
+    .noel-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .noel-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .noel-hero-info { order: 1; } .noel-hero-visual { order: 2; display: flex; justify-content: center; }
+    .noel-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--noel-dim); border: 1px solid var(--noel-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(46, 204, 113, 0.4);
+    }
+    .noel-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(46, 204, 113, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .noel-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--noel-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .noel-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .noel-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(46, 204, 113, 0.06);
+        border: 1px solid rgba(46, 204, 113, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .noel-qs-item:hover {
+        background: rgba(46, 204, 113, 0.15); border-color: var(--noel-primary); transform: translateY(-3px);
+    }
+    .noel-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--noel-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+    }
+    .noel-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .noel-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--noel-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .noel-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .noel-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(46, 204, 113, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: noelGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes noelGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .noel-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(46, 204, 113, 0.7)) drop-shadow(0 0 70px rgba(46, 204, 113, 0.3));
+        animation: noelFloat 4s ease-in-out infinite;
+    }
+    @keyframes noelFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .noel-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--noel-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: noelGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .noel-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .noel-section:nth-child(even) {
+        background: rgba(14, 90, 42, 0.15); border-top: 1px solid rgba(46, 204, 113, 0.15);
+        border-bottom: 1px solid rgba(46, 204, 113, 0.15);
+    }
+    .noel-section-inner { max-width: 1100px; margin: 0 auto; }
+    .noel-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .noel-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--noel-primary), transparent); }
+    .noel-section-line.rev { background: linear-gradient(90deg, transparent, var(--noel-primary)); }
+    .noel-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--noel-glow); text-shadow: 0 0 18px rgba(46, 204, 113, 0.5);
+        white-space: nowrap;
+    }
+    .noel-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(46, 204, 113, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .noel-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .noel-dossier-table {
+        background: rgba(14, 90, 42, 0.3); border: 1px solid rgba(46, 204, 113, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .noel-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(46, 204, 113, 0.1);
+    }
+    .noel-dossier-row:last-child { border-bottom: none; }
+    .noel-dossier-row:hover { background: rgba(46, 204, 113, 0.05); }
+    .noel-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--noel-primary);
+        border-right: 1px solid rgba(46, 204, 113, 0.15);
+    }
+    .noel-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .noel-stats-block {
+        background: rgba(14, 90, 42, 0.3); border: 1px solid rgba(46, 204, 113, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .noel-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--noel-glow); margin-bottom: 1rem;
+    }
+    .noel-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .noel-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .noel-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .noel-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--noel-dark), var(--noel-primary));
+        box-shadow: 0 0 8px rgba(46, 204, 113, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .noel-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--noel-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .noel-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .noel-skill-card {
+        background: rgba(14, 90, 42, 0.25); border: 1px solid rgba(46, 204, 113, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .noel-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .noel-skill-card:hover::before { opacity: 1; }
+    .noel-skill-card:hover {
+        border-color: rgba(46, 204, 113, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(46, 204, 113, 0.1);
+    }
+    .noel-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(46, 204, 113, 0.15);
+        border: 1px solid rgba(46, 204, 113, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(46, 204, 113, 0.2);
+    }
+    .noel-skill-info { flex: 1; }
+    .noel-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--noel-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .noel-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--noel-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .noel-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .noel-mechanic-hero {
+        background: rgba(14, 90, 42, 0.3); border: 1px solid rgba(46, 204, 113, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .noel-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--noel-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+    }
+    .noel-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .noel-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .noel-mech-card {
+        background: rgba(14, 90, 42, 0.2); border: 1px solid rgba(46, 204, 113, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .noel-mech-card:hover {
+        border-color: rgba(46, 204, 113, 0.35); background: rgba(46, 204, 113, 0.07);
+        transform: translateY(-3px);
+    }
+    .noel-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .noel-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(46, 204, 113, 0.1); border-radius: var(--radius-sm);
+    }
+    .noel-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--noel-glow);
+    }
+    .noel-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .noel-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .noel-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(14, 90, 42, 0.15); border: 1px solid rgba(46, 204, 113, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .noel-tips-list li:hover {
+        border-color: rgba(46, 204, 113, 0.28); background: rgba(46, 204, 113, 0.06);
+    }
+    .noel-tip-bullet { color: var(--noel-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .noel-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(5, 12, 7, 0.98); border-top: 1px solid rgba(46, 204, 113, 0.2);
+    }
+    .noel-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .noel-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .noel-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(46, 204, 113, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .noel-back-top:hover {
+        border-color: var(--noel-primary); color: var(--noel-glow);
+        box-shadow: 0 0 10px rgba(46, 204, 113, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .noel-hero { grid-template-columns: 1fr; }
+        .noel-dossier { grid-template-columns: 1fr; }
+        .noel-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="noelBg"></canvas>
+
+<header class="noel-header">
+    <div class="noel-header-inner">
+        <a href="index.html" class="noel-back-btn">← НАЗАД</a>
+        <div class="noel-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(46,204,113,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="noel-header-title">Noel — Gun-Kata Master</span>
+        </div>
+        <div class="noel-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--noel-glow)">Noel</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(46,204,113,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(14,90,42,0.2) 0%, transparent 60%);">
+
+        <div class="noel-hero">
+            <div class="noel-hero-info">
+                <div class="noel-tag">◈ NOL LIEUTENANT · GUN-KATA</div>
+                <h1 class="noel-hero-name">Noel</h1>
+                <div class="noel-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="noel-quick-stats">
+                    <div class="noel-qs-item"><div class="noel-qs-val">75</div><div class="noel-qs-lbl">Атака</div></div>
+                    <div class="noel-qs-item"><div class="noel-qs-val">45</div><div class="noel-qs-lbl">Защита</div></div>
+                    <div class="noel-qs-item"><div class="noel-qs-val">80</div><div class="noel-qs-lbl">Скорость</div></div>
+                    <div class="noel-qs-item"><div class="noel-qs-val">65</div><div class="noel-qs-lbl">HP</div></div>
+                    <div class="noel-qs-item"><div class="noel-qs-val">★☆☆</div><div class="noel-qs-lbl">Сложность</div></div>
+                    <div class="noel-qs-item"><div class="noel-qs-val">Дальний</div><div class="noel-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="noel-hero-desc">
+                    Noel Vermillion — бывший лейтенант NOL, владеющая парными пистолетами
+                    <strong style="color:var(--noel-glow)">Arcus Diabolus: Bolverk</strong>.
+                    Она сочетает Gun-kata с высокой мобильностью, быстро перемещаясь по полю боя
+                    и обрушивая на врагов шквальный огонь. Уникальная механика Quick Reload
+                    позволяет ей восстанавливать MP и поддерживать постоянное давление.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--noel-glow);border:1px solid rgba(46,204,113,0.3);border-radius:3px;">Quick Reload</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--noel-glow);border:1px solid rgba(46,204,113,0.3);border-radius:3px;">Precision Strike</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--noel-glow);border:1px solid rgba(46,204,113,0.3);border-radius:3px;">Gun-Kata</span>
+                </div>
+            </div>
+
+            <div class="noel-hero-visual">
+                <div class="noel-char-frame">
+                    <img src="noel.jpg" class="noel-char-img" alt="Noel">
+                    <div class="noel-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="noel-section">
+        <div class="noel-section-inner">
+            <div class="noel-section-head">
+                <span class="noel-section-num">01</span>
+                <div class="noel-section-line rev"></div>
+                <h2 class="noel-section-title">Досье персонажа</h2>
+                <div class="noel-section-line"></div>
+            </div>
+
+            <div class="noel-dossier">
+                <div class="noel-dossier-table">
+                    <div class="noel-dossier-row"><div class="noel-dossier-key">Имя</div><div class="noel-dossier-val">Noel Vermillion</div></div>
+                    <div class="noel-dossier-row"><div class="noel-dossier-key">Титул</div><div class="noel-dossier-val">Gun-Kata Master / NOL Lieutenant</div></div>
+                    <div class="noel-dossier-row"><div class="noel-dossier-key">Оружие</div><div class="noel-dossier-val">Arcus Diabolus: Bolverk (парные пистолеты)</div></div>
+                    <div class="noel-dossier-row"><div class="noel-dossier-key">База HP / Атака</div><div class="noel-dossier-val">980 / 160 (28 потенциалов, +560%)</div></div>
+                    <div class="noel-dossier-row"><div class="noel-dossier-key">Роль</div><div class="noel-dossier-val">Дальнобойный боец / Мобильный стрелок</div></div>
+                    <div class="noel-dossier-row"><div class="noel-dossier-key">Особенность</div><div class="noel-dossier-val">Quick Reload, Precision Strike, высокая мобильность</div></div>
+                </div>
+
+                <div class="noel-stats-block">
+                    <div class="noel-stats-title">Боевые характеристики</div>
+                    <div class="noel-stat-row"><span class="noel-stat-label">ATK</span><div class="noel-stat-bar"><div class="noel-stat-fill" data-width="75"></div></div><span class="noel-stat-val">75</span></div>
+                    <div class="noel-stat-row"><span class="noel-stat-label">DEF</span><div class="noel-stat-bar"><div class="noel-stat-fill" data-width="45"></div></div><span class="noel-stat-val">45</span></div>
+                    <div class="noel-stat-row"><span class="noel-stat-label">SPD</span><div class="noel-stat-bar"><div class="noel-stat-fill" data-width="80"></div></div><span class="noel-stat-val">80</span></div>
+                    <div class="noel-stat-row"><span class="noel-stat-label">HP</span><div class="noel-stat-bar"><div class="noel-stat-fill" data-width="65"></div></div><span class="noel-stat-val">65</span></div>
+                    <div class="noel-stat-row"><span class="noel-stat-label">RANGE</span><div class="noel-stat-bar"><div class="noel-stat-fill" data-width="90"></div></div><span class="noel-stat-val">90</span></div>
+                    <div class="noel-stat-row"><span class="noel-stat-label">SKILL</span><div class="noel-stat-bar"><div class="noel-stat-fill" data-width="70"></div></div><span class="noel-stat-val">70</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(46,204,113,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--noel-glow);line-height:1.6;">
+                            <strong style="color:var(--noel-primary);">Precision Strike</strong><br>
+                            При попадании по врагу с дальней дистанции увеличивает общий урон на <strong>+50% (или +60%)</strong>.
+                            Бонус статичен и не зависит от точного расстояния — достаточно находиться на установленной дистанции.
+                            Учитывает только горизонтальное расстояние. Идеально подходит для Kokonoe, Lambda, Rachel и других дальнобойных прототипов.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="noel-section">
+        <div class="noel-section-inner">
+            <div class="noel-section-head">
+                <span class="noel-section-num">02</span>
+                <div class="noel-section-line rev"></div>
+                <h2 class="noel-section-title">Навыки и приёмы</h2>
+                <div class="noel-section-line"></div>
+            </div>
+
+            <div class="noel-skills-grid">
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">🔄</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Quick Reload</div>
+                        <div class="noel-skill-type">Уникальная механика</div>
+                        <div class="noel-skill-desc">
+                            [Ground] Up + Skill: Полностью восстанавливает MP. Перезарядка 18-20 секунд.
+                            Ключевая механика для поддержания SP-навыка Zero-Gun: Sleipnir.
+                            Позволяет быстро восстанавливать MP и поддерживать высокий темп боя.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">🎯</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Shroud Fall</div>
+                        <div class="noel-skill-type">Legacy Skill 1</div>
+                        <div class="noel-skill-desc">
+                            Приоритизирует дальних врагов: захватывает цель и выпускает несколько быстрых взрывов.
+                            Урон и дальность растут с уровнем. Позволяет безопасно уничтожать врагов вне досягаемости прототипа.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">⚡</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Quick Reload [EX]</div>
+                        <div class="noel-skill-type">Legacy Skill 2</div>
+                        <div class="noel-skill-desc">
+                            Мгновенно восстанавливает 100 MP. Позволяет ещё быстрее накапливать SP для использования
+                            Zero-Gun: Sleipnir и других способностей. Восстановленное MP увеличивается с уровнем.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">🔫</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Zero-Gun: Sleipnir</div>
+                        <div class="noel-skill-type">SP Skill</div>
+                        <div class="noel-skill-desc">
+                            Основной SP-навык Noel. Расходует SP для нанесения огромного урона.
+                            Один из двух основных стилей игры Noel — постоянное поддержание Sleipnir через Quick Reload.
+                            Требует 200 MP для 60 SP, поэтому Quick Reload критически важен.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">💥</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">[Ground] Attack — 4-hit Combo</div>
+                        <div class="noel-skill-type">Базовая атака</div>
+                        <div class="noel-skill-desc">
+                            Базовая комбинация из 4 частей, всего 5 ударов. Первый удар — выстрел вперёд с хорошей
+                            дальностью и средним уроном. Быстрые и мобильные атаки позволяют постоянно двигаться и уклоняться.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">🕊️</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">[Airborne] Attack</div>
+                        <div class="noel-skill-type">Воздушная атака</div>
+                        <div class="noel-skill-desc">
+                            Noel быстро стреляет в воздухе, сохраняя мобильность. Можно комбинировать с Dash для
+                            уклонения и продолжения давления. Воздушные атаки также выигрывают от Precision Strike.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">💨</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Dash Attack</div>
+                        <div class="noel-skill-type">Рывок + Атака</div>
+                        <div class="noel-skill-desc">
+                            Во время Dash Noel выполняет скользящий выстрел. После наземной атаки можно нажать Dash,
+                            чтобы проскользнуть за спину врага с увеличенным окном неуязвимости.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">🔹</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Discharge</div>
+                        <div class="noel-skill-type">Потенциал</div>
+                        <div class="noel-skill-desc">
+                            [Ground] Hold Attack превращается в мощный AoE-взрыв, наносящий огромный урон.
+                            Отличный инструмент для зачистки групп врагов и нанесения burst-урона по боссам.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">🦵</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Type IV: Flash Suppressor</div>
+                        <div class="noel-skill-type">Потенциал</div>
+                        <div class="noel-skill-desc">
+                            [Ground] Hold Down + Attack x3: Noel выполняет удар ногой вверх, плечевой таран и
+                            завершает выстрелом. Мощное комбо для ближнего боя с высоким уроном.
+                        </div>
+                    </div>
+                </div>
+                <div class="noel-skill-card">
+                    <div class="noel-skill-icon">⏱️</div>
+                    <div class="noel-skill-info">
+                        <div class="noel-skill-name">Universal Enhancement: Over-Exhaust</div>
+                        <div class="noel-skill-type">Универсальное улучшение</div>
+                        <div class="noel-skill-desc">
+                            Позволяет использовать MP сверх лимита (Over-Exhaust) для усиления навыков.
+                            Особенно полезно для Noel, так как позволяет быстрее восстанавливать SP для Sleipnir.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="noel-section">
+        <div class="noel-section-inner">
+            <div class="noel-section-head">
+                <span class="noel-section-num">03</span>
+                <div class="noel-section-line rev"></div>
+                <h2 class="noel-section-title">Основные механики</h2>
+                <div class="noel-section-line"></div>
+            </div>
+
+            <div class="noel-mechanic-hero">
+                <div class="noel-mechanic-hero-title">Quick Reload — управление ресурсами</div>
+                <div class="noel-mechanic-hero-desc">
+                    Уникальная механика Noel позволяет ей полностью восстанавливать MP каждые 18-20 секунд.
+                    Это делает её одной из лучших для поддержания SP-навыков, особенно Zero-Gun: Sleipnir.
+                    При 150 MP, использовании, перезарядке и повторном использовании вы накопите достаточно SP для Sleipnir.
+                    Даже после Over-Exhaust (-200 SP) потребуется всего 330 MP и одна перезарядка для полного восстановления.
+                    Соотношение MP к SP: 10/3.
+                </div>
+            </div>
+
+            <div class="noel-mechanics-grid">
+                <div class="noel-mech-card">
+                    <div class="noel-mech-card-head"><div class="noel-mech-icon">🎯</div><div class="noel-mech-title">Precision Strike</div></div>
+                    <div class="noel-mech-desc">
+                        Талант Noel даёт +50% (или +60%) урона при атаке с дальней дистанции.
+                        Бонус активируется при достижении определённого горизонтального расстояния до цели.
+                        Идеально сочетается с её дальнобойным стилем игры.
+                    </div>
+                </div>
+                <div class="noel-mech-card">
+                    <div class="noel-mech-card-head"><div class="noel-mech-icon">💨</div><div class="noel-mech-title">Мобильность и уклонение</div></div>
+                    <div class="noel-mech-desc">
+                        Noel обладает высокой скоростью передвижения и может использовать Dash после атак для
+                        уклонения. Dash имеет увеличенное окно неуязвимости, позволяя избегать урона и
+                        быстро менять позицию.
+                    </div>
+                </div>
+                <div class="noel-mech-card">
+                    <div class="noel-mech-card-head"><div class="noel-mech-icon">🔄</div><div class="noel-mech-title">Цикл MP/SP</div></div>
+                    <div class="noel-mech-desc">
+                        Благодаря Quick Reload Noel может постоянно поддерживать высокий уровень SP.
+                        Это позволяет ей чаще использовать мощные SP-навыки и доминировать на поле боя
+                        за счёт постоянного давления.
+                    </div>
+                </div>
+                <div class="noel-mech-card">
+                    <div class="noel-mech-card-head"><div class="noel-mech-icon">🔫</div><div class="noel-mech-title">Gun-Kata</div></div>
+                    <div class="noel-mech-desc">
+                        Стиль боя Noel сочетает акробатику и стрельбу. Она постоянно двигается, уклоняется
+                        и ведёт огонь, что делает её сложной мишенью и позволяет контролировать темп боя.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="noel-section">
+        <div class="noel-section-inner">
+            <div class="noel-section-head">
+                <span class="noel-section-num">04</span>
+                <div class="noel-section-line rev"></div>
+                <h2 class="noel-section-title">Советы по игре</h2>
+                <div class="noel-section-line"></div>
+            </div>
+
+            <ul class="noel-tips-list">
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Всегда следи за кулдауном Quick Reload.</strong> Используй его как только становится доступным, чтобы максимизировать восстановление MP и накопление SP.</span></li>
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Держись на расстоянии для Precision Strike.</strong> Талант даёт огромный бонус к урону, поэтому старайся атаковать врагов с дальней дистанции.</span></li>
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Используй Dash для уклонения.</strong> Dash после атаки даёт увеличенное окно неуязвимости — идеально для избегания контратак.</span></li>
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Shroud Fall — отличный инструмент для дальних целей.</strong> Используй его для уничтожения снайперов и врагов на платформах, не подставляясь под удар.</span></li>
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Не забывай про Over-Exhaust.</strong> Возможность тратить MP сверх лимита позволяет Noel поддерживать Sleipnir даже в самых затяжных боях.</span></li>
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Discharge — твой AoE-инструмент.</strong> Заряженная атака с этим потенциалом отлично подходит для зачистки групп врагов.</span></li>
+                <li><span class="noel-tip-bullet">🔫</span><span><strong>Комбинируй воздушные и наземные атаки.</strong> Высокая мобильность Noel позволяет ей постоянно менять позицию и избегать урона, оставаясь в нападении.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="noel-footer">
+    <p>Noel — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="noel-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="noel-back-top" id="noelBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('noelBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#0a1a0f'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(46,204,113,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(46,204,113,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.noel-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.noel-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('noelBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

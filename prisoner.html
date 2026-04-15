@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Prisoner — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ The Prisoner
+       ══════════════════════════════════════════ */
+    :root {
+        --prisoner-primary : #aab7b8;
+        --prisoner-dark    : #2c2c2c;
+        --prisoner-glow    : #d5dbdb;
+        --prisoner-accent  : #7f8c8d;
+        --prisoner-dim     : #5d6d7e;
+    }
+
+    html, body { scroll-behavior: smooth; background: #1a1a1a; }
+
+    #prisonerBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .prisoner-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(26, 26, 26, 0.95); border-bottom: 2px solid var(--prisoner-primary);
+        box-shadow: 0 2px 40px rgba(170, 183, 184, 0.3);
+    }
+    .prisoner-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .prisoner-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--prisoner-glow);
+        border: 1px solid rgba(170, 183, 184, 0.35); border-radius: var(--radius-sm);
+        background: rgba(170, 183, 184, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .prisoner-back-btn:hover {
+        background: rgba(170, 183, 184, 0.2); border-color: var(--prisoner-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(170, 183, 184, 0.4); transform: translateX(-3px);
+    }
+    .prisoner-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .prisoner-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(170, 183, 184, 0.7));
+    }
+    .prisoner-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--prisoner-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(170, 183, 184, 0.6);
+    }
+    .prisoner-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .prisoner-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .prisoner-hero-info { order: 1; } .prisoner-hero-visual { order: 2; display: flex; justify-content: center; }
+    .prisoner-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--prisoner-dim); border: 1px solid var(--prisoner-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(170, 183, 184, 0.4);
+    }
+    .prisoner-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(170, 183, 184, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .prisoner-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--prisoner-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .prisoner-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .prisoner-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(170, 183, 184, 0.06);
+        border: 1px solid rgba(170, 183, 184, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .prisoner-qs-item:hover {
+        background: rgba(170, 183, 184, 0.15); border-color: var(--prisoner-primary); transform: translateY(-3px);
+    }
+    .prisoner-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--prisoner-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(170, 183, 184, 0.5);
+    }
+    .prisoner-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .prisoner-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--prisoner-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .prisoner-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .prisoner-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(170, 183, 184, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: prisonerGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes prisonerGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .prisoner-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(170, 183, 184, 0.7)) drop-shadow(0 0 70px rgba(170, 183, 184, 0.3));
+        animation: prisonerFloat 4s ease-in-out infinite;
+    }
+    @keyframes prisonerFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .prisoner-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--prisoner-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: prisonerGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .prisoner-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .prisoner-section:nth-child(even) {
+        background: rgba(44, 44, 44, 0.15); border-top: 1px solid rgba(170, 183, 184, 0.15);
+        border-bottom: 1px solid rgba(170, 183, 184, 0.15);
+    }
+    .prisoner-section-inner { max-width: 1100px; margin: 0 auto; }
+    .prisoner-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .prisoner-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--prisoner-primary), transparent); }
+    .prisoner-section-line.rev { background: linear-gradient(90deg, transparent, var(--prisoner-primary)); }
+    .prisoner-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--prisoner-glow); text-shadow: 0 0 18px rgba(170, 183, 184, 0.5);
+        white-space: nowrap;
+    }
+    .prisoner-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(170, 183, 184, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .prisoner-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .prisoner-dossier-table {
+        background: rgba(44, 44, 44, 0.3); border: 1px solid rgba(170, 183, 184, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .prisoner-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(170, 183, 184, 0.1);
+    }
+    .prisoner-dossier-row:last-child { border-bottom: none; }
+    .prisoner-dossier-row:hover { background: rgba(170, 183, 184, 0.05); }
+    .prisoner-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--prisoner-primary);
+        border-right: 1px solid rgba(170, 183, 184, 0.15);
+    }
+    .prisoner-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .prisoner-stats-block {
+        background: rgba(44, 44, 44, 0.3); border: 1px solid rgba(170, 183, 184, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .prisoner-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--prisoner-glow); margin-bottom: 1rem;
+    }
+    .prisoner-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .prisoner-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .prisoner-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .prisoner-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--prisoner-dark), var(--prisoner-primary));
+        box-shadow: 0 0 8px rgba(170, 183, 184, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .prisoner-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--prisoner-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .prisoner-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .prisoner-skill-card {
+        background: rgba(44, 44, 44, 0.25); border: 1px solid rgba(170, 183, 184, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .prisoner-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(170, 183, 184, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .prisoner-skill-card:hover::before { opacity: 1; }
+    .prisoner-skill-card:hover {
+        border-color: rgba(170, 183, 184, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(170, 183, 184, 0.1);
+    }
+    .prisoner-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(170, 183, 184, 0.15);
+        border: 1px solid rgba(170, 183, 184, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(170, 183, 184, 0.2);
+    }
+    .prisoner-skill-info { flex: 1; }
+    .prisoner-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--prisoner-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .prisoner-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--prisoner-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .prisoner-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .prisoner-mechanic-hero {
+        background: rgba(44, 44, 44, 0.3); border: 1px solid rgba(170, 183, 184, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .prisoner-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--prisoner-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(170, 183, 184, 0.4);
+    }
+    .prisoner-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .prisoner-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .prisoner-mech-card {
+        background: rgba(44, 44, 44, 0.2); border: 1px solid rgba(170, 183, 184, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .prisoner-mech-card:hover {
+        border-color: rgba(170, 183, 184, 0.35); background: rgba(170, 183, 184, 0.07);
+        transform: translateY(-3px);
+    }
+    .prisoner-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .prisoner-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(170, 183, 184, 0.1); border-radius: var(--radius-sm);
+    }
+    .prisoner-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--prisoner-glow);
+    }
+    .prisoner-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .prisoner-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .prisoner-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(44, 44, 44, 0.15); border: 1px solid rgba(170, 183, 184, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .prisoner-tips-list li:hover {
+        border-color: rgba(170, 183, 184, 0.28); background: rgba(170, 183, 184, 0.06);
+    }
+    .prisoner-tip-bullet { color: var(--prisoner-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .prisoner-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(10, 10, 10, 0.98); border-top: 1px solid rgba(170, 183, 184, 0.2);
+    }
+    .prisoner-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .prisoner-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .prisoner-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(170, 183, 184, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .prisoner-back-top:hover {
+        border-color: var(--prisoner-primary); color: var(--prisoner-glow);
+        box-shadow: 0 0 10px rgba(170, 183, 184, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .prisoner-hero { grid-template-columns: 1fr; }
+        .prisoner-dossier { grid-template-columns: 1fr; }
+        .prisoner-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="prisonerBg"></canvas>
+
+<header class="prisoner-header">
+    <div class="prisoner-header-inner">
+        <a href="index.html" class="prisoner-back-btn">← НАЗАД</a>
+        <div class="prisoner-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(170,183,184,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(170,183,184,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="prisoner-header-title">The Prisoner — Dead Cells Crossover</span>
+        </div>
+        <div class="prisoner-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--prisoner-glow)">The Prisoner</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(170,183,184,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(44,44,44,0.2) 0%, transparent 60%);">
+
+        <div class="prisoner-hero">
+            <div class="prisoner-hero-info">
+                <div class="prisoner-tag">◈ GUEST · DEAD CELLS CROSSOVER</div>
+                <h1 class="prisoner-hero-name">The Prisoner</h1>
+                <div class="prisoner-hero-subtitle">BlazBlue: Entropy Effect — Гостевой Персонаж</div>
+
+                <div class="prisoner-quick-stats">
+                    <div class="prisoner-qs-item"><div class="prisoner-qs-val">80</div><div class="prisoner-qs-lbl">Атака</div></div>
+                    <div class="prisoner-qs-item"><div class="prisoner-qs-val">60</div><div class="prisoner-qs-lbl">Защита</div></div>
+                    <div class="prisoner-qs-item"><div class="prisoner-qs-val">75</div><div class="prisoner-qs-lbl">Скорость</div></div>
+                    <div class="prisoner-qs-item"><div class="prisoner-qs-val">80</div><div class="prisoner-qs-lbl">HP</div></div>
+                    <div class="prisoner-qs-item"><div class="prisoner-qs-val">★★★</div><div class="prisoner-qs-lbl">Сложность</div></div>
+                    <div class="prisoner-qs-item"><div class="prisoner-qs-val">Универсал</div><div class="prisoner-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="prisoner-hero-desc">
+                    The Prisoner — второй коллаборационный персонаж BlazBlue Entropy Effect, пришедший из
+                    популярного action-roguelike Dead Cells. Он обладает чрезвычайно разнообразным арсеналом,
+                    разделённым на три рюкзака с оружием и навыками. The Prisoner способен сражаться на любой
+                    дистанции, переключаясь между билдами на лету. Его уникальная механика — критические удары,
+                    которые наносят на 50% больше урона. Освоение условий для критических ударов и управление
+                    рюкзаками — ключ к раскрытию его потенциала.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--prisoner-glow);border:1px solid rgba(170,183,184,0.3);border-radius:3px;">Backpack System</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--prisoner-glow);border:1px solid rgba(170,183,184,0.3);border-radius:3px;">Critical Hits</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--prisoner-glow);border:1px solid rgba(170,183,184,0.3);border-radius:3px;">27 Weapons</span>
+                </div>
+            </div>
+
+            <div class="prisoner-hero-visual">
+                <div class="prisoner-char-frame">
+                    <img src="thePrisoner.jpg" class="prisoner-char-img" alt="The Prisoner">
+                    <div class="prisoner-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="prisoner-section">
+        <div class="prisoner-section-inner">
+            <div class="prisoner-section-head">
+                <span class="prisoner-section-num">01</span>
+                <div class="prisoner-section-line rev"></div>
+                <h2 class="prisoner-section-title">Досье персонажа</h2>
+                <div class="prisoner-section-line"></div>
+            </div>
+
+            <div class="prisoner-dossier">
+                <div class="prisoner-dossier-table">
+                    <div class="prisoner-dossier-row"><div class="prisoner-dossier-key">Имя</div><div class="prisoner-dossier-val">The Prisoner (Узник)</div></div>
+                    <div class="prisoner-dossier-row"><div class="prisoner-dossier-key">Происхождение</div><div class="prisoner-dossier-val">Dead Cells (Motion Twin / Evil Empire)</div></div>
+                    <div class="prisoner-dossier-row"><div class="prisoner-dossier-key">Оружие</div><div class="prisoner-dossier-val">27 видов оружия, навыков и мутаций</div></div>
+                    <div class="prisoner-dossier-row"><div class="prisoner-dossier-key">База HP / Атака</div><div class="prisoner-dossier-val">~1000 / ~150 (33 потенциала, +660%)</div></div>
+                    <div class="prisoner-dossier-row"><div class="prisoner-dossier-key">Роль</div><div class="prisoner-dossier-val">Универсал / Мастер на все руки</div></div>
+                    <div class="prisoner-dossier-row"><div class="prisoner-dossier-key">Особенность</div><div class="prisoner-dossier-val">Система рюкзаков, критические удары</div></div>
+                </div>
+
+                <div class="prisoner-stats-block">
+                    <div class="prisoner-stats-title">Боевые характеристики</div>
+                    <div class="prisoner-stat-row"><span class="prisoner-stat-label">ATK</span><div class="prisoner-stat-bar"><div class="prisoner-stat-fill" data-width="80"></div></div><span class="prisoner-stat-val">80</span></div>
+                    <div class="prisoner-stat-row"><span class="prisoner-stat-label">DEF</span><div class="prisoner-stat-bar"><div class="prisoner-stat-fill" data-width="60"></div></div><span class="prisoner-stat-val">60</span></div>
+                    <div class="prisoner-stat-row"><span class="prisoner-stat-label">SPD</span><div class="prisoner-stat-bar"><div class="prisoner-stat-fill" data-width="75"></div></div><span class="prisoner-stat-val">75</span></div>
+                    <div class="prisoner-stat-row"><span class="prisoner-stat-label">HP</span><div class="prisoner-stat-bar"><div class="prisoner-stat-fill" data-width="80"></div></div><span class="prisoner-stat-val">80</span></div>
+                    <div class="prisoner-stat-row"><span class="prisoner-stat-label">RANGE</span><div class="prisoner-stat-bar"><div class="prisoner-stat-fill" data-width="85"></div></div><span class="prisoner-stat-val">85</span></div>
+                    <div class="prisoner-stat-row"><span class="prisoner-stat-label">SKILL</span><div class="prisoner-stat-bar"><div class="prisoner-stat-fill" data-width="90"></div></div><span class="prisoner-stat-val">90</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(170,183,184,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--prisoner-glow);line-height:1.6;">
+                            <strong style="color:var(--prisoner-primary);">Tactical Healing</strong><br>
+                            Восстанавливает HP при нанесении урона врагам вскоре после получения урона.
+                            Позволяет играть более агрессивно, так как вы можете восстановить здоровье,
+                            атакуя в ответ на полученный урон.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="prisoner-section">
+        <div class="prisoner-section-inner">
+            <div class="prisoner-section-head">
+                <span class="prisoner-section-num">02</span>
+                <div class="prisoner-section-line rev"></div>
+                <h2 class="prisoner-section-title">Навыки и приёмы</h2>
+                <div class="prisoner-section-line"></div>
+            </div>
+
+            <div class="prisoner-skills-grid">
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🐺</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Wolf Trap</div>
+                        <div class="prisoner-skill-type">Legacy Skill 1</div>
+                        <div class="prisoner-skill-desc">
+                            Бросает волчью ловушку, которая обездвиживает врагов на несколько секунд.
+                            Количество ловушек и длительность обездвиживания растут с уровнем.
+                            Позволяет запереть врага для безопасной атаки.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🛡️</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Cocoon</div>
+                        <div class="prisoner-skill-type">Legacy Skill 2</div>
+                        <div class="prisoner-skill-desc">
+                            Входит в блокирующую стойку. Успешный блок даёт 3 секунды неуязвимости и
+                            сбрасывает кулдаун. Длительность неуязвимости растёт с уровнем.
+                            Один из лучших парирований в игре — позволяет полностью игнорировать урон.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🗡️</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Frantic Sword (Backpack I)</div>
+                        <div class="prisoner-skill-type">Оружие ближнего боя</div>
+                        <div class="prisoner-skill-desc">
+                            5-ударное комбо мечом. Критические удары при HP ниже 50% или активном Tactical Healing.
+                            Усиления: Poison Flame Strike (яд/ожог), Assassin's Dagger (разворот врагов, криты со спины),
+                            Parrying Blade (супер-броня, блок, криты по боссам), Blitz Slash (дальний разрез с критом).
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🏹</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Quick Bow (Backpack I)</div>
+                        <div class="prisoner-skill-type">Оружие дальнего боя</div>
+                        <div class="prisoner-skill-desc">
+                            Быстрая стрельба из лука. Усиления: Ice Bow (холод/заморозка), Infantry Bow (ближний бой),
+                            Heavy Crossbow (обездвиживающая стрела + шквал). Криты при 3+ стрелах во враге или HP < 50%.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🛡️</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Rampart (Backpack I)</div>
+                        <div class="prisoner-skill-type">Щит</div>
+                        <div class="prisoner-skill-desc">
+                            Поднимает щит и наносит удар. Успешный блок усиливает удар и даёт неуязвимость.
+                            Усиления: Total Defense (блок сзади), полная невосприимчивость к урону при трате MP.
+                            После блока все оружия гарантированно критуют.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">💣</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Infantry Grenade (Skill Backpack I)</div>
+                        <div class="prisoner-skill-type">Навык</div>
+                        <div class="prisoner-skill-desc">
+                            Бросает гранату, наносящую урон по области (MP:50). Усиления: кассетная граната,
+                            увеличенный взрыв, наложение Freeze/Blind/Immobilize.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🏹</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Double Crossb-o-matic (Skill Backpack I)</div>
+                        <div class="prisoner-skill-type">Навык</div>
+                        <div class="prisoner-skill-desc">
+                            Устанавливает турель с арбалетом, стреляющую по врагам (MP:100). Усиления: реген SP,
+                            урон ядом, увеличенная скорострельность.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">⚡</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Rapier (Backpack II)</div>
+                        <div class="prisoner-skill-type">Оружие</div>
+                        <div class="prisoner-skill-desc">
+                            Рапира с рывком и заряжаемым выпадом. Криты по врагам с Abnormal Status.
+                            Rift Rapier: блокирует урон при ударе, криты после блока.
+                            Nether Souls Slash: генерирует души, которые можно запустить во врагов.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🔮</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Magic Missiles (Backpack II)</div>
+                        <div class="prisoner-skill-type">Оружие</div>
+                        <div class="prisoner-skill-desc">
+                            Выпускает 5 самонаводящихся снарядов. Усиления: Pyrotechnics (огненный снаряд),
+                            Frost Blast (ледяная волна/лазер), увеличенная дальность отслеживания.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">⚔️</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Broadsword (Backpack II)</div>
+                        <div class="prisoner-skill-type">Оружие</div>
+                        <div class="prisoner-skill-desc">
+                            Четыре мощных удара с супер-бронёй. Срыв вражеской супер-брони даёт криты.
+                            Усиления: Flint (ударная волна с критом), Blade Whip (хлыст с критом).
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🦅</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Serenade (Skill Backpack II)</div>
+                        <div class="prisoner-skill-type">Навык</div>
+                        <div class="prisoner-skill-desc">
+                            Призывает фамильяра Serenade, который атакует врагов, накладывая метки (MP:15).
+                            Метки A и B: при наложении противоположной метки — крит. Усиления: фамильяр атакует быстрее,
+                            усиление от killstreak (урон, пробивание брони, мечевые волны).
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">☁️</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Wings of the Crow (Skill Backpack II)</div>
+                        <div class="prisoner-skill-type">Навык</div>
+                        <div class="prisoner-skill-desc">
+                            Призывает грозовое облако, левитируя на нём и поражая врагов внизу молниями (MP:50).
+                            Усиления: свободное движение, вихрь (притягивание), паралич после 10 ударов.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🍳</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Vorpan (Backpack III)</div>
+                        <div class="prisoner-skill-type">Оружие</div>
+                        <div class="prisoner-skill-desc">
+                            Быстрые удары сковородой (до 10 раз). Криты по врагам, стоящим лицом.
+                            Усиления: Flashing Fans (веера, отражение снарядов), Iron Staff (посох, супер-броня, блок),
+                            Panchaku (нунчаки из сковород, блок и контратака).
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🔱</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Symmetrical Lance (Backpack III)</div>
+                        <div class="prisoner-skill-type">Оружие</div>
+                        <div class="prisoner-skill-desc">
+                            Копьё с супер-бронёй. Криты при killstreak >= 2. Усиления: War Javelin (телепорт к копью),
+                            War Spear (криты при попадании по нескольким врагам), Fierce Lance Charge (заряжаемый выпад).
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">⚡</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Electric Whip (Backpack III)</div>
+                        <div class="prisoner-skill-type">Оружие</div>
+                        <div class="prisoner-skill-desc">
+                            Электрический хлыст, поражающий самого дальнего врага. Усиления: Wrenching Whip (притягивание),
+                            Wrecking Ball (шар на цепи, супер-броня).
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">💉</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Collector's Syringe (Skill Backpack III)</div>
+                        <div class="prisoner-skill-type">Навык</div>
+                        <div class="prisoner-skill-desc">
+                            Вращение со шприцем, наносящее урон и дающее супер-броню (MP:200). Можно потратить AP
+                            для увеличения урона и длительности. Усиления: срыв брони, яд, увеличенный радиус.
+                        </div>
+                    </div>
+                </div>
+                <div class="prisoner-skill-card">
+                    <div class="prisoner-skill-icon">🌀</div>
+                    <div class="prisoner-skill-info">
+                        <div class="prisoner-skill-name">Phaser (Skill Backpack III)</div>
+                        <div class="prisoner-skill-type">Навык</div>
+                        <div class="prisoner-skill-desc">
+                            Телепорт за спину ближайшего врага с обездвиживанием (MP:10). Усиления: урон,
+                            возврат в исходную позицию, неуязвимость во время телепорта.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="prisoner-section">
+        <div class="prisoner-section-inner">
+            <div class="prisoner-section-head">
+                <span class="prisoner-section-num">03</span>
+                <div class="prisoner-section-line rev"></div>
+                <h2 class="prisoner-section-title">Основные механики</h2>
+                <div class="prisoner-section-line"></div>
+            </div>
+
+            <div class="prisoner-mechanic-hero">
+                <div class="prisoner-mechanic-hero-title">Backpack System — три билда в одном</div>
+                <div class="prisoner-mechanic-hero-desc">
+                    The Prisoner имеет три рюкзака с оружием и навыками, между которыми можно переключаться на лету.
+                    Изначально доступен только Backpack I. Чтобы разблокировать Backpack II, III, мутации и
+                    универсальные улучшения, необходимо получить потенциал "Enhances Starting Weapons" в Weapon Backpack I.
+                    Без него вы ограничены только четверным прыжком и тройным рывком. Приоритетное получение этого
+                    потенциала открывает весь арсенал The Prisoner и позволяет адаптироваться к любой ситуации.
+                </div>
+            </div>
+
+            <div class="prisoner-mechanics-grid">
+                <div class="prisoner-mech-card">
+                    <div class="prisoner-mech-card-head"><div class="prisoner-mech-icon">💥</div><div class="prisoner-mech-title">Critical Hits</div></div>
+                    <div class="prisoner-mech-desc">
+                        Уникальная механика урона: критические удары наносят на 50% больше урона.
+                        Enhanced Critical Hits — +100% урона (через скрытые эффекты). Devastating Critical Hits —
+                        огромный урон (только с Cursed Potion, риск мгновенного поражения).
+                    </div>
+                </div>
+                <div class="prisoner-mech-card">
+                    <div class="prisoner-mech-card-head"><div class="prisoner-mech-icon">🔀</div><div class="prisoner-mech-title">Abnormal State</div></div>
+                    <div class="prisoner-mech-desc">
+                        Враги считаются в "Abnormal State", если на них наложен любой дебафф: Cold, Freeze, Lightning,
+                        Paralyze, Rend, Burn, Poison или уникальный Immobilize. Многие потенциалы требуют этого статуса.
+                    </div>
+                </div>
+                <div class="prisoner-mech-card">
+                    <div class="prisoner-mech-card-head"><div class="prisoner-mech-icon">🎒</div><div class="prisoner-mech-title">Переключение рюкзаков</div></div>
+                    <div class="prisoner-mech-desc">
+                        Down + Action переключает на Backpack II. Up + Action переключает на Backpack III.
+                        Action или Hold Action + Left/Right возвращает на Backpack I. Комбо не сбрасывается.
+                    </div>
+                </div>
+                <div class="prisoner-mech-card">
+                    <div class="prisoner-mech-card-head"><div class="prisoner-mech-icon">🔄</div><div class="prisoner-mech-title">Синергия потенциалов</div></div>
+                    <div class="prisoner-mech-desc">
+                        Потенциалы для разных рюкзаков синхронизированы: получение потенциала в Backpack I
+                        может разблокировать потенциалы в Backpack II и III. Собирайте "Various Weapon Enhancements"
+                        для полной синхронизации.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="prisoner-section">
+        <div class="prisoner-section-inner">
+            <div class="prisoner-section-head">
+                <span class="prisoner-section-num">04</span>
+                <div class="prisoner-section-line rev"></div>
+                <h2 class="prisoner-section-title">Советы по игре</h2>
+                <div class="prisoner-section-line"></div>
+            </div>
+
+            <ul class="prisoner-tips-list">
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Приоритетно берите "Enhances Starting Weapons".</strong> Без этого потенциала вы заблокированы от 90% арсенала The Prisoner.</span></li>
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Изучите условия для критических ударов.</strong> Каждое оружие имеет свои условия для критов. Знание их удваивает ваш урон.</span></li>
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Cocoon — лучший парирование в игре.</strong> Даёт 3 секунды неуязвимости и сбрасывает кулдаун. Используйте его для полной защиты.</span></li>
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Переключайте рюкзаки под ситуацию.</strong> Backpack I для универсальности, II для магии и контроля, III для мощного ближнего боя.</span></li>
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Wolf Trap обездвиживает даже боссов.</strong> Используйте ловушки, чтобы запереть опасных врагов и безопасно нанести урон.</span></li>
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Собирайте "Various Weapon Enhancements".</strong> Эти потенциалы синхронизируют улучшения между рюкзаками и открывают скрытые эффекты.</span></li>
+                <li><span class="prisoner-tip-bullet">🎒</span><span><strong>Tactical Healing позволяет играть агрессивно.</strong> Восстанавливайте HP, атакуя в ответ на полученный урон. Не бойтесь обмениваться ударами.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="prisoner-footer">
+    <p>The Prisoner — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="prisoner-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="prisoner-back-top" id="prisonerBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('prisonerBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#1a1a1a'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(170,183,184,0.1)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(170,183,184,0.4)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.prisoner-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.prisoner-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('prisonerBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

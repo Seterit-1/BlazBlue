@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICEY — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ ICEY
+       ══════════════════════════════════════════ */
+    :root {
+        --icey-primary : #f4d03f;
+        --icey-dark    : #4d3e00;
+        --icey-glow    : #f9e654;
+        --icey-accent  : #f1c40f;
+        --icey-dim     : #b7950b;
+    }
+
+    html, body { scroll-behavior: smooth; background: #1a1500; }
+
+    #iceyBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .icey-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(26, 21, 0, 0.95); border-bottom: 2px solid var(--icey-primary);
+        box-shadow: 0 2px 40px rgba(244, 208, 63, 0.3);
+    }
+    .icey-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .icey-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--icey-glow);
+        border: 1px solid rgba(244, 208, 63, 0.35); border-radius: var(--radius-sm);
+        background: rgba(244, 208, 63, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .icey-back-btn:hover {
+        background: rgba(244, 208, 63, 0.2); border-color: var(--icey-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(244, 208, 63, 0.4); transform: translateX(-3px);
+    }
+    .icey-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .icey-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(244, 208, 63, 0.7));
+    }
+    .icey-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--icey-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(244, 208, 63, 0.6);
+    }
+    .icey-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .icey-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .icey-hero-info { order: 1; } .icey-hero-visual { order: 2; display: flex; justify-content: center; }
+    .icey-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--icey-dim); border: 1px solid var(--icey-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(244, 208, 63, 0.4);
+    }
+    .icey-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(244, 208, 63, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .icey-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--icey-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .icey-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .icey-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(244, 208, 63, 0.06);
+        border: 1px solid rgba(244, 208, 63, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .icey-qs-item:hover {
+        background: rgba(244, 208, 63, 0.15); border-color: var(--icey-primary); transform: translateY(-3px);
+    }
+    .icey-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--icey-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(244, 208, 63, 0.5);
+    }
+    .icey-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .icey-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--icey-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .icey-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .icey-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(244, 208, 63, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: iceyGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes iceyGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .icey-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(244, 208, 63, 0.7)) drop-shadow(0 0 70px rgba(244, 208, 63, 0.3));
+        animation: iceyFloat 4s ease-in-out infinite;
+    }
+    @keyframes iceyFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .icey-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--icey-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: iceyGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .icey-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .icey-section:nth-child(even) {
+        background: rgba(77, 62, 0, 0.15); border-top: 1px solid rgba(244, 208, 63, 0.15);
+        border-bottom: 1px solid rgba(244, 208, 63, 0.15);
+    }
+    .icey-section-inner { max-width: 1100px; margin: 0 auto; }
+    .icey-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .icey-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--icey-primary), transparent); }
+    .icey-section-line.rev { background: linear-gradient(90deg, transparent, var(--icey-primary)); }
+    .icey-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--icey-glow); text-shadow: 0 0 18px rgba(244, 208, 63, 0.5);
+        white-space: nowrap;
+    }
+    .icey-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(244, 208, 63, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .icey-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .icey-dossier-table {
+        background: rgba(77, 62, 0, 0.3); border: 1px solid rgba(244, 208, 63, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .icey-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(244, 208, 63, 0.1);
+    }
+    .icey-dossier-row:last-child { border-bottom: none; }
+    .icey-dossier-row:hover { background: rgba(244, 208, 63, 0.05); }
+    .icey-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--icey-primary);
+        border-right: 1px solid rgba(244, 208, 63, 0.15);
+    }
+    .icey-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .icey-stats-block {
+        background: rgba(77, 62, 0, 0.3); border: 1px solid rgba(244, 208, 63, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .icey-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--icey-glow); margin-bottom: 1rem;
+    }
+    .icey-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .icey-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .icey-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .icey-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--icey-dark), var(--icey-primary));
+        box-shadow: 0 0 8px rgba(244, 208, 63, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .icey-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--icey-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .icey-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .icey-skill-card {
+        background: rgba(77, 62, 0, 0.25); border: 1px solid rgba(244, 208, 63, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .icey-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(244, 208, 63, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .icey-skill-card:hover::before { opacity: 1; }
+    .icey-skill-card:hover {
+        border-color: rgba(244, 208, 63, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(244, 208, 63, 0.1);
+    }
+    .icey-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(244, 208, 63, 0.15);
+        border: 1px solid rgba(244, 208, 63, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(244, 208, 63, 0.2);
+    }
+    .icey-skill-info { flex: 1; }
+    .icey-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--icey-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .icey-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--icey-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .icey-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .icey-mechanic-hero {
+        background: rgba(77, 62, 0, 0.3); border: 1px solid rgba(244, 208, 63, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .icey-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--icey-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(244, 208, 63, 0.4);
+    }
+    .icey-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .icey-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .icey-mech-card {
+        background: rgba(77, 62, 0, 0.2); border: 1px solid rgba(244, 208, 63, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .icey-mech-card:hover {
+        border-color: rgba(244, 208, 63, 0.35); background: rgba(244, 208, 63, 0.07);
+        transform: translateY(-3px);
+    }
+    .icey-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .icey-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(244, 208, 63, 0.1); border-radius: var(--radius-sm);
+    }
+    .icey-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--icey-glow);
+    }
+    .icey-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .icey-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .icey-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(77, 62, 0, 0.15); border: 1px solid rgba(244, 208, 63, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .icey-tips-list li:hover {
+        border-color: rgba(244, 208, 63, 0.28); background: rgba(244, 208, 63, 0.06);
+    }
+    .icey-tip-bullet { color: var(--icey-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .icey-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(10, 8, 0, 0.98); border-top: 1px solid rgba(244, 208, 63, 0.2);
+    }
+    .icey-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .icey-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .icey-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(244, 208, 63, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .icey-back-top:hover {
+        border-color: var(--icey-primary); color: var(--icey-glow);
+        box-shadow: 0 0 10px rgba(244, 208, 63, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .icey-hero { grid-template-columns: 1fr; }
+        .icey-dossier { grid-template-columns: 1fr; }
+        .icey-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="iceyBg"></canvas>
+
+<header class="icey-header">
+    <div class="icey-header-inner">
+        <a href="index.html" class="icey-back-btn">← НАЗАД</a>
+        <div class="icey-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(244,208,63,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(244,208,63,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="icey-header-title">ICEY — Guest Prototype</span>
+        </div>
+        <div class="icey-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--icey-glow)">ICEY</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(244,208,63,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(77,62,0,0.2) 0%, transparent 60%);">
+
+        <div class="icey-hero">
+            <div class="icey-hero-info">
+                <div class="icey-tag">◈ GUEST · INFINITE DASH</div>
+                <h1 class="icey-hero-name">ICEY</h1>
+                <div class="icey-hero-subtitle">BlazBlue: Entropy Effect — Гостевой Персонаж</div>
+
+                <div class="icey-quick-stats">
+                    <div class="icey-qs-item"><div class="icey-qs-val">85</div><div class="icey-qs-lbl">Атака</div></div>
+                    <div class="icey-qs-item"><div class="icey-qs-val">55</div><div class="icey-qs-lbl">Защита</div></div>
+                    <div class="icey-qs-item"><div class="icey-qs-val">95</div><div class="icey-qs-lbl">Скорость</div></div>
+                    <div class="icey-qs-item"><div class="icey-qs-val">70</div><div class="icey-qs-lbl">HP</div></div>
+                    <div class="icey-qs-item"><div class="icey-qs-val">★★★</div><div class="icey-qs-lbl">Сложность</div></div>
+                    <div class="icey-qs-item"><div class="icey-qs-val">Ближний</div><div class="icey-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="icey-hero-desc">
+                    ICEY — первый коллаборационный персонаж BlazBlue Entropy Effect, пришедший из
+                    одноимённого сайд-скроллерного слешера. Она специализируется на комбо, открывая
+                    новые приёмы по мере получения потенциалов. В отличие от других прототипов,
+                    ICEY не восстанавливает MP пассивно — вместо этого она зарабатывает MP, нанося
+                    урон атаками. Это требует постоянного чередования атак и навыков. Кроме того,
+                    она обладает одним из лучших рывков в игре — бесконечным рывком в любом направлении.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--icey-glow);border:1px solid rgba(244,208,63,0.3);border-radius:3px;">No Auto MP Regen</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--icey-glow);border:1px solid rgba(244,208,63,0.3);border-radius:3px;">Armor Broken Status</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--icey-glow);border:1px solid rgba(244,208,63,0.3);border-radius:3px;">Infinite Dash</span>
+                </div>
+            </div>
+
+            <div class="icey-hero-visual">
+                <div class="icey-char-frame">
+                    <img src="icey.jpg" class="icey-char-img" alt="ICEY">
+                    <div class="icey-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="icey-section">
+        <div class="icey-section-inner">
+            <div class="icey-section-head">
+                <span class="icey-section-num">01</span>
+                <div class="icey-section-line rev"></div>
+                <h2 class="icey-section-title">Досье персонажа</h2>
+                <div class="icey-section-line"></div>
+            </div>
+
+            <div class="icey-dossier">
+                <div class="icey-dossier-table">
+                    <div class="icey-dossier-row"><div class="icey-dossier-key">Имя</div><div class="icey-dossier-val">ICEY (アイシー)</div></div>
+                    <div class="icey-dossier-row"><div class="icey-dossier-key">Происхождение</div><div class="icey-dossier-val">Гость из игры ICEY</div></div>
+                    <div class="icey-dossier-row"><div class="icey-dossier-key">Оружие</div><div class="icey-dossier-val">Катана / Энергетические клинки</div></div>
+                    <div class="icey-dossier-row"><div class="icey-dossier-key">База HP / Атака</div><div class="icey-dossier-val">960 / 99 (32 потенциала, +640%)</div></div>
+                    <div class="icey-dossier-row"><div class="icey-dossier-key">Роль</div><div class="icey-dossier-val">Rushdown / Комбо-специалист</div></div>
+                    <div class="icey-dossier-row"><div class="icey-dossier-key">Особенность</div><div class="icey-dossier-val">Бесконечный рывок, уникальная система MP</div></div>
+                </div>
+
+                <div class="icey-stats-block">
+                    <div class="icey-stats-title">Боевые характеристики</div>
+                    <div class="icey-stat-row"><span class="icey-stat-label">ATK</span><div class="icey-stat-bar"><div class="icey-stat-fill" data-width="85"></div></div><span class="icey-stat-val">85</span></div>
+                    <div class="icey-stat-row"><span class="icey-stat-label">DEF</span><div class="icey-stat-bar"><div class="icey-stat-fill" data-width="55"></div></div><span class="icey-stat-val">55</span></div>
+                    <div class="icey-stat-row"><span class="icey-stat-label">SPD</span><div class="icey-stat-bar"><div class="icey-stat-fill" data-width="95"></div></div><span class="icey-stat-val">95</span></div>
+                    <div class="icey-stat-row"><span class="icey-stat-label">HP</span><div class="icey-stat-bar"><div class="icey-stat-fill" data-width="70"></div></div><span class="icey-stat-val">70</span></div>
+                    <div class="icey-stat-row"><span class="icey-stat-label">RANGE</span><div class="icey-stat-bar"><div class="icey-stat-fill" data-width="55"></div></div><span class="icey-stat-val">55</span></div>
+                    <div class="icey-stat-row"><span class="icey-stat-label">SKILL</span><div class="icey-stat-bar"><div class="icey-stat-fill" data-width="90"></div></div><span class="icey-stat-val">90</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(244,208,63,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--icey-glow);line-height:1.6;">
+                            <strong style="color:var(--icey-primary);">Mechanized Enemy</strong><br>
+                            ICEY или унаследовавший прототип наносит повышенный урон механическим врагам и мгновенно
+                            устраняет их при низком уровне здоровья. Полезный талант против механических противников,
+                            но прирост урона недостаточно велик, чтобы наследовать его другим персонажам.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="icey-section">
+        <div class="icey-section-inner">
+            <div class="icey-section-head">
+                <span class="icey-section-num">02</span>
+                <div class="icey-section-line rev"></div>
+                <h2 class="icey-section-title">Навыки и приёмы</h2>
+                <div class="icey-section-line"></div>
+            </div>
+
+            <div class="icey-skills-grid">
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🔊</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Otherworldly Voice</div>
+                        <div class="icey-skill-type">Legacy Skill 1</div>
+                        <div class="icey-skill-desc">
+                            Призывает таинственный звук, дающий случайный бафф (или редко — дебафф).
+                            Доступные баффы: +20% общего урона; щит, блокирующий одну атаку; восстановление MP (94 MP).
+                            Дебафф: временно инвертированные направления ввода.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🗡️</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Otherworldly Blade</div>
+                        <div class="icey-skill-type">Legacy Skill 2</div>
+                        <div class="icey-skill-desc">
+                            ICEY совершает рывок вперёд и наносит серию ударов при контакте с врагами.
+                            Урон увеличивается с каждым уровнем. Простой навык для зачистки небольших групп врагов.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">⚔️</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">[Ground] Attack — 4-hit Combo</div>
+                        <div class="icey-skill-type">Базовая атака</div>
+                        <div class="icey-skill-desc">
+                            Комбо из 4 ударов. Каждый удар генерирует небольшое количество MP.
+                            Quadra Slash: добавляет пятый удар — вращающийся разрез. Uppercut: Up + Attack —
+                            прыжковый удар с двумя попаданиями и неуязвимостью.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">💥</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Overload / EX Overload</div>
+                        <div class="icey-skill-type">Заряженная атака</div>
+                        <div class="icey-skill-desc">
+                            Hold Attack: мощный мульти-хитовый разрез (MP:100). EX Overload: при наличии 10+ SP
+                            потребляет все SP для усиленной версии. Урон EX Overload растёт с количеством потреблённого SP.
+                            Даёт неуязвимость во время использования.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🕊️</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">[Airborne] Attack & Cyclone</div>
+                        <div class="icey-skill-type">Воздушная атака</div>
+                        <div class="icey-skill-desc">
+                            3-ударное комбо в воздухе. Cyclone: добавляет четвёртый удар — вращающийся разрез вниз.
+                            Vertical Cut: [Airborne] Down + Attack — быстрый plunging attack. С потенциалами
+                            генерирует ударную волну и даёт неуязвимость.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">💨</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Infinite Dash</div>
+                        <div class="icey-skill-type">Уникальный Dash</div>
+                        <div class="icey-skill-desc">
+                            ICEY может совершать до 5 рывков в любом направлении. С потенциалами может тратить
+                            10 MP для продолжения рывка сверх лимита, делая рывок практически бесконечным.
+                            Рывок в воздухе сбрасывает лимит воздушных атак.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🔄</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Electron Flow</div>
+                        <div class="icey-skill-type">Потенциал</div>
+                        <div class="icey-skill-desc">
+                            Открывает новые комбо: Sweep (Attack > Skill) — быстрый разрез; Skewer (Attack x2 > Skill) —
+                            серия уколов; Brutal Blade (Attack x3 > Skill) — два рывка туда-обратно, притягивающие врагов;
+                            Bounceback (Attack x4 > Skill) — горизонтальный выпад, притягивающий врагов.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🎭</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Dance of Death</div>
+                        <div class="icey-skill-type">Потенциал</div>
+                        <div class="icey-skill-desc">
+                            Deadly Disc: Up + Skill — вращающаяся атака (MP:50). Shadow Dance: Down + Skill — призыв клона,
+                            атакующего врага и взрывающегося (MP:50). Swap: Down + Hold Skill — смена позиции с клоном.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🧘</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Integration (Sheathing)</div>
+                        <div class="icey-skill-type">Уникальная стойка</div>
+                        <div class="icey-skill-desc">
+                            [Ground] Down + Action: ICEY входит в стойку Sheathing. Divide: Sheathing > Attack — быстрый
+                            разрез вверх. Neutralize: Sheathing > Skill — горизонтальный разрез с блоком, при успешном
+                            блоке восстанавливает 200 MP и даёт неуязвимость (MP:100).
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">⚡</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Resonance (Charging)</div>
+                        <div class="icey-skill-type">Уникальная стойка</div>
+                        <div class="icey-skill-desc">
+                            [Ground] Up + Action: ICEY входит в стойку Charging. Surge: Charging > Attack — выпускает
+                            режущий снаряд (MP:25). Shift: Charging > Skill — удар вниз, потребляющий всю MP, урон
+                            масштабируется от потраченной MP; можно телепортироваться к врагу со статусом Armor Broken.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">💚</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Regeneration (Lysis)</div>
+                        <div class="icey-skill-type">Уникальная механика</div>
+                        <div class="icey-skill-desc">
+                            Action: ICEY телепортируется к врагу со статусом Armor Broken, наносит удар и снимает статус,
+                            восстанавливая MP. С потенциалами также восстанавливает HP и SP. Даёт неуязвимость.
+                        </div>
+                    </div>
+                </div>
+                <div class="icey-skill-card">
+                    <div class="icey-skill-icon">🛡️</div>
+                    <div class="icey-skill-info">
+                        <div class="icey-skill-name">Universal Enhancement: Vitality</div>
+                        <div class="icey-skill-type">Универсальное улучшение</div>
+                        <div class="icey-skill-desc">
+                            Hold Action: ICEY генерирует щит, поглощающий урон (MP:50). При получении урона щитом
+                            есть шанс наложить статус Armor Broken на атакующего врага. С потенциалами щит становится
+                            прочнее и не исчезает, пока не будет сломан.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="icey-section">
+        <div class="icey-section-inner">
+            <div class="icey-section-head">
+                <span class="icey-section-num">03</span>
+                <div class="icey-section-line rev"></div>
+                <h2 class="icey-section-title">Основные механики</h2>
+                <div class="icey-section-line"></div>
+            </div>
+
+            <div class="icey-mechanic-hero">
+                <div class="icey-mechanic-hero-title">No Automatic MP Regeneration — уникальная система MP</div>
+                <div class="icey-mechanic-hero-desc">
+                    ICEY — единственный прототип, который не восстанавливает MP пассивно со временем. Вместо этого
+                    она зарабатывает MP, нанося урон базовыми атаками. Это означает, что её способность использовать
+                    навыки напрямую зависит от того, насколько часто вы атакуете врагов. Многие из её сильнейших
+                    навыков требуют большого количества MP, поэтому освоение комбо и постоянное чередование атак
+                    и навыков абсолютно необходимо для поддержания урона.
+                </div>
+            </div>
+
+            <div class="icey-mechanics-grid">
+                <div class="icey-mech-card">
+                    <div class="icey-mech-card-head"><div class="icey-mech-icon">🔺</div><div class="icey-mech-title">Armor Broken Status</div></div>
+                    <div class="icey-mech-desc">
+                        Уникальный статус, накладываемый ICEY на врагов (отображается треугольной меткой).
+                        Использование Regeneration телепортирует ICEY к помеченному врагу, наносит удар и снимает статус,
+                        восстанавливая MP. Снятие статуса наносит дополнительный урон и восстанавливает HP.
+                    </div>
+                </div>
+                <div class="icey-mech-card">
+                    <div class="icey-mech-card-head"><div class="icey-mech-icon">💨</div><div class="icey-mech-title">Бесконечный рывок</div></div>
+                    <div class="icey-mech-desc">
+                        С потенциалами ICEY может совершать до 5 рывков в любом направлении, а затем тратить 10 MP
+                        для продолжения рывка сверх лимита. Это даёт ей невероятную мобильность и возможность
+                        уклоняться от любых атак.
+                    </div>
+                </div>
+                <div class="icey-mech-card">
+                    <div class="icey-mech-card-head"><div class="icey-mech-icon">🔄</div><div class="icey-mech-title">Сброс воздушных атак</div></div>
+                    <div class="icey-mech-desc">
+                        Рывок или прыжок в воздухе сбрасывает лимит воздушных атак, позволяя ICEY выполнять
+                        бесконечные воздушные комбо и оставаться в воздухе сколь угодно долго.
+                    </div>
+                </div>
+                <div class="icey-mech-card">
+                    <div class="icey-mech-card-head"><div class="icey-mech-icon">🎯</div><div class="icey-mech-title">Комбо-потенциал</div></div>
+                    <div class="icey-mech-desc">
+                        Electron Flow открывает несколько новых комбо-маршрутов, позволяя ICEY постоянно менять
+                        стиль атаки и адаптироваться к любой ситуации. Правильное использование этих комбо —
+                        ключ к максимизации DPS.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="icey-section">
+        <div class="icey-section-inner">
+            <div class="icey-section-head">
+                <span class="icey-section-num">04</span>
+                <div class="icey-section-line rev"></div>
+                <h2 class="icey-section-title">Советы по игре</h2>
+                <div class="icey-section-line"></div>
+            </div>
+
+            <ul class="icey-tips-list">
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>Постоянно атакуйте для восстановления MP.</strong> Без пассивной регенерации MP ваша способность использовать навыки зависит от агрессивности. Не стойте на месте!</span></li>
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>Освойте Electron Flow комбо.</strong> Sweep, Skewer, Brutal Blade и Bounceback — ваши основные инструменты для нанесения урона и контроля толпы.</span></li>
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>Используйте Armor Broken статус.</strong> Накапливайте статус на врагах, затем используйте Regeneration для телепортации, урона и восстановления MP/HP.</span></li>
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>Злоупотребляйте бесконечным рывком.</strong> С потенциалами вы можете рывком уклоняться от любых атак и постоянно менять позицию.</span></li>
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>EX Overload — ваш бурст.</strong> Накапливайте SP через Regeneration и используйте EX Overload для нанесения колоссального урона.</span></li>
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>Neutralize даёт 200 MP при успешном блоке.</strong> Используйте Integration стойку для восстановления MP в критические моменты.</span></li>
+                <li><span class="icey-tip-bullet">🗡️</span><span><strong>Shift потребляет всю MP, но наносит огромный урон.</strong> Используйте его, когда у вас много MP и враг в статусе Armor Broken, чтобы телепортироваться и добить.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="icey-footer">
+    <p>ICEY — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="icey-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="icey-back-top" id="iceyBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('iceyBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#1a1500'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(244,208,63,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(244,208,63,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.icey-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.icey-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('iceyBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

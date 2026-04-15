@@ -1324,7 +1324,7 @@ function renderDetail() {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
 
-  /* ═══════════════════════════════════════════
+ /* ═══════════════════════════════════════════
    ИЗМЕНЕНО: УПРАВЛЕНИЕ КНОПКОЙ СТРАНИЦЫ ПЕРСОНАЖА
    ═══════════════════════════════════════════ */
 var pageBtn = document.getElementById('charPageBtn');
@@ -1358,18 +1358,30 @@ if (c.id === 'es') {
     pageBtn.style.pointerEvents = 'auto';
     pageBtn.style.cursor = 'pointer';
     pageBtn.setAttribute('title', 'Открыть страницу Taokaka');
-} else if (c.id === 'noel') {        // <-- ДОБАВИТЬ
+} else if (c.id === 'noel') {
     pageBtn.href = 'noel.html';
     pageBtn.style.opacity = '1';
     pageBtn.style.pointerEvents = 'auto';
     pageBtn.style.cursor = 'pointer';
     pageBtn.setAttribute('title', 'Открыть страницу Noel');
-} else if (c.id === 'jin') {         // <-- ДОБАВИТЬ
+} else if (c.id === 'jin') {
     pageBtn.href = 'jin.html';
     pageBtn.style.opacity = '1';
     pageBtn.style.pointerEvents = 'auto';
     pageBtn.style.cursor = 'pointer';
     pageBtn.setAttribute('title', 'Открыть страницу Jin');
+} else if (c.id === 'kokonoe') {        // <-- ДОБАВИТЬ
+    pageBtn.href = 'kokonoe.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Kokonoe');
+} else if (c.id === 'hakumen') {        // <-- ДОБАВИТЬ
+    pageBtn.href = 'hakumen.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Hakumen');
 } else {
     pageBtn.href = '#';
     pageBtn.style.opacity = '0.4';

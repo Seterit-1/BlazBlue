@@ -6,6 +6,9 @@
     <title>Rachel — BlazBlue: Entropy Effect</title>
     <link rel="stylesheet" href="style.css">
     <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Rachel
+       ══════════════════════════════════════════ */
     :root {
         --rachel-primary : #a569bd;
         --rachel-dark    : #2e0f3a;
@@ -13,164 +16,644 @@
         --rachel-accent  : #c39bd3;
         --rachel-dim     : #6c3483;
     }
+
     html, body { scroll-behavior: smooth; background: #0f0714; }
-    #rachelBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    #rachelBg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* ШАПКА */
     .rachel-header {
-        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
-        background: rgba(15, 7, 20, 0.95); border-bottom: 2px solid var(--rachel-primary);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: rgba(15, 7, 20, 0.95);
+        border-bottom: 2px solid var(--rachel-primary);
         box-shadow: 0 2px 40px rgba(165, 105, 189, 0.3);
     }
     .rachel-header-inner {
-        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
-        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
     }
     .rachel-back-btn {
-        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
-        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
-        text-transform: uppercase; color: var(--rachel-glow);
-        border: 1px solid rgba(165, 105, 189, 0.35); border-radius: var(--radius-sm);
-        background: rgba(165, 105, 189, 0.07); transition: all 0.3s ease; text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1.2rem;
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--rachel-glow);
+        border: 1px solid rgba(165, 105, 189, 0.35);
+        border-radius: var(--radius-sm);
+        background: rgba(165, 105, 189, 0.07);
+        transition: all 0.3s ease;
+        text-decoration: none;
     }
     .rachel-back-btn:hover {
-        background: rgba(165, 105, 189, 0.2); border-color: var(--rachel-primary); color: #fff;
-        box-shadow: 0 0 16px rgba(165, 105, 189, 0.4); transform: translateX(-3px);
+        background: rgba(165, 105, 189, 0.2);
+        border-color: var(--rachel-primary);
+        color: #fff;
+        box-shadow: 0 0 16px rgba(165, 105, 189, 0.4);
+        transform: translateX(-3px);
     }
-    .rachel-header-logo svg { width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(165, 105, 189, 0.7)); }
+    .rachel-header-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .rachel-header-logo svg {
+        width: 38px;
+        height: 34px;
+        filter: drop-shadow(0 0 6px rgba(165, 105, 189, 0.7));
+    }
     .rachel-header-title {
-        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--rachel-glow);
-        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(165, 105, 189, 0.6);
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 900;
+        color: var(--rachel-glow);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-shadow: 0 0 14px rgba(165, 105, 189, 0.6);
     }
+    .rachel-breadcrumb {
+        font-family: var(--font-main);
+        font-size: 0.7rem;
+        color: var(--clr-text-dim);
+        letter-spacing: 0.12em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .rachel-breadcrumb span { color: rgba(136,146,176,0.35); }
+
+    /* HERO */
     .rachel-hero {
-        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
-        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 5rem 2rem 4rem;
+        gap: 4rem;
     }
-    .rachel-hero-info { order: 1; } .rachel-hero-visual { order: 2; display: flex; justify-content: center; }
+    .rachel-hero-info { order: 1; }
+    .rachel-hero-visual { order: 2; display: flex; justify-content: center; }
+
     .rachel-tag {
-        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
-        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
-        background: var(--rachel-dim); border: 1px solid var(--rachel-primary); border-radius: var(--radius-sm);
-        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(165, 105, 189, 0.4);
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        font-family: var(--font-display);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--rachel-dim);
+        border: 1px solid var(--rachel-primary);
+        border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem;
+        box-shadow: 0 0 14px rgba(165, 105, 189, 0.4);
     }
     .rachel-hero-name {
-        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
-        color: #fff; line-height: 0.9; text-transform: uppercase;
-        text-shadow: 0 0 40px rgba(165, 105, 189, 0.6); margin-bottom: 0.4rem;
+        font-family: var(--font-display);
+        font-size: clamp(3.5rem, 7vw, 6rem);
+        font-weight: 900;
+        color: #fff;
+        line-height: 0.9;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(165, 105, 189, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
     }
     .rachel-hero-subtitle {
-        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
-        color: var(--rachel-primary); text-transform: uppercase; margin-bottom: 2rem;
+        font-family: var(--font-logo);
+        font-size: 0.75rem;
+        letter-spacing: 0.35em;
+        color: var(--rachel-primary);
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(165, 105, 189, 0.6);
+        margin-bottom: 2rem;
     }
-    .rachel-quick-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+
+    .rachel-quick-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
     .rachel-qs-item {
-        padding: 0.9rem 0.75rem; background: rgba(165, 105, 189, 0.06);
-        border: 1px solid rgba(165, 105, 189, 0.2); border-radius: var(--radius-md);
-        text-align: center; transition: all 0.3s ease;
+        padding: 0.9rem 0.75rem;
+        background: rgba(165, 105, 189, 0.06);
+        border: 1px solid rgba(165, 105, 189, 0.2);
+        border-radius: var(--radius-md);
+        text-align: center;
+        transition: all 0.3s ease;
     }
-    .rachel-qs-val { font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--rachel-glow); }
-    .rachel-qs-lbl { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--clr-text-dim); text-transform: uppercase; }
+    .rachel-qs-item:hover {
+        background: rgba(165, 105, 189, 0.15);
+        border-color: var(--rachel-primary);
+        transform: translateY(-3px);
+    }
+    .rachel-qs-val {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: var(--rachel-glow);
+        line-height: 1;
+        text-shadow: 0 0 10px rgba(165, 105, 189, 0.5);
+    }
+    .rachel-qs-lbl {
+        font-family: var(--font-main);
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--clr-text-dim);
+        text-transform: uppercase;
+        margin-top: 0.3rem;
+    }
+
     .rachel-hero-desc {
-        font-size: 0.95rem; color: var(--clr-text-dim); line-height: 1.8;
-        border-left: 2px solid var(--rachel-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+        font-family: var(--font-main);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        line-height: 1.8;
+        border-left: 2px solid var(--rachel-primary);
+        padding-left: 1.1rem;
+        margin-bottom: 2rem;
     }
+
     .rachel-char-frame {
-        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+        position: relative;
+        width: 340px;
+        height: 420px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
     }
     .rachel-char-frame::before {
-        content: ''; position: absolute; inset: 0;
+        content: '';
+        position: absolute;
+        inset: 0;
         background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(165, 105, 189, 0.25) 0%, transparent 70%);
-        border-radius: 50%; animation: rachelGlowPulse 3s infinite;
+        border-radius: 50%;
+        animation: rachelGlowPulse 3s ease-in-out infinite;
     }
-    @keyframes rachelGlowPulse { 0%,100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+    @keyframes rachelGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
     .rachel-char-img {
-        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
-        filter: drop-shadow(0 0 30px rgba(165, 105, 189, 0.7)); animation: rachelFloat 4s infinite;
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(165, 105, 189, 0.7)) drop-shadow(0 0 70px rgba(165, 105, 189, 0.3));
+        animation: rachelFloat 4s ease-in-out infinite;
     }
-    @keyframes rachelFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-    .rachel-section { position: relative; z-index: 1; padding: 5rem 2rem; }
+    @keyframes rachelFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .rachel-char-platform {
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 160px;
+        height: 6px;
+        background: linear-gradient(90deg, transparent, var(--rachel-primary), transparent);
+        border-radius: 50%;
+        filter: blur(4px);
+        opacity: 0.6;
+        animation: rachelGlowPulse 3s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .rachel-section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 2rem;
+    }
     .rachel-section:nth-child(even) {
-        background: rgba(46, 15, 58, 0.2); border-top: 1px solid rgba(165, 105, 189, 0.15);
+        background: rgba(46, 15, 58, 0.15);
+        border-top: 1px solid rgba(165, 105, 189, 0.15);
         border-bottom: 1px solid rgba(165, 105, 189, 0.15);
     }
-    .rachel-section-inner { max-width: 1100px; margin: 0 auto; }
-    .rachel-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
-    .rachel-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--rachel-primary), transparent); }
-    .rachel-section-title {
-        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
-        color: var(--rachel-glow); text-transform: uppercase;
+    .rachel-section-inner {
+        max-width: 1100px;
+        margin: 0 auto;
     }
-    .rachel-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .rachel-section-head {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        margin-bottom: 3rem;
+    }
+    .rachel-section-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, var(--rachel-primary), transparent);
+    }
+    .rachel-section-line.rev { background: linear-gradient(90deg, transparent, var(--rachel-primary)); }
+    .rachel-section-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--rachel-glow);
+        text-shadow: 0 0 18px rgba(165, 105, 189, 0.5);
+        white-space: nowrap;
+    }
+    .rachel-section-num {
+        font-family: var(--font-logo);
+        font-size: 0.65rem;
+        color: rgba(165, 105, 189, 0.4);
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .rachel-dossier {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
     .rachel-dossier-table {
-        background: rgba(46, 15, 58, 0.3); border: 1px solid rgba(165, 105, 189, 0.2);
-        border-radius: var(--radius-lg); overflow: hidden;
+        background: rgba(46, 15, 58, 0.3);
+        border: 1px solid rgba(165, 105, 189, 0.2);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
     }
     .rachel-dossier-row {
-        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(165, 105, 189, 0.1);
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        border-bottom: 1px solid rgba(165, 105, 189, 0.1);
     }
+    .rachel-dossier-row:last-child { border-bottom: none; }
+    .rachel-dossier-row:hover { background: rgba(165, 105, 189, 0.05); }
     .rachel-dossier-key {
-        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
-        color: var(--rachel-primary); border-right: 1px solid rgba(165, 105, 189, 0.15);
+        padding: 0.85rem 1.2rem;
+        font-family: var(--font-display);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--rachel-primary);
+        border-right: 1px solid rgba(165, 105, 189, 0.15);
     }
-    .rachel-dossier-val { padding: 0.85rem 1.2rem; font-size: 0.88rem; color: var(--clr-text); }
+    .rachel-dossier-val {
+        padding: 0.85rem 1.2rem;
+        font-family: var(--font-main);
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--clr-text);
+    }
+
     .rachel-stats-block {
-        background: rgba(46, 15, 58, 0.3); border: 1px solid rgba(165, 105, 189, 0.2);
-        border-radius: var(--radius-lg); padding: 1.8rem;
+        background: rgba(46, 15, 58, 0.3);
+        border: 1px solid rgba(165, 105, 189, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 1.8rem;
+    }
+    .rachel-stats-title {
+        font-family: var(--font-display);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--rachel-glow);
+        margin-bottom: 1rem;
     }
     .rachel-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
-    .rachel-stat-bar { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; }
+    .rachel-stat-label {
+        font-family: var(--font-display);
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--clr-text-dim);
+        width: 38px;
+        text-align: right;
+        letter-spacing: 0.08em;
+    }
+    .rachel-stat-bar {
+        flex: 1;
+        height: 7px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 4px;
+        overflow: hidden;
+    }
     .rachel-stat-fill {
-        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--rachel-dark), var(--rachel-primary));
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, var(--rachel-dark), var(--rachel-primary));
         box-shadow: 0 0 8px rgba(165, 105, 189, 0.6);
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
     }
-    .rachel-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .rachel-stat-val {
+        font-family: var(--font-logo);
+        font-size: 0.72rem;
+        color: var(--rachel-glow);
+        width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .rachel-skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.2rem;
+    }
     .rachel-skill-card {
-        background: rgba(46, 15, 58, 0.25); border: 1px solid rgba(165, 105, 189, 0.2);
-        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem; transition: all 0.3s ease;
+        background: rgba(46, 15, 58, 0.25);
+        border: 1px solid rgba(165, 105, 189, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        display: flex;
+        gap: 1.1rem;
+        align-items: flex-start;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
-    .rachel-skill-card:hover { border-color: var(--rachel-primary); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .rachel-skill-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(165, 105, 189, 0.08) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .rachel-skill-card:hover::before { opacity: 1; }
+    .rachel-skill-card:hover {
+        border-color: rgba(165, 105, 189, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(165, 105, 189, 0.1);
+    }
     .rachel-skill-icon {
-        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(165, 105, 189, 0.15);
-        border: 1px solid rgba(165, 105, 189, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        background: rgba(165, 105, 189, 0.15);
+        border: 1px solid rgba(165, 105, 189, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+        box-shadow: 0 0 12px rgba(165, 105, 189, 0.2);
     }
+    .rachel-skill-info { flex: 1; }
     .rachel-skill-name {
-        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; color: var(--rachel-glow); margin-bottom: 0.4rem;
+        font-family: var(--font-display);
+        font-size: 0.88rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--rachel-glow);
+        margin-bottom: 0.4rem;
+        position: relative;
+        z-index: 1;
     }
     .rachel-skill-type {
-        display: inline-block; font-size: 0.58rem; background: var(--rachel-dim); padding: 0.15rem 0.5rem;
-        border-radius: 3px; margin-bottom: 0.6rem; color: #fff;
+        display: inline-block;
+        font-family: var(--font-display);
+        font-size: 0.58rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--rachel-dim);
+        border-radius: 3px;
+        padding: 0.15rem 0.5rem;
+        margin-bottom: 0.6rem;
     }
-    .rachel-skill-desc { font-size: 0.83rem; color: var(--clr-text-dim); line-height: 1.7; }
+    .rachel-skill-desc {
+        font-family: var(--font-main);
+        font-size: 0.83rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+    }
+    .rachel-skill-desc strong { color: var(--rachel-primary); }
+
+    /* МЕХАНИКИ */
+    .rachel-mechanic-hero {
+        background: rgba(46, 15, 58, 0.3);
+        border: 1px solid rgba(165, 105, 189, 0.25);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    .rachel-mechanic-hero-title {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--rachel-glow);
+        margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(165, 105, 189, 0.4);
+    }
+    .rachel-mechanic-hero-desc {
+        font-family: var(--font-main);
+        font-size: 0.93rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+
+    .rachel-mechanics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+    }
+    .rachel-mech-card {
+        background: rgba(46, 15, 58, 0.2);
+        border: 1px solid rgba(165, 105, 189, 0.15);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .rachel-mech-card:hover {
+        border-color: rgba(165, 105, 189, 0.35);
+        background: rgba(165, 105, 189, 0.07);
+        transform: translateY(-3px);
+    }
+    .rachel-mech-card-head {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+    .rachel-mech-icon {
+        font-size: 1.3rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(165, 105, 189, 0.1);
+        border-radius: var(--radius-sm);
+    }
+    .rachel-mech-title {
+        font-family: var(--font-display);
+        font-size: 0.85rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--rachel-glow);
+    }
+    .rachel-mech-desc {
+        font-family: var(--font-main);
+        font-size: 0.84rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .rachel-tips-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .rachel-tips-list li {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        padding: 0.9rem 1.2rem;
+        background: rgba(46, 15, 58, 0.15);
+        border: 1px solid rgba(165, 105, 189, 0.1);
+        border-radius: var(--radius-md);
+        font-family: var(--font-main);
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        line-height: 1.7;
+        transition: all 0.25s ease;
+    }
+    .rachel-tips-list li:hover {
+        border-color: rgba(165, 105, 189, 0.28);
+        background: rgba(165, 105, 189, 0.06);
+    }
+    .rachel-tip-bullet {
+        color: var(--rachel-primary);
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    /* ФУТЕР */
     .rachel-footer {
-        text-align: center; padding: 3rem 2rem; background: rgba(10, 3, 12, 0.98);
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(10, 3, 12, 0.98);
         border-top: 1px solid rgba(165, 105, 189, 0.2);
     }
-    .rachel-back-top {
-        margin-top: 1.5rem; padding: 0.5rem 1.5rem; border: 1px solid rgba(165, 105, 189, 0.2);
-        border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 0.75rem;
-        color: var(--clr-text-dim); text-transform: uppercase; cursor: pointer; background: none;
+    .rachel-footer p {
+        font-family: var(--font-main);
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--clr-text-dim);
+        letter-spacing: 0.05em;
+        margin-bottom: 0.3rem;
     }
-    .rachel-back-top:hover { border-color: var(--rachel-primary); color: var(--rachel-glow); }
+    .rachel-footer-note {
+        color: rgba(136,146,176,0.35) !important;
+        font-size: 0.7rem !important;
+    }
+    .rachel-back-top {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(165, 105, 189, 0.2);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-display);
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--clr-text-dim);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        background: none;
+        cursor: pointer;
+    }
+    .rachel-back-top:hover {
+        border-color: var(--rachel-primary);
+        color: var(--rachel-glow);
+        box-shadow: 0 0 10px rgba(165, 105, 189, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .rachel-hero { grid-template-columns: 1fr; }
+        .rachel-dossier { grid-template-columns: 1fr; }
+        .rachel-mechanics-grid { grid-template-columns: 1fr; }
+    }
     </style>
 </head>
 <body>
+
 <canvas id="rachelBg"></canvas>
+
 <header class="rachel-header">
     <div class="rachel-header-inner">
         <a href="index.html" class="rachel-back-btn">← НАЗАД</a>
         <div class="rachel-header-logo">
-            <svg viewBox="0 0 100 88"><polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(165,105,189,0.9)" stroke-width="3"/></svg>
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(165,105,189,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(165,105,189,0.9)" stroke-width="3"/>
+            </svg>
             <span class="rachel-header-title">Rachel — Mistress of Wind</span>
         </div>
-        <div class="rachel-breadcrumb">BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--rachel-glow)">Rachel</span></div>
+        <div class="rachel-breadcrumb">
+            BlazBlue: Entropy Effect
+            <span>/</span>
+            Персонажи
+            <span>/</span>
+            <span style="color:var(--rachel-glow)">Rachel</span>
+        </div>
     </div>
 </header>
 
 <main>
-    <section>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(165,105,189,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(46,15,58,0.2) 0%, transparent 60%);">
+
         <div class="rachel-hero">
             <div class="rachel-hero-info">
                 <div class="rachel-tag">◈ DLC · TSUKUYOMI UNIT</div>
                 <h1 class="rachel-hero-name">Rachel</h1>
                 <div class="rachel-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
                 <div class="rachel-quick-stats">
                     <div class="rachel-qs-item"><div class="rachel-qs-val">85</div><div class="rachel-qs-lbl">Атака</div></div>
                     <div class="rachel-qs-item"><div class="rachel-qs-val">50</div><div class="rachel-qs-lbl">Защита</div></div>
@@ -179,18 +662,21 @@
                     <div class="rachel-qs-item"><div class="rachel-qs-val">★★☆</div><div class="rachel-qs-lbl">Сложность</div></div>
                     <div class="rachel-qs-item"><div class="rachel-qs-val">Контроль</div><div class="rachel-qs-lbl">Тип боя</div></div>
                 </div>
+
                 <p class="rachel-hero-desc">
                     Rachel Alucard — первый DLC-персонаж BlazBlue Entropy Effect, доминирующий на поле боя
                     благодаря своей подавляющей силе. С латентным контролем над установкой Цукуёми (Tsukuyomi Unit)
                     она полностью игнорирует входящий урон. Её многочисленные фамильяры помогают в бою,
-                    не оставляя безопасных зон на экране.[reference:9]
+                    не оставляя безопасных зон на экране.
                 </p>
+
                 <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
-                    <span style="border:1px solid rgba(165,105,189,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--rachel-glow);">Tsukuyomi (Negate)</span>
-                    <span style="border:1px solid rgba(165,105,189,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--rachel-glow);">Silpheed</span>
-                    <span style="border:1px solid rgba(165,105,189,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--rachel-glow);">Familiars</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--rachel-glow);border:1px solid rgba(165,105,189,0.3);border-radius:3px;">Tsukuyomi (Negate)</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--rachel-glow);border:1px solid rgba(165,105,189,0.3);border-radius:3px;">Silpheed</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--rachel-glow);border:1px solid rgba(165,105,189,0.3);border-radius:3px;">Familiars</span>
                 </div>
             </div>
+
             <div class="rachel-hero-visual">
                 <div class="rachel-char-frame">
                     <img src="rachel.jpg" class="rachel-char-img" alt="Rachel">
@@ -204,28 +690,38 @@
     <section class="rachel-section">
         <div class="rachel-section-inner">
             <div class="rachel-section-head">
-                <h2 class="rachel-section-title">Досье</h2><div class="rachel-section-line"></div>
+                <span class="rachel-section-num">01</span>
+                <div class="rachel-section-line rev"></div>
+                <h2 class="rachel-section-title">Досье персонажа</h2>
+                <div class="rachel-section-line"></div>
             </div>
+
             <div class="rachel-dossier">
                 <div class="rachel-dossier-table">
                     <div class="rachel-dossier-row"><div class="rachel-dossier-key">Имя</div><div class="rachel-dossier-val">Rachel Alucard</div></div>
                     <div class="rachel-dossier-row"><div class="rachel-dossier-key">Титул</div><div class="rachel-dossier-val">Mistress of Wind / Observer</div></div>
-                    <div class="rachel-dossier-row"><div class="rachel-dossier-key">База HP / Атака</div><div class="rachel-dossier-val">810 / 180[reference:10]</div></div>
-                    <div class="rachel-dossier-row"><div class="rachel-dossier-key">Уникальная механика</div><div class="rachel-dossier-val">Tsukuyomi Unit — полное игнорирование урона[reference:11]</div></div>
+                    <div class="rachel-dossier-row"><div class="rachel-dossier-key">База HP / Атака</div><div class="rachel-dossier-val">810 / 180</div></div>
+                    <div class="rachel-dossier-row"><div class="rachel-dossier-key">Уникальная механика</div><div class="rachel-dossier-val">Tsukuyomi Unit — полное игнорирование урона</div></div>
                     <div class="rachel-dossier-row"><div class="rachel-dossier-key">Роль</div><div class="rachel-dossier-val">Zoner / Контролёр поля боя</div></div>
+                    <div class="rachel-dossier-row"><div class="rachel-dossier-key">Особенность</div><div class="rachel-dossier-val">Фамильяры, ветер, отражение снарядов</div></div>
                 </div>
+
                 <div class="rachel-stats-block">
-                    <div style="font-family:var(--font-display);font-size:0.7rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--rachel-glow);margin-bottom:1rem;">Характеристики</div>
-                    <div class="rachel-stat-row"><span>ATK</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" style="width:85%"></div></div><span>85</span></div>
-                    <div class="rachel-stat-row"><span>DEF</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" style="width:50%"></div></div><span>50</span></div>
-                    <div class="rachel-stat-row"><span>SPD</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" style="width:60%"></div></div><span>60</span></div>
-                    <div class="rachel-stat-row"><span>HP</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" style="width:70%"></div></div><span>70</span></div>
+                    <div class="rachel-stats-title">Боевые характеристики</div>
+                    <div class="rachel-stat-row"><span class="rachel-stat-label">ATK</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" data-width="85"></div></div><span class="rachel-stat-val">85</span></div>
+                    <div class="rachel-stat-row"><span class="rachel-stat-label">DEF</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" data-width="50"></div></div><span class="rachel-stat-val">50</span></div>
+                    <div class="rachel-stat-row"><span class="rachel-stat-label">SPD</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" data-width="60"></div></div><span class="rachel-stat-val">60</span></div>
+                    <div class="rachel-stat-row"><span class="rachel-stat-label">HP</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" data-width="70"></div></div><span class="rachel-stat-val">70</span></div>
+                    <div class="rachel-stat-row"><span class="rachel-stat-label">RANGE</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" data-width="90"></div></div><span class="rachel-stat-val">90</span></div>
+                    <div class="rachel-stat-row"><span class="rachel-stat-label">SKILL</span><div class="rachel-stat-bar"><div class="rachel-stat-fill" data-width="80"></div></div><span class="rachel-stat-val">80</span></div>
+
                     <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(165,105,189,0.1);">
-                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант: Ivy Blossom</div>
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
                         <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--rachel-glow);line-height:1.6;">
+                            <strong style="color:var(--rachel-primary);">Ivy Blossom</strong><br>
                             Если Rachel не атакует несколько секунд, вокруг неё появляются фамильяры-летучие мыши.
                             При приближении к врагам они сливаются и наносят непрерывный урон. Урон считается атакой
-                            и триггерит эффекты Attack-тактик.[reference:12]
+                            и триггерит эффекты Attack-тактик.
                         </div>
                     </div>
                 </div>
@@ -233,11 +729,18 @@
         </div>
     </section>
 
-    <!-- НАВЫКИ -->
+    <!-- НАВЫКИ (РАСШИРЕННЫЙ БЛОК) -->
     <section class="rachel-section">
         <div class="rachel-section-inner">
-            <div class="rachel-section-head"><h2 class="rachel-section-title">Навыки и приёмы</h2><div class="rachel-section-line"></div></div>
+            <div class="rachel-section-head">
+                <span class="rachel-section-num">02</span>
+                <div class="rachel-section-line rev"></div>
+                <h2 class="rachel-section-title">Навыки и приёмы</h2>
+                <div class="rachel-section-line"></div>
+            </div>
+
             <div class="rachel-skills-grid">
+                <!-- Legacy Skill 1: George XIII -->
                 <div class="rachel-skill-card">
                     <div class="rachel-skill-icon">🐸</div>
                     <div class="rachel-skill-info">
@@ -246,10 +749,12 @@
                         <div class="rachel-skill-desc">
                             Призывает лягушку, которая выпускает электрический разряд до 3 раз при приближении врагов.
                             Лягушка чрезвычайно живучая и перетягивает на себя агрессию всех врагов — от обычных мобов
-                            до ракетных залпов Sweeper. Сила лягушки растёт с уровнем.[reference:13]
+                            до ракетных залпов Sweeper. Сила лягушки растёт с уровнем.
                         </div>
                     </div>
                 </div>
+
+                <!-- Legacy Skill 2: Tempest Dahlia -->
                 <div class="rachel-skill-card">
                     <div class="rachel-skill-icon">🌪️</div>
                     <div class="rachel-skill-info">
@@ -259,10 +764,12 @@
                             Призывает поток ветра, наносящий урон врагам в большой области.
                             Обеспечивает невероятный контроль толпы — сбивает всех обычных врагов
                             в направлении взгляда Rachel. Можно сбросить врагов в пропасть, на шипы или
-                            прижать к стене. Длительность растёт с уровнем.[reference:14]
+                            прижать к стене. Длительность растёт с уровнем.
                         </div>
                     </div>
                 </div>
+
+                <!-- Drive: Silpheed -->
                 <div class="rachel-skill-card">
                     <div class="rachel-skill-icon">💨</div>
                     <div class="rachel-skill-info">
@@ -271,34 +778,83 @@
                         <div class="rachel-skill-desc">
                             Уникальная механика ветра: влияет на движение Rachel, её снаряды
                             и даже на противников. Используется для ускорения снарядов,
-                            увеличения дальности атак и контроля позиционирования.[reference:15]
+                            увеличения дальности атак и контроля позиционирования.
+                            При активации создаёт порыв ветра, отбрасывающий врагов.
                         </div>
                     </div>
                 </div>
+
+                <!-- Наземная атака (3-hit combo) -->
                 <div class="rachel-skill-card">
                     <div class="rachel-skill-icon">⚡</div>
                     <div class="rachel-skill-info">
-                        <div class="rachel-skill-name">[Ground] Attack</div>
-                        <div class="rachel-skill-type">Базовая атака (3-hit combo)</div>
+                        <div class="rachel-skill-name">[Ground] Attack — 3-hit Combo</div>
+                        <div class="rachel-skill-type">Базовая атака</div>
                         <div class="rachel-skill-desc">
                             Комбо из 3 ударов: Rachel создаёт вихрь, детонирует его, затем сбрасывает клинок сверху.
                             С потенциалами увеличивается дальность и область распространения вихря,
-                            а оставшиеся маленькие вихри также наносят урон.[reference:16]
+                            а оставшиеся маленькие вихри также наносят урон.
                         </div>
                     </div>
                 </div>
+
+                <!-- Воздушная атака -->
                 <div class="rachel-skill-card">
-                    <div class="rachel-skill-icon">🔮</div>
+                    <div class="rachel-skill-icon">🕊️</div>
+                    <div class="rachel-skill-info">
+                        <div class="rachel-skill-name">[Airborne] Attack — 2-hit Combo</div>
+                        <div class="rachel-skill-type">Воздушная атака</div>
+                        <div class="rachel-skill-desc">
+                            Rachel выпускает летучих мышей, которые атакуют врагов впереди.
+                            При удержании кнопки атаки выполняет plunging attack с мечом, нанося урон по площади.
+                            Воздушные атаки могут быть усилены ветром Silpheed.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Heavy Strike: Whirlwind -->
+                <div class="rachel-skill-card">
+                    <div class="rachel-skill-icon">🌀</div>
                     <div class="rachel-skill-info">
                         <div class="rachel-skill-name">Heavy Strike: Whirlwind</div>
                         <div class="rachel-skill-type">Заряженная атака</div>
                         <div class="rachel-skill-desc">
                             [Ground] Hold Attack: Rachel выпускает клинок, который продолжает наносить урон.
                             При наличии всех Heavy Strike-потенциалов вторая заряженная атака превращается
-                            в грозовую бурю, притягивающую врагов.[reference:17]
+                            в грозовую бурю, притягивающую врагов.
                         </div>
                     </div>
                 </div>
+
+                <!-- Dash Attack -->
+                <div class="rachel-skill-card">
+                    <div class="rachel-skill-icon">🏃</div>
+                    <div class="rachel-skill-info">
+                        <div class="rachel-skill-name">Dash Attack</div>
+                        <div class="rachel-skill-type">Рывок + Атака</div>
+                        <div class="rachel-skill-desc">
+                            Rachel совершает рывок с одновременным выпадом мечом. Быстрое сближение
+                            с врагом и нанесение урона. Может быть отменено в Silpheed для дополнительного
+                            контроля позиции.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SP Skill: Baden Baden Lily -->
+                <div class="rachel-skill-card">
+                    <div class="rachel-skill-icon">🌩️</div>
+                    <div class="rachel-skill-info">
+                        <div class="rachel-skill-name">Baden Baden Lily</div>
+                        <div class="rachel-skill-type">SP Skill</div>
+                        <div class="rachel-skill-desc">
+                            Rachel призывает молнию, которая поражает ближайшего врага, нанося высокий урон
+                            и оглушая его. При наличии ветра Silpheed молния может быть направлена в нужную сторону.
+                            Стоимость: 40 SP.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tsukuyomi Unit (уникальная механика) -->
                 <div class="rachel-skill-card">
                     <div class="rachel-skill-icon">🛡️</div>
                     <div class="rachel-skill-info">
@@ -306,18 +862,120 @@
                         <div class="rachel-skill-type">Уникальная механика</div>
                         <div class="rachel-skill-desc">
                             Латентный контроль над установкой Цукуёми позволяет Rachel полностью игнорировать
-                            входящий урон. В сочетании с фамильярами и ветром она становится практически
-                            неуязвимой при грамотной игре.[reference:18]
+                            входящий урон. При активации (автоматически при получении удара) Rachel становится
+                            неуязвимой на короткое время и выпускает взрывную волну. Восстанавливается 15 секунд.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Потенциал: Enhanced Silpheed -->
+                <div class="rachel-skill-card">
+                    <div class="rachel-skill-icon">💫</div>
+                    <div class="rachel-skill-info">
+                        <div class="rachel-skill-name">Enhanced Silpheed (Potential)</div>
+                        <div class="rachel-skill-type">Потенциал</div>
+                        <div class="rachel-skill-desc">
+                            Увеличивает длительность и силу ветра Silpheed. Ветер начинает наносить урон
+                            врагам, находящимся в нём, и может отражать снаряды обратно в противника.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Потенциал: Familiar Swarm -->
+                <div class="rachel-skill-card">
+                    <div class="rachel-skill-icon">🦇</div>
+                    <div class="rachel-skill-info">
+                        <div class="rachel-skill-name">Familiar Swarm (Potential)</div>
+                        <div class="rachel-skill-type">Потенциал</div>
+                        <div class="rachel-skill-desc">
+                            Увеличивает количество летучих мышей, призываемых талантом Ivy Blossom.
+                            Мыши наносят больше урона и могут атаковать нескольких врагов одновременно.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="rachel-section">
+        <div class="rachel-section-inner">
+            <div class="rachel-section-head">
+                <span class="rachel-section-num">03</span>
+                <div class="rachel-section-line rev"></div>
+                <h2 class="rachel-section-title">Основные механики</h2>
+                <div class="rachel-section-line"></div>
+            </div>
+
+            <div class="rachel-mechanic-hero">
+                <div class="rachel-mechanic-hero-title">Система ветра (Silpheed)</div>
+                <div class="rachel-mechanic-hero-desc">
+                    Rachel управляет ветром, который влияет на траекторию её атак и снарядов, а также на врагов.
+                    Ветер может ускорять снаряды, увеличивать дальность атак, отбрасывать противников и даже
+                    отражать вражеские снаряды. Правильное использование ветра — ключ к контролю поля боя.
+                </div>
+            </div>
+
+            <div class="rachel-mechanics-grid">
+                <div class="rachel-mech-card">
+                    <div class="rachel-mech-card-head"><div class="rachel-mech-icon">🐸</div><div class="rachel-mech-title">Фамильяры-помощники</div></div>
+                    <div class="rachel-mech-desc">
+                        George XIII и летучие мыши Ivy Blossom действуют автономно, отвлекая врагов
+                        и нанося дополнительный урон. Это позволяет Rachel сосредоточиться на позиционировании.
+                    </div>
+                </div>
+                <div class="rachel-mech-card">
+                    <div class="rachel-mech-card-head"><div class="rachel-mech-icon">🛡️</div><div class="rachel-mech-title">Абсолютная защита</div></div>
+                    <div class="rachel-mech-desc">
+                        Tsukuyomi Unit даёт Rachel периодическую неуязвимость, позволяя ей агрессивно
+                        атаковать, не опасаясь ответного урона. Важно следить за временем восстановления.
+                    </div>
+                </div>
+                <div class="rachel-mech-card">
+                    <div class="rachel-mech-card-head"><div class="rachel-mech-icon">🎯</div><div class="rachel-mech-title">Контроль толпы</div></div>
+                    <div class="rachel-mech-desc">
+                        Tempest Dahlia — один из лучших навыков контроля толпы в игре. Он сбивает с ног
+                        практически всех обычных врагов и позволяет сбросить их в пропасть или ловушки.
+                    </div>
+                </div>
+                <div class="rachel-mech-card">
+                    <div class="rachel-mech-card-head"><div class="rachel-mech-icon">🔄</div><div class="rachel-mech-title">Отражение снарядов</div></div>
+                    <div class="rachel-mech-desc">
+                        С потенциалом Enhanced Silpheed ветер Rachel отражает вражеские снаряды,
+                        превращая атаки противника в его же оружие. Особенно эффективно против боссов-снайперов.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="rachel-section">
+        <div class="rachel-section-inner">
+            <div class="rachel-section-head">
+                <span class="rachel-section-num">04</span>
+                <div class="rachel-section-line rev"></div>
+                <h2 class="rachel-section-title">Советы по игре</h2>
+                <div class="rachel-section-line"></div>
+            </div>
+
+            <ul class="rachel-tips-list">
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>Используй ветер для усиления атак.</strong> Активируй Silpheed перед использованием Baden Baden Lily или Tempest Dahlia, чтобы увеличить их дальность и скорость.</span></li>
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>George XIII — отличный танк.</strong> Призывай лягушку перед сложными волнами врагов, чтобы она приняла на себя основной урон.</span></li>
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>Tempest Dahlia сбрасывает врагов с платформ.</strong> На уровнях с пропастями используй этот навык, чтобы мгновенно устранять целые группы.</span></li>
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>Следи за кулдауном Tsukuyomi Unit.</strong> Не полагайся на неуязвимость постоянно — используй её для агрессивных рывков или спасения в критический момент.</span></li>
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>Ivy Blossom работает даже в воздухе.</strong> Если ты долго висишь в воздухе, летучие мыши всё равно появятся и атакуют ближайших врагов.</span></li>
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>Потенциал Enhanced Silpheed обязателен.</strong> Отражение снарядов кардинально меняет стиль игры против боссов вроде Arakune или Mu-12.</span></li>
+                <li><span class="rachel-tip-bullet">🌪️</span><span><strong>Комбинируй наземное комбо с Heavy Strike.</strong> После 3-hit комбо удерживай атаку, чтобы выпустить вихрь, а затем добей врагов Baden Baden Lily.</span></li>
+            </ul>
+        </div>
+    </section>
+
 </main>
 
 <footer class="rachel-footer">
     <p>Rachel — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="rachel-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
     <button class="rachel-back-top" id="rachelBackTop">↑ НАВЕРХ</button>
 </footer>
 
@@ -327,25 +985,47 @@
     var ctx = cv.getContext('2d');
     function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
     resize(); window.addEventListener('resize', resize);
-    var nodes = Array.from({ length: 50 }, () => ({
+    var nodes = Array.from({ length: 60 }, () => ({
         x: Math.random() * cv.width, y: Math.random() * cv.height,
-        vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
+        vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+        r: 2 + Math.random() * 3
     }));
     function animate() {
         ctx.clearRect(0, 0, cv.width, cv.height);
         ctx.fillStyle = '#0f0714'; ctx.fillRect(0, 0, cv.width, cv.height);
-        nodes.forEach(n => {
-            n.x += n.vx; n.y += n.vy;
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
             if (n.x < 0 || n.x > cv.width) n.vx *= -1;
             if (n.y < 0 || n.y > cv.height) n.vy *= -1;
             var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
             g.addColorStop(0, 'rgba(165,105,189,0.15)'); g.addColorStop(1, 'transparent');
             ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
-        });
+            ctx.fillStyle = 'rgba(165,105,189,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
         requestAnimationFrame(animate);
     }
     animate();
-    document.getElementById('rachelBackTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    var fills = document.querySelectorAll('.rachel-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.rachel-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('rachelBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 })();
 </script>
 </body>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lambda-11 — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Lambda-11
+       ══════════════════════════════════════════ */
+    :root {
+        --lambda-primary : #17a589;
+        --lambda-dark    : #063025;
+        --lambda-glow    : #a3e4d7;
+        --lambda-accent  : #148f77;
+        --lambda-dim     : #0b5345;
+    }
+
+    html, body { scroll-behavior: smooth; background: #0a1a15; }
+
+    #lambdaBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .lambda-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(10, 26, 21, 0.95); border-bottom: 2px solid var(--lambda-primary);
+        box-shadow: 0 2px 40px rgba(23, 165, 137, 0.3);
+    }
+    .lambda-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .lambda-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--lambda-glow);
+        border: 1px solid rgba(23, 165, 137, 0.35); border-radius: var(--radius-sm);
+        background: rgba(23, 165, 137, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .lambda-back-btn:hover {
+        background: rgba(23, 165, 137, 0.2); border-color: var(--lambda-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(23, 165, 137, 0.4); transform: translateX(-3px);
+    }
+    .lambda-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .lambda-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(23, 165, 137, 0.7));
+    }
+    .lambda-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--lambda-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(23, 165, 137, 0.6);
+    }
+    .lambda-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .lambda-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .lambda-hero-info { order: 1; } .lambda-hero-visual { order: 2; display: flex; justify-content: center; }
+    .lambda-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--lambda-dim); border: 1px solid var(--lambda-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(23, 165, 137, 0.4);
+    }
+    .lambda-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(23, 165, 137, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .lambda-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--lambda-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .lambda-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .lambda-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(23, 165, 137, 0.06);
+        border: 1px solid rgba(23, 165, 137, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .lambda-qs-item:hover {
+        background: rgba(23, 165, 137, 0.15); border-color: var(--lambda-primary); transform: translateY(-3px);
+    }
+    .lambda-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--lambda-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(23, 165, 137, 0.5);
+    }
+    .lambda-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .lambda-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--lambda-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .lambda-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .lambda-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(23, 165, 137, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: lambdaGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes lambdaGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .lambda-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(23, 165, 137, 0.7)) drop-shadow(0 0 70px rgba(23, 165, 137, 0.3));
+        animation: lambdaFloat 4s ease-in-out infinite;
+    }
+    @keyframes lambdaFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .lambda-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--lambda-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: lambdaGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .lambda-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .lambda-section:nth-child(even) {
+        background: rgba(6, 48, 37, 0.15); border-top: 1px solid rgba(23, 165, 137, 0.15);
+        border-bottom: 1px solid rgba(23, 165, 137, 0.15);
+    }
+    .lambda-section-inner { max-width: 1100px; margin: 0 auto; }
+    .lambda-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .lambda-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--lambda-primary), transparent); }
+    .lambda-section-line.rev { background: linear-gradient(90deg, transparent, var(--lambda-primary)); }
+    .lambda-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--lambda-glow); text-shadow: 0 0 18px rgba(23, 165, 137, 0.5);
+        white-space: nowrap;
+    }
+    .lambda-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(23, 165, 137, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .lambda-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .lambda-dossier-table {
+        background: rgba(6, 48, 37, 0.3); border: 1px solid rgba(23, 165, 137, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .lambda-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(23, 165, 137, 0.1);
+    }
+    .lambda-dossier-row:last-child { border-bottom: none; }
+    .lambda-dossier-row:hover { background: rgba(23, 165, 137, 0.05); }
+    .lambda-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--lambda-primary);
+        border-right: 1px solid rgba(23, 165, 137, 0.15);
+    }
+    .lambda-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .lambda-stats-block {
+        background: rgba(6, 48, 37, 0.3); border: 1px solid rgba(23, 165, 137, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .lambda-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--lambda-glow); margin-bottom: 1rem;
+    }
+    .lambda-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .lambda-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .lambda-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .lambda-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--lambda-dark), var(--lambda-primary));
+        box-shadow: 0 0 8px rgba(23, 165, 137, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .lambda-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--lambda-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .lambda-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .lambda-skill-card {
+        background: rgba(6, 48, 37, 0.25); border: 1px solid rgba(23, 165, 137, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .lambda-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(23, 165, 137, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .lambda-skill-card:hover::before { opacity: 1; }
+    .lambda-skill-card:hover {
+        border-color: rgba(23, 165, 137, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(23, 165, 137, 0.1);
+    }
+    .lambda-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(23, 165, 137, 0.15);
+        border: 1px solid rgba(23, 165, 137, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(23, 165, 137, 0.2);
+    }
+    .lambda-skill-info { flex: 1; }
+    .lambda-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--lambda-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .lambda-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--lambda-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .lambda-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .lambda-mechanic-hero {
+        background: rgba(6, 48, 37, 0.3); border: 1px solid rgba(23, 165, 137, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .lambda-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--lambda-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(23, 165, 137, 0.4);
+    }
+    .lambda-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .lambda-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .lambda-mech-card {
+        background: rgba(6, 48, 37, 0.2); border: 1px solid rgba(23, 165, 137, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .lambda-mech-card:hover {
+        border-color: rgba(23, 165, 137, 0.35); background: rgba(23, 165, 137, 0.07);
+        transform: translateY(-3px);
+    }
+    .lambda-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .lambda-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(23, 165, 137, 0.1); border-radius: var(--radius-sm);
+    }
+    .lambda-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--lambda-glow);
+    }
+    .lambda-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .lambda-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .lambda-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(6, 48, 37, 0.15); border: 1px solid rgba(23, 165, 137, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .lambda-tips-list li:hover {
+        border-color: rgba(23, 165, 137, 0.28); background: rgba(23, 165, 137, 0.06);
+    }
+    .lambda-tip-bullet { color: var(--lambda-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .lambda-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(5, 12, 10, 0.98); border-top: 1px solid rgba(23, 165, 137, 0.2);
+    }
+    .lambda-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .lambda-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .lambda-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(23, 165, 137, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .lambda-back-top:hover {
+        border-color: var(--lambda-primary); color: var(--lambda-glow);
+        box-shadow: 0 0 10px rgba(23, 165, 137, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .lambda-hero { grid-template-columns: 1fr; }
+        .lambda-dossier { grid-template-columns: 1fr; }
+        .lambda-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="lambdaBg"></canvas>
+
+<header class="lambda-header">
+    <div class="lambda-header-inner">
+        <a href="index.html" class="lambda-back-btn">← НАЗАД</a>
+        <div class="lambda-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(23,165,137,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(23,165,137,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="lambda-header-title">Lambda-11 — Prime Field Device</span>
+        </div>
+        <div class="lambda-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--lambda-glow)">Lambda-11</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(23,165,137,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(6,48,37,0.2) 0%, transparent 60%);">
+
+        <div class="lambda-hero">
+            <div class="lambda-hero-info">
+                <div class="lambda-tag">◈ MURAKUMO UNIT · SWORD SUMMONER</div>
+                <h1 class="lambda-hero-name">Lambda-11</h1>
+                <div class="lambda-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="lambda-quick-stats">
+                    <div class="lambda-qs-item"><div class="lambda-qs-val">80</div><div class="lambda-qs-lbl">Атака</div></div>
+                    <div class="lambda-qs-item"><div class="lambda-qs-val">45</div><div class="lambda-qs-lbl">Защита</div></div>
+                    <div class="lambda-qs-item"><div class="lambda-qs-val">70</div><div class="lambda-qs-lbl">Скорость</div></div>
+                    <div class="lambda-qs-item"><div class="lambda-qs-val">65</div><div class="lambda-qs-lbl">HP</div></div>
+                    <div class="lambda-qs-item"><div class="lambda-qs-val">★★☆</div><div class="lambda-qs-lbl">Сложность</div></div>
+                    <div class="lambda-qs-item"><div class="lambda-qs-val">Дальний</div><div class="lambda-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="lambda-hero-desc">
+                    Lambda-11 использует способность призывать мечи из ниоткуда для атаки врагов на всех дистанциях.
+                    В сочетании с порталами, которые также генерируют клинки, Lambda создаёт несколько источников урона,
+                    играя безопасно издалека. Несмотря на свою специализацию на дальней дистанции, она также
+                    превосходна в ближнем бою благодаря множеству мульти-хитовых движений, которые оглушают и
+                    связывают врагов.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--lambda-glow);border:1px solid rgba(23,165,137,0.3);border-radius:3px;">Terrain Advantage</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--lambda-glow);border:1px solid rgba(23,165,137,0.3);border-radius:3px;">Luminous Slave EX</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--lambda-glow);border:1px solid rgba(23,165,137,0.3);border-radius:3px;">Sword Summoner EX</span>
+                </div>
+            </div>
+
+            <div class="lambda-hero-visual">
+                <div class="lambda-char-frame">
+                    <img src="lambda.jpg" class="lambda-char-img" alt="Lambda-11">
+                    <div class="lambda-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="lambda-section">
+        <div class="lambda-section-inner">
+            <div class="lambda-section-head">
+                <span class="lambda-section-num">01</span>
+                <div class="lambda-section-line rev"></div>
+                <h2 class="lambda-section-title">Досье персонажа</h2>
+                <div class="lambda-section-line"></div>
+            </div>
+
+            <div class="lambda-dossier">
+                <div class="lambda-dossier-table">
+                    <div class="lambda-dossier-row"><div class="lambda-dossier-key">Имя</div><div class="lambda-dossier-val">Lambda-11 (Λ-No.11-)</div></div>
+                    <div class="lambda-dossier-row"><div class="lambda-dossier-key">Титул</div><div class="lambda-dossier-val">Prime Field Device / Imitation Murakumo Unit</div></div>
+                    <div class="lambda-dossier-row"><div class="lambda-dossier-key">Оружие</div><div class="lambda-dossier-val">Парящие мечи / Пространственные порталы</div></div>
+                    <div class="lambda-dossier-row"><div class="lambda-dossier-key">Роль</div><div class="lambda-dossier-val">Zoner / Суммонер мечей</div></div>
+                    <div class="lambda-dossier-row"><div class="lambda-dossier-key">Особенность</div><div class="lambda-dossier-val">Тройной прыжок, телепорт, множество источников урона</div></div>
+                </div>
+
+                <div class="lambda-stats-block">
+                    <div class="lambda-stats-title">Боевые характеристики</div>
+                    <div class="lambda-stat-row"><span class="lambda-stat-label">ATK</span><div class="lambda-stat-bar"><div class="lambda-stat-fill" data-width="80"></div></div><span class="lambda-stat-val">80</span></div>
+                    <div class="lambda-stat-row"><span class="lambda-stat-label">DEF</span><div class="lambda-stat-bar"><div class="lambda-stat-fill" data-width="45"></div></div><span class="lambda-stat-val">45</span></div>
+                    <div class="lambda-stat-row"><span class="lambda-stat-label">SPD</span><div class="lambda-stat-bar"><div class="lambda-stat-fill" data-width="70"></div></div><span class="lambda-stat-val">70</span></div>
+                    <div class="lambda-stat-row"><span class="lambda-stat-label">HP</span><div class="lambda-stat-bar"><div class="lambda-stat-fill" data-width="65"></div></div><span class="lambda-stat-val">65</span></div>
+                    <div class="lambda-stat-row"><span class="lambda-stat-label">RANGE</span><div class="lambda-stat-bar"><div class="lambda-stat-fill" data-width="95"></div></div><span class="lambda-stat-val">95</span></div>
+                    <div class="lambda-stat-row"><span class="lambda-stat-label">SKILL</span><div class="lambda-stat-bar"><div class="lambda-stat-fill" data-width="85"></div></div><span class="lambda-stat-val">85</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(23,165,137,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--lambda-glow);line-height:1.6;">
+                            <strong style="color:var(--lambda-primary);">Terrain Advantage</strong><br>
+                            При падении врага с определённой высоты восстанавливает <strong>60 MP</strong>.
+                            Высота не очень большая, но враг должен достичь достаточной скорости падения.
+                            Прерывание падения атакой отменяет восстановление MP. Множество синих сфер при падении
+                            указывает на успешное восстановление.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="lambda-section">
+        <div class="lambda-section-inner">
+            <div class="lambda-section-head">
+                <span class="lambda-section-num">02</span>
+                <div class="lambda-section-line rev"></div>
+                <h2 class="lambda-section-title">Навыки и приёмы</h2>
+                <div class="lambda-section-line"></div>
+            </div>
+
+            <div class="lambda-skills-grid">
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🌀</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Luminous Slave EX</div>
+                        <div class="lambda-skill-type">Legacy Skill 1</div>
+                        <div class="lambda-skill-desc">
+                            Открывает пространственные врата, выпускающие лезвия, которые автоматически нацеливаются
+                            на врагов. Частота появления лезвий увеличивается с каждым уровнем. Хорошее отслеживание
+                            и достойный урон.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🌊</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Legacy Edge [EX]</div>
+                        <div class="lambda-skill-type">Legacy Skill 2</div>
+                        <div class="lambda-skill-desc">
+                            Призывает гигантские пространственные врата, которые выпускают постоянный поток лезвий вперёд.
+                            Длительность увеличивается с каждым уровнем. Наносит урон долгое время на очень большой
+                            горизонтальной дистанции. Отлично против множества мелких врагов или боссов в углу.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🔫</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">[Ground] Attack — 2-hit Combo</div>
+                        <div class="lambda-skill-type">Базовая атака</div>
+                        <div class="lambda-skill-desc">
+                            Комбо из 2 ударов: Lambda стреляет несколькими мини-лезвиями вперёд, затем обрушивает
+                            несколько вниз перед собой. С потенциалами: мини-лезвия автоматически нацеливаются
+                            на врагов выше; продолжают стрелять даже после прерывания; удержание направления
+                            и нажатие атаки заставляет Lambda непрерывно стрелять.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🕊️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">[Airborne] Attack & Exiga Nail</div>
+                        <div class="lambda-skill-type">Воздушная атака</div>
+                        <div class="lambda-skill-desc">
+                            Лезвия Lambda превращаются в большой серповидный клинок, которым она рубит вниз.
+                            Exiga Nail: [Airborne] Attack > Attack или [Airborne] Down + Attack — Lambda стреляет
+                            большим лезвием по диагонали вниз.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">💨</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Dash & Teleport</div>
+                        <div class="lambda-skill-type">Уникальный Dash</div>
+                        <div class="lambda-skill-desc">
+                            Lambda ненадолго исчезает, телепортируясь вперёд. Имеет Dash Invulnerability.
+                            Dash > Attack: Lambda делает рывок вперёд и призывает большое лезвие, которое
+                            пронзает по диагонали вверх. С потенциалами: Triple Dash; лезвия рубят вокруг Lambda
+                            во время Dash; в воздухе Dash сбрасывает лимит [Airborne] Attack.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🗡️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Skill: 3 Waves of Giant Blades</div>
+                        <div class="lambda-skill-type">Skill > Skill > Skill</div>
+                        <div class="lambda-skill-desc">
+                            Lambda призывает 3 волны гигантских лезвий (MP:33 каждая). С потенциалами: лезвия
+                            появляются в месте нахождения врага; Skill > Attack после любой из волн призывает
+                            дополнительную волну сверху (не тратит MP); больше лезвий в каждой волне.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">⬆️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Heavy Strike</div>
+                        <div class="lambda-skill-type">[Ground] Hold Attack</div>
+                        <div class="lambda-skill-desc">
+                            Lambda стреляет большим лезвием вперёд, слегка отступая. Имеет краткую неуязвимость.
+                            С потенциалами: при попадании несколько дополнительных лезвий атакуют врага;
+                            Dash Invulnerability во время использования; с Corsair Sabre — накладывает метку
+                            на врагов, которая призывает ещё больше лезвий.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">⚔️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Sword Summoner EX</div>
+                        <div class="lambda-skill-type">[Ground] Up + Attack x4 / [Airborne] Up + Attack x3</div>
+                        <div class="lambda-skill-desc">
+                            Lambda непрерывно призывает лезвия перед собой, атакующие врагов (до 4 раз на земле,
+                            до 3 раз в воздухе). Нельзя продолжить, если первый удар не попал. С потенциалами:
+                            ещё больше лезвий; во время атаки можно нажать Down + Attack для выстрела Exiga Nail
+                            в местонахождение врага.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🏹</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Act Parcer Tri: Cavalier</div>
+                        <div class="lambda-skill-type">[Ground] Down + Dash</div>
+                        <div class="lambda-skill-desc">
+                            Lambda выполняет плечевой таран и призывает большое лезвие из земли, которое
+                            разрушает Super Armor. С потенциалами: прерывание не останавливает призыв лезвия;
+                            можно использовать в воздухе; Dash Attack разрушает Super Armor.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">⬆️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Up + Dash: Marking</div>
+                        <div class="lambda-skill-type">Up + Dash</div>
+                        <div class="lambda-skill-desc">
+                            Lambda делает рывок вперёд, атакуя врагов по пути, и накладывает метку на одного
+                            поражённого врага (MP:50). Помеченный враг становится целью для автоматически
+                            призываемых лезвий. С потенциалами: ещё больше лезвий; до двух врагов могут быть
+                            помечены.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">⬇️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Down + Skill: Massive Blade</div>
+                        <div class="lambda-skill-type">Down + Skill / Down + Hold Skill</div>
+                        <div class="lambda-skill-desc">
+                            Призывает массивное лезвие с неба, которое падает на землю (MP:100).
+                            Down + Hold Skill: призывает 3 массивных лезвия вместо одного (MP:100).
+                            Отличный инструмент для нанесения урона по области и контроля зоны.
+                        </div>
+                    </div>
+                </div>
+                <div class="lambda-skill-card">
+                    <div class="lambda-skill-icon">🛡️</div>
+                    <div class="lambda-skill-info">
+                        <div class="lambda-skill-name">Triple Jump & Air Reset</div>
+                        <div class="lambda-skill-type">Потенциал</div>
+                        <div class="lambda-skill-desc">
+                            Lambda может совершать тройной прыжок. При получении урона может немедленно
+                            восстановиться прыжком и стать неуязвимой на 1 секунду. В воздухе может использовать
+                            Jump для сброса лимита [Airborne] Attack. С Luminous Slave EX: прыжок в воздухе
+                            порождает маленький портал, который стреляет дополнительным лезвием.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="lambda-section">
+        <div class="lambda-section-inner">
+            <div class="lambda-section-head">
+                <span class="lambda-section-num">03</span>
+                <div class="lambda-section-line rev"></div>
+                <h2 class="lambda-section-title">Основные механики</h2>
+                <div class="lambda-section-line"></div>
+            </div>
+
+            <div class="lambda-mechanic-hero">
+                <div class="lambda-mechanic-hero-title">Sword Summoner — множество источников урона</div>
+                <div class="lambda-mechanic-hero-desc">
+                    Lambda-11 специализируется на призыве лезвий из порталов. Её навыки создают несколько
+                    источников урона одновременно, позволяя ей играть безопасно издалека. Luminous Slave EX
+                    автоматически нацеливается на врагов, Legacy Edge создаёт постоянный поток лезвий,
+                    а Sword Summoner EX позволяет непрерывно атаковать врагов перед собой. В сочетании с
+                    возможностью телепортации и тройным прыжком, Lambda может постоянно перемещаться и
+                    наносить урон, оставаясь трудной мишенью.
+                </div>
+            </div>
+
+            <div class="lambda-mechanics-grid">
+                <div class="lambda-mech-card">
+                    <div class="lambda-mech-card-head"><div class="lambda-mech-icon">🎯</div><div class="lambda-mech-title">Автоматическое нацеливание</div></div>
+                    <div class="lambda-mech-desc">
+                        Luminous Slave EX и помеченные враги (через Up + Dash) позволяют Lambda наносить урон,
+                        не прицеливаясь вручную. Это даёт ей свободу перемещения и уклонения.
+                    </div>
+                </div>
+                <div class="lambda-mech-card">
+                    <div class="lambda-mech-card-head"><div class="lambda-mech-icon">💨</div><div class="lambda-mech-title">Телепортация и мобильность</div></div>
+                    <div class="lambda-mech-desc">
+                        Dash Lambda — это телепорт с полной неуязвимостью. В воздухе Dash сбрасывает лимит
+                        воздушных атак. С Triple Dash она становится чрезвычайно мобильной.
+                    </div>
+                </div>
+                <div class="lambda-mech-card">
+                    <div class="lambda-mech-card-head"><div class="lambda-mech-icon">🔄</div><div class="lambda-mech-title">Восстановление MP</div></div>
+                    <div class="lambda-mech-desc">
+                        Terrain Advantage даёт 60 MP при падении врага с высоты. Хотя это не должно быть
+                        главным приоритетом, это полезный бонус для поддержания запаса MP.
+                    </div>
+                </div>
+                <div class="lambda-mech-card">
+                    <div class="lambda-mech-card-head"><div class="lambda-mech-icon">⚡</div><div class="lambda-mech-title">Over-Exhaust MP</div></div>
+                    <div class="lambda-mech-desc">
+                        Универсальные навыки Lambda позволяют ей тратить MP сверх лимита (Over-Exhaust).
+                        Это даёт возможность использовать больше навыков в критических ситуациях.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="lambda-section">
+        <div class="lambda-section-inner">
+            <div class="lambda-section-head">
+                <span class="lambda-section-num">04</span>
+                <div class="lambda-section-line rev"></div>
+                <h2 class="lambda-section-title">Советы по игре</h2>
+                <div class="lambda-section-line"></div>
+            </div>
+
+            <ul class="lambda-tips-list">
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Используй Luminous Slave EX для пассивного урона.</strong> Порталы автоматически нацеливаются на врагов, позволяя тебе сосредоточиться на уклонении и позиционировании.</span></li>
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Legacy Edge отлично подходит для боссов в углу.</strong> Постоянный поток лезвий наносит огромный урон, если босс заперт у стены.</span></li>
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Освой телепортацию.</strong> Dash Lambda даёт полную неуязвимость. Используй его для уклонения от опасных атак и быстрого перемещения.</span></li>
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Сбрасывай лимит воздушных атак.</strong> В воздухе Dash или Jump сбрасывают лимит [Airborne] Attack, позволяя выполнять бесконечные воздушные комбо.</span></li>
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Sword Summoner EX — отличный инструмент для ближнего боя.</strong> Непрерывный призыв лезвий оглушает врагов и наносит высокий урон.</span></li>
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Помечай приоритетные цели.</strong> Up + Dash накладывает метку, которая призывает дополнительные лезвия. Идеально для боссов и элитных врагов.</span></li>
+                <li><span class="lambda-tip-bullet">🌀</span><span><strong>Down + Hold Skill для мгновенного AoE.</strong> Три массивных лезвия с неба наносят огромный урон по области — отлично для зачистки групп.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="lambda-footer">
+    <p>Lambda-11 — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="lambda-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="lambda-back-top" id="lambdaBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('lambdaBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#0a1a15'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(23,165,137,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(23,165,137,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.lambda-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.lambda-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('lambdaBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

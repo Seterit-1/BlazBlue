@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hibiki — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Hibiki
+       ══════════════════════════════════════════ */
+    :root {
+        --hibiki-primary : #5d6d7e;
+        --hibiki-dark    : #0d1b2a;
+        --hibiki-glow    : #aeb6bf;
+        --hibiki-accent  : #85929e;
+        --hibiki-dim     : #34495e;
+    }
+
+    html, body { scroll-behavior: smooth; background: #0a0e12; }
+
+    #hibikiBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .hibiki-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(10, 14, 18, 0.95); border-bottom: 2px solid var(--hibiki-primary);
+        box-shadow: 0 2px 40px rgba(93, 109, 126, 0.3);
+    }
+    .hibiki-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .hibiki-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--hibiki-glow);
+        border: 1px solid rgba(93, 109, 126, 0.35); border-radius: var(--radius-sm);
+        background: rgba(93, 109, 126, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .hibiki-back-btn:hover {
+        background: rgba(93, 109, 126, 0.2); border-color: var(--hibiki-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(93, 109, 126, 0.4); transform: translateX(-3px);
+    }
+    .hibiki-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .hibiki-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(93, 109, 126, 0.7));
+    }
+    .hibiki-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--hibiki-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(93, 109, 126, 0.6);
+    }
+    .hibiki-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .hibiki-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .hibiki-hero-info { order: 1; } .hibiki-hero-visual { order: 2; display: flex; justify-content: center; }
+    .hibiki-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--hibiki-dim); border: 1px solid var(--hibiki-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(93, 109, 126, 0.4);
+    }
+    .hibiki-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(93, 109, 126, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .hibiki-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--hibiki-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .hibiki-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .hibiki-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(93, 109, 126, 0.06);
+        border: 1px solid rgba(93, 109, 126, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .hibiki-qs-item:hover {
+        background: rgba(93, 109, 126, 0.15); border-color: var(--hibiki-primary); transform: translateY(-3px);
+    }
+    .hibiki-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--hibiki-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(93, 109, 126, 0.5);
+    }
+    .hibiki-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .hibiki-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--hibiki-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .hibiki-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .hibiki-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(93, 109, 126, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: hibikiGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes hibikiGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .hibiki-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(93, 109, 126, 0.7)) drop-shadow(0 0 70px rgba(93, 109, 126, 0.3));
+        animation: hibikiFloat 4s ease-in-out infinite;
+    }
+    @keyframes hibikiFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .hibiki-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--hibiki-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: hibikiGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .hibiki-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .hibiki-section:nth-child(even) {
+        background: rgba(13, 27, 42, 0.15); border-top: 1px solid rgba(93, 109, 126, 0.15);
+        border-bottom: 1px solid rgba(93, 109, 126, 0.15);
+    }
+    .hibiki-section-inner { max-width: 1100px; margin: 0 auto; }
+    .hibiki-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .hibiki-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--hibiki-primary), transparent); }
+    .hibiki-section-line.rev { background: linear-gradient(90deg, transparent, var(--hibiki-primary)); }
+    .hibiki-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--hibiki-glow); text-shadow: 0 0 18px rgba(93, 109, 126, 0.5);
+        white-space: nowrap;
+    }
+    .hibiki-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(93, 109, 126, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .hibiki-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .hibiki-dossier-table {
+        background: rgba(13, 27, 42, 0.3); border: 1px solid rgba(93, 109, 126, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .hibiki-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(93, 109, 126, 0.1);
+    }
+    .hibiki-dossier-row:last-child { border-bottom: none; }
+    .hibiki-dossier-row:hover { background: rgba(93, 109, 126, 0.05); }
+    .hibiki-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--hibiki-primary);
+        border-right: 1px solid rgba(93, 109, 126, 0.15);
+    }
+    .hibiki-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .hibiki-stats-block {
+        background: rgba(13, 27, 42, 0.3); border: 1px solid rgba(93, 109, 126, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .hibiki-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--hibiki-glow); margin-bottom: 1rem;
+    }
+    .hibiki-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .hibiki-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .hibiki-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .hibiki-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--hibiki-dark), var(--hibiki-primary));
+        box-shadow: 0 0 8px rgba(93, 109, 126, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .hibiki-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--hibiki-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .hibiki-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .hibiki-skill-card {
+        background: rgba(13, 27, 42, 0.25); border: 1px solid rgba(93, 109, 126, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .hibiki-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(93, 109, 126, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .hibiki-skill-card:hover::before { opacity: 1; }
+    .hibiki-skill-card:hover {
+        border-color: rgba(93, 109, 126, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(93, 109, 126, 0.1);
+    }
+    .hibiki-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(93, 109, 126, 0.15);
+        border: 1px solid rgba(93, 109, 126, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(93, 109, 126, 0.2);
+    }
+    .hibiki-skill-info { flex: 1; }
+    .hibiki-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--hibiki-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .hibiki-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--hibiki-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .hibiki-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .hibiki-mechanic-hero {
+        background: rgba(13, 27, 42, 0.3); border: 1px solid rgba(93, 109, 126, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .hibiki-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--hibiki-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(93, 109, 126, 0.4);
+    }
+    .hibiki-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .hibiki-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .hibiki-mech-card {
+        background: rgba(13, 27, 42, 0.2); border: 1px solid rgba(93, 109, 126, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .hibiki-mech-card:hover {
+        border-color: rgba(93, 109, 126, 0.35); background: rgba(93, 109, 126, 0.07);
+        transform: translateY(-3px);
+    }
+    .hibiki-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .hibiki-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(93, 109, 126, 0.1); border-radius: var(--radius-sm);
+    }
+    .hibiki-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--hibiki-glow);
+    }
+    .hibiki-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .hibiki-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .hibiki-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(13, 27, 42, 0.15); border: 1px solid rgba(93, 109, 126, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .hibiki-tips-list li:hover {
+        border-color: rgba(93, 109, 126, 0.28); background: rgba(93, 109, 126, 0.06);
+    }
+    .hibiki-tip-bullet { color: var(--hibiki-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .hibiki-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(5, 7, 9, 0.98); border-top: 1px solid rgba(93, 109, 126, 0.2);
+    }
+    .hibiki-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .hibiki-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .hibiki-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(93, 109, 126, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .hibiki-back-top:hover {
+        border-color: var(--hibiki-primary); color: var(--hibiki-glow);
+        box-shadow: 0 0 10px rgba(93, 109, 126, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .hibiki-hero { grid-template-columns: 1fr; }
+        .hibiki-dossier { grid-template-columns: 1fr; }
+        .hibiki-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="hibikiBg"></canvas>
+
+<header class="hibiki-header">
+    <div class="hibiki-header-inner">
+        <a href="index.html" class="hibiki-back-btn">← НАЗАД</a>
+        <div class="hibiki-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(93,109,126,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(93,109,126,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="hibiki-header-title">Hibiki — Ninja Prototype</span>
+        </div>
+        <div class="hibiki-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--hibiki-glow)">Hibiki</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(93,109,126,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(13,27,42,0.2) 0%, transparent 60%);">
+
+        <div class="hibiki-hero">
+            <div class="hibiki-hero-info">
+                <div class="hibiki-tag">◈ NINJA · BACKSTAB SPECIALIST</div>
+                <h1 class="hibiki-hero-name">Hibiki</h1>
+                <div class="hibiki-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="hibiki-quick-stats">
+                    <div class="hibiki-qs-item"><div class="hibiki-qs-val">85</div><div class="hibiki-qs-lbl">Атака</div></div>
+                    <div class="hibiki-qs-item"><div class="hibiki-qs-val">50</div><div class="hibiki-qs-lbl">Защита</div></div>
+                    <div class="hibiki-qs-item"><div class="hibiki-qs-val">85</div><div class="hibiki-qs-lbl">Скорость</div></div>
+                    <div class="hibiki-qs-item"><div class="hibiki-qs-val">65</div><div class="hibiki-qs-lbl">HP</div></div>
+                    <div class="hibiki-qs-item"><div class="hibiki-qs-val">★★★</div><div class="hibiki-qs-lbl">Сложность</div></div>
+                    <div class="hibiki-qs-item"><div class="hibiki-qs-val">Ближний</div><div class="hibiki-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="hibiki-hero-desc">
+                    Hibiki — ниндзя-подобный персонаж BlazBlue Entropy Effect. С быстрыми атаками,
+                    высокой мобильностью, двумя мечами и клонами, Hibiki способен наносить высокий урон
+                    как вблизи, так и на расстоянии. Приоритет атаки со спины позволяет максимально
+                    использовать его пассивный талант.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--hibiki-glow);border:1px solid rgba(93,109,126,0.3);border-radius:3px;">Way of Assassination</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--hibiki-glow);border:1px solid rgba(93,109,126,0.3);border-radius:3px;">Oblivion Glaives</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--hibiki-glow);border:1px solid rgba(93,109,126,0.3);border-radius:3px;">Stealth</span>
+                </div>
+            </div>
+
+            <div class="hibiki-hero-visual">
+                <div class="hibiki-char-frame">
+                    <img src="hibiki.jpg" class="hibiki-char-img" alt="Hibiki">
+                    <div class="hibiki-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="hibiki-section">
+        <div class="hibiki-section-inner">
+            <div class="hibiki-section-head">
+                <span class="hibiki-section-num">01</span>
+                <div class="hibiki-section-line rev"></div>
+                <h2 class="hibiki-section-title">Досье персонажа</h2>
+                <div class="hibiki-section-line"></div>
+            </div>
+
+            <div class="hibiki-dossier">
+                <div class="hibiki-dossier-table">
+                    <div class="hibiki-dossier-row"><div class="hibiki-dossier-key">Имя</div><div class="hibiki-dossier-val">Hibiki Kohaku</div></div>
+                    <div class="hibiki-dossier-row"><div class="hibiki-dossier-key">Титул</div><div class="hibiki-dossier-val">Captain of the Controlling Organization</div></div>
+                    <div class="hibiki-dossier-row"><div class="hibiki-dossier-key">Оружие</div><div class="hibiki-dossier-val">Парные мечи / Глефы</div></div>
+                    <div class="hibiki-dossier-row"><div class="hibiki-dossier-key">База HP / Атака</div><div class="hibiki-dossier-val">1100 / 146 (38 потенциалов, +760%)</div></div>
+                    <div class="hibiki-dossier-row"><div class="hibiki-dossier-key">Роль</div><div class="hibiki-dossier-val">Rushdown / Backstab-специалист</div></div>
+                    <div class="hibiki-dossier-row"><div class="hibiki-dossier-key">Особенность</div><div class="hibiki-dossier-val">Клоны, скрытность, высокий урон со спины</div></div>
+                </div>
+
+                <div class="hibiki-stats-block">
+                    <div class="hibiki-stats-title">Боевые характеристики</div>
+                    <div class="hibiki-stat-row"><span class="hibiki-stat-label">ATK</span><div class="hibiki-stat-bar"><div class="hibiki-stat-fill" data-width="85"></div></div><span class="hibiki-stat-val">85</span></div>
+                    <div class="hibiki-stat-row"><span class="hibiki-stat-label">DEF</span><div class="hibiki-stat-bar"><div class="hibiki-stat-fill" data-width="50"></div></div><span class="hibiki-stat-val">50</span></div>
+                    <div class="hibiki-stat-row"><span class="hibiki-stat-label">SPD</span><div class="hibiki-stat-bar"><div class="hibiki-stat-fill" data-width="85"></div></div><span class="hibiki-stat-val">85</span></div>
+                    <div class="hibiki-stat-row"><span class="hibiki-stat-label">HP</span><div class="hibiki-stat-bar"><div class="hibiki-stat-fill" data-width="65"></div></div><span class="hibiki-stat-val">65</span></div>
+                    <div class="hibiki-stat-row"><span class="hibiki-stat-label">RANGE</span><div class="hibiki-stat-bar"><div class="hibiki-stat-fill" data-width="60"></div></div><span class="hibiki-stat-val">60</span></div>
+                    <div class="hibiki-stat-row"><span class="hibiki-stat-label">SKILL</span><div class="hibiki-stat-bar"><div class="hibiki-stat-fill" data-width="85"></div></div><span class="hibiki-stat-val">85</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(93,109,126,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--hibiki-glow);line-height:1.6;">
+                            <strong style="color:var(--hibiki-primary);">The Way of Assassination</strong><br>
+                            Атака врагов со спины увеличивает базовый урон атаки на <strong>+100%</strong>.
+                            Hibiki может разворачивать врагов с помощью [Ground] Attack комбо или Heavy Strike.
+                            Клоны из Endlos Lace могут быть улучшены для автоматической атаки со спины.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="hibiki-section">
+        <div class="hibiki-section-inner">
+            <div class="hibiki-section-head">
+                <span class="hibiki-section-num">02</span>
+                <div class="hibiki-section-line rev"></div>
+                <h2 class="hibiki-section-title">Навыки и приёмы</h2>
+                <div class="hibiki-section-line"></div>
+            </div>
+
+            <div class="hibiki-skills-grid">
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">🗡️</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Splitting Glaives</div>
+                        <div class="hibiki-skill-type">Legacy Skill 1</div>
+                        <div class="hibiki-skill-desc">
+                            Выпускает несколько глеф вокруг прототипа. Один враг может быть поражён максимум 4 раза.
+                            Урон и количество попаданий увеличиваются с уровнем. Быстрый инструмент для создания
+                            пространства и нанесения урона по площади.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">🌑</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Cover of Darkness</div>
+                        <div class="hibiki-skill-type">Legacy Skill 2</div>
+                        <div class="hibiki-skill-desc">
+                            Вводит прототип в состояние "Stealth and Haste" на 8 секунд. Первая атака в этом состоянии
+                            триггерит surprise attack. Урон surprise attack увеличивается с уровнем и зависит от
+                            расстояния до врага. Враги перестают атаковать или бьют в пустоту.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">🔄</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">[Ground] Attack — 4-hit Combo</div>
+                        <div class="hibiki-skill-type">Базовая атака</div>
+                        <div class="hibiki-skill-desc">
+                            Комбо из 4 ударов, которое слегка продвигает Hibiki вперёд с каждым ударом.
+                            С потенциалами: Swallow Dance — [Ground] Down + Attack x4: новая комбо из 4 ударов
+                            с использованием глеф. Комбо разворачивают врагов, активируя пассивный талант.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">🕊️</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">[Airborne] Attack & Piercing Feather</div>
+                        <div class="hibiki-skill-type">Воздушная атака</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki рубит вниз и вперёд, затем выполняет diving attack. Удержание "вниз" при атаке
+                            заставляет его немедленно пикировать. Piercing Feather: первый удар [Airborne] Attack
+                            бросает несколько кинжалов вниз (до 3 раз подряд с потенциалами).
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">💨</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Dash & Whirlwind Roll</div>
+                        <div class="hibiki-skill-type">Уникальный Dash</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki делает кувырок вперёд с Dash Invulnerability. Whirlwind Roll: Skill > Dash —
+                            после использования Oblivion Glaive Hibiki вращается в воздухе, нанося урон вокруг.
+                            С Triple Dash можно выполнить до 3 Whirlwind Rolls подряд без задержки.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">🌀</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Skill: Oblivion Glaive</div>
+                        <div class="hibiki-skill-type">[Ground] / [Airborne] Skill</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki призывает круг из Oblivion Glaives вокруг себя (MP:100). С потенциалами:
+                            глефы становятся больше и наносят больше урона; вращаются и следуют за Hibiki;
+                            Skill > Attack — большой диагональный разрез с огромным уроном.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">⬆️</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Heavy Strike & Double Wing Rapid Cyclone</div>
+                        <div class="hibiki-skill-type">[Ground] Hold Attack / Up + Attack</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki делает большой шаг вперёд и рубит вверх, разворачивая врагов.
+                            С потенциалами: больше, разрушает Super Armor, неуязвимость во время шага.
+                            Double Wing Rapid Cyclone: [Ground] Up + Attack — вращающийся удар вверх с неуязвимостью.
+                            Можно использовать в воздухе. Up + Attack > Down + Attack — plunging attack.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">⚔️</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Staggering Cuts</div>
+                        <div class="hibiki-skill-type">[Ground] Down + Hold Attack</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki выполняет 3 (до 5 с потенциалами) удара, прыгая влево и вправо. Если 3-й удар
+                            попадает по врагу, выполняется большая атака. С потенциалами: неуязвимость,
+                            сброс кулдауна при попадании последним ударом.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">🛡️</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Triple Jump & Air Reset</div>
+                        <div class="hibiki-skill-type">Потенциал</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki может совершать тройной прыжок. При получении урона может немедленно
+                            восстановиться прыжком и стать неуязвимым на 1 секунду. В воздухе может использовать
+                            Jump или Dash для сброса лимита [Airborne] Attack.
+                        </div>
+                    </div>
+                </div>
+                <div class="hibiki-skill-card">
+                    <div class="hibiki-skill-icon">✨</div>
+                    <div class="hibiki-skill-info">
+                        <div class="hibiki-skill-name">Endlos Lace (Clones)</div>
+                        <div class="hibiki-skill-type">Уникальная механика</div>
+                        <div class="hibiki-skill-desc">
+                            Hibiki может призывать клонов через определённые потенциалы. Клоны атакуют врагов
+                            и могут быть улучшены для автоматической атаки со спины, гарантируя бонус от
+                            The Way of Assassination.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="hibiki-section">
+        <div class="hibiki-section-inner">
+            <div class="hibiki-section-head">
+                <span class="hibiki-section-num">03</span>
+                <div class="hibiki-section-line rev"></div>
+                <h2 class="hibiki-section-title">Основные механики</h2>
+                <div class="hibiki-section-line"></div>
+            </div>
+
+            <div class="hibiki-mechanic-hero">
+                <div class="hibiki-mechanic-hero-title">The Way of Assassination — атаки со спины</div>
+                <div class="hibiki-mechanic-hero-desc">
+                    Ключевой пассивный талант Hibiki даёт <strong>+100% к базовому урону атаки</strong> при ударе
+                    со спины. Hibiki специализируется на развороте врагов и нанесении ударов сзади. Его наземное
+                    комбо и Heavy Strike разворачивают врагов, а клоны из Endlos Lace могут быть настроены на
+                    автоматическую атаку со спины. Максимизация этого бонуса — ключ к раскрытию полного потенциала
+                    Hibiki.
+                </div>
+            </div>
+
+            <div class="hibiki-mechanics-grid">
+                <div class="hibiki-mech-card">
+                    <div class="hibiki-mech-card-head"><div class="hibiki-mech-icon">🔄</div><div class="hibiki-mech-title">Разворот врагов</div></div>
+                    <div class="hibiki-mech-desc">
+                        [Ground] Attack комбо и Heavy Strike разворачивают врагов, позволяя немедленно
+                        воспользоваться бонусом +100% к урону от атак со спины.
+                    </div>
+                </div>
+                <div class="hibiki-mech-card">
+                    <div class="hibiki-mech-card-head"><div class="hibiki-mech-icon">🌑</div><div class="hibiki-mech-title">Скрытность и перерыв</div></div>
+                    <div class="hibiki-mech-desc">
+                        Cover of Darkness делает Hibiki невидимым для врагов на 8 секунд. Это даёт время
+                        на восстановление, перепозиционирование или подготовку мощной surprise attack.
+                    </div>
+                </div>
+                <div class="hibiki-mech-card">
+                    <div class="hibiki-mech-card-head"><div class="hibiki-mech-icon">🌀</div><div class="hibiki-mech-title">Whirlwind Roll мобильность</div></div>
+                    <div class="hibiki-mech-desc">
+                        С Triple Dash и Whirlwind Roll Hibiki может выполнять до 3 вращающихся атак подряд
+                        без задержки. Это даёт ему невероятную мобильность и возможность наносить урон в движении.
+                    </div>
+                </div>
+                <div class="hibiki-mech-card">
+                    <div class="hibiki-mech-card-head"><div class="hibiki-mech-icon">⚔️</div><div class="hibiki-mech-title">Oblivion Glaive комбо</div></div>
+                    <div class="hibiki-mech-desc">
+                        Skill > Attack после Oblivion Glaive выполняет мощный диагональный разрез с огромным уроном.
+                        Это один из основных источников burst-урона Hibiki.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="hibiki-section">
+        <div class="hibiki-section-inner">
+            <div class="hibiki-section-head">
+                <span class="hibiki-section-num">04</span>
+                <div class="hibiki-section-line rev"></div>
+                <h2 class="hibiki-section-title">Советы по игре</h2>
+                <div class="hibiki-section-line"></div>
+            </div>
+
+            <ul class="hibiki-tips-list">
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Всегда старайся атаковать со спины.</strong> +100% к урону — это удвоение. Используй разворот из комбо или Heavy Strike, чтобы получить этот бонус.</span></li>
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Oblivion Glaive > Skill > Attack — твой бурст.</strong> Это комбо наносит огромный урон. Старайся использовать его, когда враг обездвижен или оглушён.</span></li>
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Используй Cover of Darkness для передышки.</strong> 8 секунд невидимости дают время восстановить MP, перепозиционироваться или подготовить surprise attack.</span></li>
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Освой Whirlwind Roll.</strong> До 3 вращающихся атак подряд без задержки — это и мобильность, и урон. Идеально для уклонения и контратак.</span></li>
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Staggering Cuts сбрасывает кулдаун.</strong> При попадании последним ударом кулдаун сбрасывается, позволяя использовать его снова немедленно.</span></li>
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Double Wing Rapid Cyclone даёт неуязвимость.</strong> Используй его как panic button для избегания опасных атак и контратаки.</span></li>
+                <li><span class="hibiki-tip-bullet">🗡️</span><span><strong>Splitting Glaives — отличный AoE.</strong> Быстрый навык для создания пространства и нанесения урона по площади, особенно против групп врагов.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="hibiki-footer">
+    <p>Hibiki — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="hibiki-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="hibiki-back-top" id="hibikiBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('hibikiBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#0a0e12'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(93,109,126,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(93,109,126,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.hibiki-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.hibiki-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('hibikiBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

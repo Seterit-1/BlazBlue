@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mai — BlazBlue: Entropy Effect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ══════════════════════════════════════════
+       ПЕРЕМЕННЫЕ ТЕМЫ Mai
+       ══════════════════════════════════════════ */
+    :root {
+        --mai-primary : #e84393;
+        --mai-dark    : #6e0028;
+        --mai-glow    : #f5b7b1;
+        --mai-accent  : #c0392b;
+        --mai-dim     : #a93226;
+    }
+
+    html, body { scroll-behavior: smooth; background: #1a0510; }
+
+    #maiBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ШАПКА */
+    .mai-header {
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(26, 5, 16, 0.95); border-bottom: 2px solid var(--mai-primary);
+        box-shadow: 0 2px 40px rgba(232, 67, 147, 0.3);
+    }
+    .mai-header-inner {
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .mai-back-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--mai-glow);
+        border: 1px solid rgba(232, 67, 147, 0.35); border-radius: var(--radius-sm);
+        background: rgba(232, 67, 147, 0.07); transition: all 0.3s ease; text-decoration: none;
+    }
+    .mai-back-btn:hover {
+        background: rgba(232, 67, 147, 0.2); border-color: var(--mai-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(232, 67, 147, 0.4); transform: translateX(-3px);
+    }
+    .mai-header-logo { display: flex; align-items: center; gap: 0.8rem; }
+    .mai-header-logo svg {
+        width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(232, 67, 147, 0.7));
+    }
+    .mai-header-title {
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--mai-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(232, 67, 147, 0.6);
+    }
+    .mai-breadcrumb {
+        font-family: var(--font-main); font-size: 0.7rem; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* HERO */
+    .mai-hero {
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
+    }
+    .mai-hero-info { order: 1; } .mai-hero-visual { order: 2; display: flex; justify-content: center; }
+    .mai-tag {
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--mai-dim); border: 1px solid var(--mai-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(232, 67, 147, 0.4);
+    }
+    .mai-hero-name {
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(232, 67, 147, 0.6), 0 4px 20px rgba(0,0,0,0.9);
+        margin-bottom: 0.4rem;
+    }
+    .mai-hero-subtitle {
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--mai-primary); text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .mai-quick-stats {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+    }
+    .mai-qs-item {
+        padding: 0.9rem 0.75rem; background: rgba(232, 67, 147, 0.06);
+        border: 1px solid rgba(232, 67, 147, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
+    }
+    .mai-qs-item:hover {
+        background: rgba(232, 67, 147, 0.15); border-color: var(--mai-primary); transform: translateY(-3px);
+    }
+    .mai-qs-val {
+        font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--mai-glow);
+        line-height: 1; text-shadow: 0 0 10px rgba(232, 67, 147, 0.5);
+    }
+    .mai-qs-lbl {
+        font-family: var(--font-main); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+        color: var(--clr-text-dim); text-transform: uppercase; margin-top: 0.3rem;
+    }
+    .mai-hero-desc {
+        font-family: var(--font-main); font-size: 0.95rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.8; border-left: 2px solid var(--mai-primary); padding-left: 1.1rem; margin-bottom: 2rem;
+    }
+    .mai-char-frame {
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .mai-char-frame::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(232, 67, 147, 0.25) 0%, transparent 70%);
+        border-radius: 50%; animation: maiGlowPulse 3s ease-in-out infinite;
+    }
+    @keyframes maiGlowPulse {
+        0%,100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.08); }
+    }
+    .mai-char-img {
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(232, 67, 147, 0.7)) drop-shadow(0 0 70px rgba(232, 67, 147, 0.3));
+        animation: maiFloat 4s ease-in-out infinite;
+    }
+    @keyframes maiFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+    }
+    .mai-char-platform {
+        position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        width: 160px; height: 6px; background: linear-gradient(90deg, transparent, var(--mai-primary), transparent);
+        border-radius: 50%; filter: blur(4px); opacity: 0.6;
+        animation: maiGlowPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    /* СЕКЦИИ */
+    .mai-section {
+        position: relative; z-index: 1; padding: 5rem 2rem;
+    }
+    .mai-section:nth-child(even) {
+        background: rgba(110, 0, 40, 0.15); border-top: 1px solid rgba(232, 67, 147, 0.15);
+        border-bottom: 1px solid rgba(232, 67, 147, 0.15);
+    }
+    .mai-section-inner { max-width: 1100px; margin: 0 auto; }
+    .mai-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .mai-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--mai-primary), transparent); }
+    .mai-section-line.rev { background: linear-gradient(90deg, transparent, var(--mai-primary)); }
+    .mai-section-title {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--mai-glow); text-shadow: 0 0 18px rgba(232, 67, 147, 0.5);
+        white-space: nowrap;
+    }
+    .mai-section-num {
+        font-family: var(--font-logo); font-size: 0.65rem; color: rgba(232, 67, 147, 0.4);
+        letter-spacing: 0.1em; white-space: nowrap;
+    }
+
+    /* ДОСЬЕ */
+    .mai-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .mai-dossier-table {
+        background: rgba(110, 0, 40, 0.3); border: 1px solid rgba(232, 67, 147, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .mai-dossier-row {
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(232, 67, 147, 0.1);
+    }
+    .mai-dossier-row:last-child { border-bottom: none; }
+    .mai-dossier-row:hover { background: rgba(232, 67, 147, 0.05); }
+    .mai-dossier-key {
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--mai-primary);
+        border-right: 1px solid rgba(232, 67, 147, 0.15);
+    }
+    .mai-dossier-val {
+        padding: 0.85rem 1.2rem; font-family: var(--font-main); font-size: 0.88rem; font-weight: 500;
+        color: var(--clr-text);
+    }
+    .mai-stats-block {
+        background: rgba(110, 0, 40, 0.3); border: 1px solid rgba(232, 67, 147, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
+    }
+    .mai-stats-title {
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--mai-glow); margin-bottom: 1rem;
+    }
+    .mai-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .mai-stat-label {
+        font-family: var(--font-display); font-size: 0.68rem; font-weight: 800; color: var(--clr-text-dim);
+        width: 38px; text-align: right; letter-spacing: 0.08em;
+    }
+    .mai-stat-bar {
+        flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .mai-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--mai-dark), var(--mai-primary));
+        box-shadow: 0 0 8px rgba(232, 67, 147, 0.6); width: 0%;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mai-stat-val {
+        font-family: var(--font-logo); font-size: 0.72rem; color: var(--mai-glow); width: 30px;
+    }
+
+    /* НАВЫКИ */
+    .mai-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+    .mai-skill-card {
+        background: rgba(110, 0, 40, 0.25); border: 1px solid rgba(232, 67, 147, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .mai-skill-card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(232, 67, 147, 0.08) 0%, transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .mai-skill-card:hover::before { opacity: 1; }
+    .mai-skill-card:hover {
+        border-color: rgba(232, 67, 147, 0.4); transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(232, 67, 147, 0.1);
+    }
+    .mai-skill-icon {
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(232, 67, 147, 0.15);
+        border: 1px solid rgba(232, 67, 147, 0.4); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(232, 67, 147, 0.2);
+    }
+    .mai-skill-info { flex: 1; }
+    .mai-skill-name {
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--mai-glow); margin-bottom: 0.4rem;
+        position: relative; z-index: 1;
+    }
+    .mai-skill-type {
+        display: inline-block; font-family: var(--font-display); font-size: 0.58rem; font-weight: 800;
+        letter-spacing: 0.15em; text-transform: uppercase; color: #fff; background: var(--mai-dim);
+        border-radius: 3px; padding: 0.15rem 0.5rem; margin-bottom: 0.6rem;
+    }
+    .mai-skill-desc {
+        font-family: var(--font-main); font-size: 0.83rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* МЕХАНИКИ */
+    .mai-mechanic-hero {
+        background: rgba(110, 0, 40, 0.3); border: 1px solid rgba(232, 67, 147, 0.25);
+        border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .mai-mechanic-hero-title {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--mai-glow); margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(232, 67, 147, 0.4);
+    }
+    .mai-mechanic-hero-desc {
+        font-family: var(--font-main); font-size: 0.93rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.85;
+    }
+    .mai-mechanics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .mai-mech-card {
+        background: rgba(110, 0, 40, 0.2); border: 1px solid rgba(232, 67, 147, 0.15);
+        border-radius: var(--radius-lg); padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .mai-mech-card:hover {
+        border-color: rgba(232, 67, 147, 0.35); background: rgba(232, 67, 147, 0.07);
+        transform: translateY(-3px);
+    }
+    .mai-mech-card-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .mai-mech-icon {
+        font-size: 1.3rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        background: rgba(232, 67, 147, 0.1); border-radius: var(--radius-sm);
+    }
+    .mai-mech-title {
+        font-family: var(--font-display); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--mai-glow);
+    }
+    .mai-mech-desc {
+        font-family: var(--font-main); font-size: 0.84rem; font-weight: 500; color: var(--clr-text-dim);
+        line-height: 1.75;
+    }
+
+    /* СОВЕТЫ */
+    .mai-tips-list {
+        list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .mai-tips-list li {
+        display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 1.2rem;
+        background: rgba(110, 0, 40, 0.15); border: 1px solid rgba(232, 67, 147, 0.1);
+        border-radius: var(--radius-md); font-family: var(--font-main); font-size: 0.88rem;
+        font-weight: 500; color: var(--clr-text-dim); line-height: 1.7; transition: all 0.25s ease;
+    }
+    .mai-tips-list li:hover {
+        border-color: rgba(232, 67, 147, 0.28); background: rgba(232, 67, 147, 0.06);
+    }
+    .mai-tip-bullet { color: var(--mai-primary); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ФУТЕР */
+    .mai-footer {
+        position: relative; z-index: 1; text-align: center; padding: 3rem 2rem;
+        background: rgba(10, 2, 5, 0.98); border-top: 1px solid rgba(232, 67, 147, 0.2);
+    }
+    .mai-footer p {
+        font-family: var(--font-main); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-dim);
+        letter-spacing: 0.05em; margin-bottom: 0.3rem;
+    }
+    .mai-footer-note { color: rgba(136,146,176,0.35) !important; font-size: 0.7rem !important; }
+    .mai-back-top {
+        display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.5rem;
+        border: 1px solid rgba(232, 67, 147, 0.2); border-radius: var(--radius-sm);
+        font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; color: var(--clr-text-dim);
+        letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+        background: none; cursor: pointer;
+    }
+    .mai-back-top:hover {
+        border-color: var(--mai-primary); color: var(--mai-glow);
+        box-shadow: 0 0 10px rgba(232, 67, 147, 0.25);
+    }
+
+    @media (max-width: 900px) {
+        .mai-hero { grid-template-columns: 1fr; }
+        .mai-dossier { grid-template-columns: 1fr; }
+        .mai-mechanics-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="maiBg"></canvas>
+
+<header class="mai-header">
+    <div class="mai-header-inner">
+        <a href="index.html" class="mai-back-btn">← НАЗАД</a>
+        <div class="mai-header-logo">
+            <svg viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(232,67,147,0.9)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(232,67,147,0.9)" stroke-width="3"/>
+            </svg>
+            <span class="mai-header-title">Mai — Gallia Sphyra: Outseal</span>
+        </div>
+        <div class="mai-breadcrumb">
+            BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--mai-glow)">Mai</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section style="position:relative; z-index:1; background:
+        radial-gradient(ellipse 60% 80% at 60% 50%, rgba(232,67,147,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 40%, rgba(110,0,40,0.2) 0%, transparent 60%);">
+
+        <div class="mai-hero">
+            <div class="mai-hero-info">
+                <div class="mai-tag">◈ JACK-OF-ALL-TRADES · CROWD CONTROL</div>
+                <h1 class="mai-hero-name">Mai</h1>
+                <div class="mai-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
+
+                <div class="mai-quick-stats">
+                    <div class="mai-qs-item"><div class="mai-qs-val">75</div><div class="mai-qs-lbl">Атака</div></div>
+                    <div class="mai-qs-item"><div class="mai-qs-val">60</div><div class="mai-qs-lbl">Защита</div></div>
+                    <div class="mai-qs-item"><div class="mai-qs-val">70</div><div class="mai-qs-lbl">Скорость</div></div>
+                    <div class="mai-qs-item"><div class="mai-qs-val">70</div><div class="mai-qs-lbl">HP</div></div>
+                    <div class="mai-qs-item"><div class="mai-qs-val">★★☆</div><div class="mai-qs-lbl">Сложность</div></div>
+                    <div class="mai-qs-item"><div class="mai-qs-val">Средний</div><div class="mai-qs-lbl">Тип боя</div></div>
+                </div>
+
+                <p class="mai-hero-desc">
+                    Mai — персонаж без явной специализации. Она может как стремительно перемещаться по экрану,
+                    так и оставаться неподвижной, нанося огромный урон. Игра за Mai требует понимания,
+                    когда переключаться между спамом неуязвимых движений для контроля толпы и использованием
+                    уникальной стойки Ayanishiki для сброса MP и комбинирования врагов.
+                </p>
+
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--mai-glow);border:1px solid rgba(232,67,147,0.3);border-radius:3px;">Make Haste</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--mai-glow);border:1px solid rgba(232,67,147,0.3);border-radius:3px;">Ayanishiki</span>
+                    <span style="display:inline-block;padding:0.3rem 0.9rem;font-family:var(--font-display);font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--mai-glow);border:1px solid rgba(232,67,147,0.3);border-radius:3px;">Javelin Bounce</span>
+                </div>
+            </div>
+
+            <div class="mai-hero-visual">
+                <div class="mai-char-frame">
+                    <img src="mai.jpg" class="mai-char-img" alt="Mai">
+                    <div class="mai-char-platform"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ДОСЬЕ -->
+    <section class="mai-section">
+        <div class="mai-section-inner">
+            <div class="mai-section-head">
+                <span class="mai-section-num">01</span>
+                <div class="mai-section-line rev"></div>
+                <h2 class="mai-section-title">Досье персонажа</h2>
+                <div class="mai-section-line"></div>
+            </div>
+
+            <div class="mai-dossier">
+                <div class="mai-dossier-table">
+                    <div class="mai-dossier-row"><div class="mai-dossier-key">Имя</div><div class="mai-dossier-val">Mai Natsume</div></div>
+                    <div class="mai-dossier-row"><div class="mai-dossier-key">Титул</div><div class="mai-dossier-val">Gallia Sphyra: Outseal</div></div>
+                    <div class="mai-dossier-row"><div class="mai-dossier-key">Оружие</div><div class="mai-dossier-val">Копьё (Javelin)</div></div>
+                    <div class="mai-dossier-row"><div class="mai-dossier-key">База HP / Атака</div><div class="mai-dossier-val">1020 / 168 (25 потенциалов, +500%)</div></div>
+                    <div class="mai-dossier-row"><div class="mai-dossier-key">Роль</div><div class="mai-dossier-val">Универсал / Контроль толпы</div></div>
+                    <div class="mai-dossier-row"><div class="mai-dossier-key">Особенность</div><div class="mai-dossier-val">Ayanishiki, рикошеты копья, вихри</div></div>
+                </div>
+
+                <div class="mai-stats-block">
+                    <div class="mai-stats-title">Боевые характеристики</div>
+                    <div class="mai-stat-row"><span class="mai-stat-label">ATK</span><div class="mai-stat-bar"><div class="mai-stat-fill" data-width="75"></div></div><span class="mai-stat-val">75</span></div>
+                    <div class="mai-stat-row"><span class="mai-stat-label">DEF</span><div class="mai-stat-bar"><div class="mai-stat-fill" data-width="60"></div></div><span class="mai-stat-val">60</span></div>
+                    <div class="mai-stat-row"><span class="mai-stat-label">SPD</span><div class="mai-stat-bar"><div class="mai-stat-fill" data-width="70"></div></div><span class="mai-stat-val">70</span></div>
+                    <div class="mai-stat-row"><span class="mai-stat-label">HP</span><div class="mai-stat-bar"><div class="mai-stat-fill" data-width="70"></div></div><span class="mai-stat-val">70</span></div>
+                    <div class="mai-stat-row"><span class="mai-stat-label">RANGE</span><div class="mai-stat-bar"><div class="mai-stat-fill" data-width="85"></div></div><span class="mai-stat-val">85</span></div>
+                    <div class="mai-stat-row"><span class="mai-stat-label">SKILL</span><div class="mai-stat-bar"><div class="mai-stat-fill" data-width="80"></div></div><span class="mai-stat-val">80</span></div>
+
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(232,67,147,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант (Talent)</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--mai-glow);line-height:1.6;">
+                            <strong style="color:var(--mai-primary);">Make Haste</strong><br>
+                            После использования навыка урон базовой атаки увеличивается на <strong>+130% на 3 секунды</strong>.
+                            Короткий, но мощный бафф, который может значительно увеличить общий DPS при правильном использовании.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="mai-section">
+        <div class="mai-section-inner">
+            <div class="mai-section-head">
+                <span class="mai-section-num">02</span>
+                <div class="mai-section-line rev"></div>
+                <h2 class="mai-section-title">Навыки и приёмы</h2>
+                <div class="mai-section-line"></div>
+            </div>
+
+            <div class="mai-skills-grid">
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">🍁</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Maple Blossom</div>
+                        <div class="mai-skill-type">Legacy Skill 1</div>
+                        <div class="mai-skill-desc">
+                            Призывает два вихря, которые вращаются по кругу, нанося урон и притягивая врагов.
+                            Мощный инструмент контроля толпы — мелкие враги редко получают шанс вас перегрузить.
+                            Урон увеличивается с уровнем.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">🌪️</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Maple Gust</div>
+                        <div class="mai-skill-type">Legacy Skill 2</div>
+                        <div class="mai-skill-desc">
+                            Призывает большой вихрь, который движется вперёд, нанося урон и притягивая врагов.
+                            Проходит дальше и даёт больше пространства для выхода из плохих ситуаций.
+                            Дальность и урон растут с уровнем.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">⬆️</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Moon Blossom</div>
+                        <div class="mai-skill-type">Потенциал: Up + Jump</div>
+                        <div class="mai-skill-desc">
+                            Mai выполняет более высокий прыжок, делающий её неуязвимой.
+                            Использование в воздухе сбрасывает лимит [Airborne] Attack.
+                            Ключевой инструмент для мобильности и выживания.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">🔪</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">[Airborne] Attack & Sanzashi</div>
+                        <div class="mai-skill-type">Воздушная атака</div>
+                        <div class="mai-skill-desc">
+                            Mai выполняет одиночный рубящий удар вниз. Sanzashi: [Airborne] Attack > Attack или
+                            [Airborne] Up + Attack — короткий выпад вперёд. С потенциалами: посылает ударные волны,
+                            разрушает Super Armor, даёт неуязвимость.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">⬇️</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Sylvan Hurricane Assault</div>
+                        <div class="mai-skill-type">[Airborne] Attack x3 / Down + Attack</div>
+                        <div class="mai-skill-desc">
+                            Mai выполняет plunging attack с копьём. С потенциалами: увеличенная область,
+                            разрушение Super Armor, неуязвимость. С Ayanishiki: притягивает врагов к Mai.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">💨</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Dash & Himeyuri / Suzuran</div>
+                        <div class="mai-skill-type">Уникальный Dash</div>
+                        <div class="mai-skill-desc">
+                            Короткий рывок вперёд с Dash Invulnerability. Himeyuri: [Ground] Dash > Up + Dash —
+                            дополнительный выпад, делающий Mai воздушной. Suzuran: [Airborne] Dash > Down + Dash —
+                            выпад по диагонали вниз. До 3 выпадов подряд.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">🎯</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Skill: Javelin Throw</div>
+                        <div class="mai-skill-type">[Ground] / [Airborne] Skill</div>
+                        <div class="mai-skill-desc">
+                            Mai бросает копьё вперёд (MP:100). Пробивает всех врагов до стены.
+                            С потенциалами: восстанавливает MP при возвращении; притягивает врагов к стене;
+                            можно менять угол (Hold Skill + Left/Right) — копьё рикошетит от пола и стен,
+                            увеличивая урон с каждым отскоком. При возврате копья можно нажать Skill снова
+                            для более мощного броска (до 3 раз).
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">🌊</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">[Ground] Up + Skill: Giant Tornado</div>
+                        <div class="mai-skill-type">Skill</div>
+                        <div class="mai-skill-desc">
+                            Mai призывает гигантский вихрь перед собой (MP:100). Медленно движется вперёд,
+                            собирая врагов. С потенциалами: вихрь больше, дополнительный вихрь на 4-м ударе
+                            комбо или Heavy Strike.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">⚔️</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Thousand Spears & Flurry of the Winter Moon</div>
+                        <div class="mai-skill-type">[Ground] Hold Down + Mash Attack</div>
+                        <div class="mai-skill-desc">
+                            Заменяет 3-й удар наземного комбо на серию быстрых уколов. Flurry of the Winter Moon:
+                            во время Thousand Spears нажмите Skill — Mai выполняет огромный рубящий удар,
+                            делающий её полностью неуязвимой (MP:30).
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">🛡️</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Triple Jump & Invincibility</div>
+                        <div class="mai-skill-type">Потенциал</div>
+                        <div class="mai-skill-desc">
+                            Mai может совершать тройной прыжок. При получении урона может немедленно
+                            восстановиться прыжком и стать неуязвимой на 1 секунду.
+                        </div>
+                    </div>
+                </div>
+                <div class="mai-skill-card">
+                    <div class="mai-skill-icon">✨</div>
+                    <div class="mai-skill-info">
+                        <div class="mai-skill-name">Ayanishiki Stance</div>
+                        <div class="mai-skill-type">Уникальная механика</div>
+                        <div class="mai-skill-desc">
+                            Особая стойка Mai, активируемая через определённые потенциалы. Позволяет
+                            быстро расходовать MP для мощных комбо и запуска врагов. Ключевая механика
+                            для максимизации урона.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- МЕХАНИКИ -->
+    <section class="mai-section">
+        <div class="mai-section-inner">
+            <div class="mai-section-head">
+                <span class="mai-section-num">03</span>
+                <div class="mai-section-line rev"></div>
+                <h2 class="mai-section-title">Основные механики</h2>
+                <div class="mai-section-line"></div>
+            </div>
+
+            <div class="mai-mechanic-hero">
+                <div class="mai-mechanic-hero-title">Ayanishiki — стойка для комбо</div>
+                <div class="mai-mechanic-hero-desc">
+                    Уникальная стойка Mai, которая открывает доступ к мощным комбо и позволяет быстро
+                    расходовать MP для максимального урона. В этой стойке Mai может выполнять специальные
+                    приёмы, такие как усиленный Sylvan Hurricane Assault, который притягивает врагов.
+                    Правильное использование Ayanishiki — ключ к освоению Mai и раскрытию её полного
+                    потенциала.
+                </div>
+            </div>
+
+            <div class="mai-mechanics-grid">
+                <div class="mai-mech-card">
+                    <div class="mai-mech-card-head"><div class="mai-mech-icon">🎯</div><div class="mai-mech-title">Рикошеты копья</div></div>
+                    <div class="mai-mech-desc">
+                        При броске под углом копьё Mai отскакивает от пола и стен, увеличивая урон
+                        с каждым отскоком. Это позволяет наносить огромный урон в замкнутых пространствах.
+                    </div>
+                </div>
+                <div class="mai-mech-card">
+                    <div class="mai-mech-card-head"><div class="mai-mech-icon">🔄</div><div class="mai-mech-title">Восстановление MP</div></div>
+                    <div class="mai-mech-desc">
+                        С потенциалами копьё Mai восстанавливает MP при попадании во врагов как на пути
+                        вперёд, так и при возвращении. Это позволяет ей постоянно использовать навыки.
+                    </div>
+                </div>
+                <div class="mai-mech-card">
+                    <div class="mai-mech-card-head"><div class="mai-mech-icon">💨</div><div class="mai-mech-title">Мобильность и неуязвимость</div></div>
+                    <div class="mai-mech-desc">
+                        Многие движения Mai дают ей полную неуязвимость: Moon Blossom, Sanzashi,
+                        Sylvan Hurricane Assault, Flurry of the Winter Moon. Это делает её чрезвычайно
+                        живучей при правильной игре.
+                    </div>
+                </div>
+                <div class="mai-mech-card">
+                    <div class="mai-mech-card-head"><div class="mai-mech-icon">🌪️</div><div class="mai-mech-title">Контроль толпы</div></div>
+                    <div class="mai-mech-desc">
+                        Maple Blossom, Maple Gust и гигантский вихрь — мощные инструменты контроля толпы.
+                        Они притягивают и обездвиживают врагов, позволяя Mai безопасно наносить урон.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СОВЕТЫ -->
+    <section class="mai-section">
+        <div class="mai-section-inner">
+            <div class="mai-section-head">
+                <span class="mai-section-num">04</span>
+                <div class="mai-section-line rev"></div>
+                <h2 class="mai-section-title">Советы по игре</h2>
+                <div class="mai-section-line"></div>
+            </div>
+
+            <ul class="mai-tips-list">
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Используй Make Haste перед комбо.</strong> +130% к урону базовой атаки на 3 секунды — огромный бафф. Активируй навык, затем начинай комбо.</span></li>
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Бросай копьё под углом в замкнутых пространствах.</strong> Рикошеты от стен и пола увеличивают урон с каждым отскоком — идеально против боссов у стены.</span></li>
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Освой Ayanishiki.</strong> Эта стойка открывает доступ к самым мощным комбо Mai. Тренируйся переключаться в неё во время боя.</span></li>
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Используй вихри для контроля толпы.</strong> Maple Blossom и Maple Gust не дают мелким врагам перегрузить вас. Размещай их в узких проходах.</span></li>
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Злоупотребляй неуязвимостью.</strong> Moon Blossom, Sanzashi и Sylvan Hurricane Assault дают полную неуязвимость — используй их для избегания опасных атак.</span></li>
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Thousand Spears + Flurry of the Winter Moon — твой бурст.</strong> Это комбо наносит огромный урон и делает Mai неуязвимой на время выполнения.</span></li>
+                <li><span class="mai-tip-bullet">🍁</span><span><strong>Mai хороша для изучения игры.</strong> Её универсальность и множество неуязвимых движений делают её forgiving для новичков.</span></li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="mai-footer">
+    <p>Mai — BlazBlue: Entropy Effect © 91Act / Arc System Works</p>
+    <p class="mai-footer-note">Фан-страница создана в образовательных целях · Все права на персонажа принадлежат правообладателям</p>
+    <button class="mai-back-top" id="maiBackTop">↑ НАВЕРХ</button>
+</footer>
+
+<script>
+(function() {
+    var cv = document.getElementById('maiBg');
+    var ctx = cv.getContext('2d');
+    function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var nodes = Array.from({ length: 60 }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        r: 2 + Math.random() * 3
+    }));
+    function animate() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.fillStyle = '#1a0510'; ctx.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]; n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > cv.width) n.vx *= -1;
+            if (n.y < 0 || n.y > cv.height) n.vy *= -1;
+            var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30);
+            g.addColorStop(0, 'rgba(232,67,147,0.15)'); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(232,67,147,0.5)'; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    var fills = document.querySelectorAll('.mai-stat-fill');
+    var observed = false;
+    function animateBars() {
+        if (observed) return; observed = true;
+        fills.forEach(function(fill, i) {
+            var target = fill.getAttribute('data-width') + '%';
+            setTimeout(function() { fill.style.width = target; }, 150 + i * 120);
+        });
+    }
+    var statsBlock = document.querySelector('.mai-stats-block');
+    if (statsBlock) {
+        var io = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) { animateBars(); io.disconnect(); }
+        }, { threshold: 0.3 });
+        io.observe(statsBlock);
+    } else { animateBars(); }
+
+    document.getElementById('maiBackTop').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+</body>
+</html>

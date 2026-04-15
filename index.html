@@ -1324,7 +1324,7 @@ function renderDetail() {
             return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
         }).join('');
 
- /* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════
    ИЗМЕНЕНО: УПРАВЛЕНИЕ КНОПКОЙ СТРАНИЦЫ ПЕРСОНАЖА
    ═══════════════════════════════════════════ */
 var pageBtn = document.getElementById('charPageBtn');
@@ -1370,18 +1370,36 @@ if (c.id === 'es') {
     pageBtn.style.pointerEvents = 'auto';
     pageBtn.style.cursor = 'pointer';
     pageBtn.setAttribute('title', 'Открыть страницу Jin');
-} else if (c.id === 'kokonoe') {        // <-- ДОБАВИТЬ
+} else if (c.id === 'kokonoe') {
     pageBtn.href = 'kokonoe.html';
     pageBtn.style.opacity = '1';
     pageBtn.style.pointerEvents = 'auto';
     pageBtn.style.cursor = 'pointer';
     pageBtn.setAttribute('title', 'Открыть страницу Kokonoe');
-} else if (c.id === 'hakumen') {        // <-- ДОБАВИТЬ
+} else if (c.id === 'hakumen') {
     pageBtn.href = 'hakumen.html';
     pageBtn.style.opacity = '1';
     pageBtn.style.pointerEvents = 'auto';
     pageBtn.style.cursor = 'pointer';
     pageBtn.setAttribute('title', 'Открыть страницу Hakumen');
+} else if (c.id === 'mai') {        // <-- ДОБАВИТЬ
+    pageBtn.href = 'mai.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Mai');
+} else if (c.id === 'hibiki') {     // <-- ДОБАВИТЬ
+    pageBtn.href = 'hibiki.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Hibiki');
+} else if (c.id === 'lambda') {     // <-- ДОБАВИТЬ
+    pageBtn.href = 'lambda.html';
+    pageBtn.style.opacity = '1';
+    pageBtn.style.pointerEvents = 'auto';
+    pageBtn.style.cursor = 'pointer';
+    pageBtn.setAttribute('title', 'Открыть страницу Lambda-11');
 } else {
     pageBtn.href = '#';
     pageBtn.style.opacity = '0.4';

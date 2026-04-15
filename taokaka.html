@@ -6,9 +6,6 @@
     <title>Taokaka — BlazBlue: Entropy Effect</title>
     <link rel="stylesheet" href="style.css">
     <style>
-    /* ══════════════════════════════════════════
-       ПЕРЕМЕННЫЕ ТЕМЫ Taokaka
-       ══════════════════════════════════════════ */
     :root {
         --tao-primary : #f1c40f;
         --tao-dark    : #5d4a00;
@@ -16,360 +13,152 @@
         --tao-accent  : #f39c12;
         --tao-dim     : #b7950b;
     }
-
     html, body { scroll-behavior: smooth; background: #1a1500; }
-
-    #taoBg {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    /* ШАПКА */
+    #taoBg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .tao-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        backdrop-filter: blur(20px);
-        background: rgba(26, 21, 0, 0.95);
-        border-bottom: 2px solid var(--tao-primary);
+        position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+        background: rgba(26, 21, 0, 0.95); border-bottom: 2px solid var(--tao-primary);
         box-shadow: 0 2px 40px rgba(241, 196, 15, 0.3);
     }
     .tao-header-inner {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        height: 72px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1.5rem;
+        max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px;
+        display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
     }
     .tao-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.45rem 1.2rem;
-        font-family: var(--font-display);
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--tao-glow);
-        border: 1px solid rgba(241, 196, 15, 0.35);
-        border-radius: var(--radius-sm);
-        background: rgba(241, 196, 15, 0.07);
-        transition: all 0.3s ease;
-        text-decoration: none;
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+        font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--tao-glow);
+        border: 1px solid rgba(241, 196, 15, 0.35); border-radius: var(--radius-sm);
+        background: rgba(241, 196, 15, 0.07); transition: all 0.3s ease; text-decoration: none;
     }
     .tao-back-btn:hover {
-        background: rgba(241, 196, 15, 0.2);
-        border-color: var(--tao-primary);
-        color: #fff;
-        box-shadow: 0 0 16px rgba(241, 196, 15, 0.4);
-        transform: translateX(-3px);
+        background: rgba(241, 196, 15, 0.2); border-color: var(--tao-primary); color: #fff;
+        box-shadow: 0 0 16px rgba(241, 196, 15, 0.4); transform: translateX(-3px);
     }
-    .tao-header-logo svg {
-        width: 38px;
-        height: 34px;
-        filter: drop-shadow(0 0 6px rgba(241, 196, 15, 0.7));
-    }
+    .tao-header-logo svg { width: 38px; height: 34px; filter: drop-shadow(0 0 6px rgba(241, 196, 15, 0.7)); }
     .tao-header-title {
-        font-family: var(--font-display);
-        font-size: 1rem;
-        font-weight: 900;
-        color: var(--tao-glow);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        text-shadow: 0 0 14px rgba(241, 196, 15, 0.6);
+        font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: var(--tao-glow);
+        letter-spacing: 0.1em; text-transform: uppercase; text-shadow: 0 0 14px rgba(241, 196, 15, 0.6);
     }
-
-    /* HERO */
     .tao-hero {
-        position: relative;
-        z-index: 1;
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 5rem 2rem 4rem;
-        gap: 4rem;
+        position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+        align-items: center; max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 4rem; gap: 4rem;
     }
-    .tao-hero-info { order: 1; }
-    .tao-hero-visual { order: 2; display: flex; justify-content: center; }
-
+    .tao-hero-info { order: 1; } .tao-hero-visual { order: 2; display: flex; justify-content: center; }
     .tao-tag {
-        display: inline-block;
-        padding: 0.3rem 1rem;
-        font-family: var(--font-display);
-        font-size: 0.65rem;
-        font-weight: 800;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: #fff;
-        background: var(--tao-dim);
-        border: 1px solid var(--tao-primary);
-        border-radius: var(--radius-sm);
-        margin-bottom: 1.2rem;
-        box-shadow: 0 0 14px rgba(241, 196, 15, 0.4);
+        display: inline-block; padding: 0.3rem 1rem; font-family: var(--font-display); font-size: 0.65rem;
+        font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+        background: var(--tao-dim); border: 1px solid var(--tao-primary); border-radius: var(--radius-sm);
+        margin-bottom: 1.2rem; box-shadow: 0 0 14px rgba(241, 196, 15, 0.4);
     }
     .tao-hero-name {
-        font-family: var(--font-display);
-        font-size: clamp(3.5rem, 7vw, 6rem);
-        font-weight: 900;
-        color: #fff;
-        line-height: 0.9;
-        text-transform: uppercase;
-        text-shadow: 0 0 40px rgba(241, 196, 15, 0.6);
-        margin-bottom: 0.4rem;
+        font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900;
+        color: #fff; line-height: 0.9; text-transform: uppercase;
+        text-shadow: 0 0 40px rgba(241, 196, 15, 0.6); margin-bottom: 0.4rem;
     }
     .tao-hero-subtitle {
-        font-family: var(--font-logo);
-        font-size: 0.75rem;
-        letter-spacing: 0.35em;
-        color: var(--tao-primary);
-        text-transform: uppercase;
-        margin-bottom: 2rem;
+        font-family: var(--font-logo); font-size: 0.75rem; letter-spacing: 0.35em;
+        color: var(--tao-primary); text-transform: uppercase; margin-bottom: 2rem;
     }
-
-    .tao-quick-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
+    .tao-quick-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
     .tao-qs-item {
-        padding: 0.9rem 0.75rem;
-        background: rgba(241, 196, 15, 0.06);
-        border: 1px solid rgba(241, 196, 15, 0.2);
-        border-radius: var(--radius-md);
-        text-align: center;
-        transition: all 0.3s ease;
+        padding: 0.9rem 0.75rem; background: rgba(241, 196, 15, 0.06);
+        border: 1px solid rgba(241, 196, 15, 0.2); border-radius: var(--radius-md);
+        text-align: center; transition: all 0.3s ease;
     }
-    .tao-qs-val {
-        font-family: var(--font-display);
-        font-size: 1.4rem;
-        font-weight: 900;
-        color: var(--tao-glow);
-    }
-    .tao-qs-lbl {
-        font-size: 0.6rem;
-        letter-spacing: 0.15em;
-        color: var(--clr-text-dim);
-        text-transform: uppercase;
-    }
-
+    .tao-qs-val { font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--tao-glow); }
+    .tao-qs-lbl { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--clr-text-dim); text-transform: uppercase; }
     .tao-hero-desc {
-        font-size: 0.95rem;
-        color: var(--clr-text-dim);
-        line-height: 1.8;
-        border-left: 2px solid var(--tao-primary);
-        padding-left: 1.1rem;
-        margin-bottom: 2rem;
+        font-size: 0.95rem; color: var(--clr-text-dim); line-height: 1.8;
+        border-left: 2px solid var(--tao-primary); padding-left: 1.1rem; margin-bottom: 2rem;
     }
-
     .tao-char-frame {
-        position: relative;
-        width: 340px;
-        height: 420px;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
+        position: relative; width: 340px; height: 420px; display: flex; align-items: flex-end; justify-content: center;
     }
     .tao-char-frame::before {
-        content: '';
-        position: absolute;
-        inset: 0;
+        content: ''; position: absolute; inset: 0;
         background: radial-gradient(ellipse 80% 90% at 50% 60%, rgba(241, 196, 15, 0.25) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: taoGlowPulse 3s infinite;
+        border-radius: 50%; animation: taoGlowPulse 3s infinite;
     }
-    @keyframes taoGlowPulse {
-        0%,100% { opacity: 0.6; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.08); }
-    }
+    @keyframes taoGlowPulse { 0%,100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
     .tao-char-img {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        object-position: top center;
-        filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.7));
-        animation: taoFloat 4s infinite;
+        position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; object-position: top center;
+        filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.7)); animation: taoFloat 4s infinite;
     }
-    @keyframes taoFloat {
-        0%,100% { transform: translateY(0); }
-        50% { transform: translateY(-14px); }
-    }
-
-    /* СЕКЦИИ */
-    .tao-section {
-        position: relative;
-        z-index: 1;
-        padding: 5rem 2rem;
-    }
+    @keyframes taoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+    .tao-section { position: relative; z-index: 1; padding: 5rem 2rem; }
     .tao-section:nth-child(even) {
-        background: rgba(93, 74, 0, 0.2);
-        border-top: 1px solid rgba(241, 196, 15, 0.15);
+        background: rgba(93, 74, 0, 0.2); border-top: 1px solid rgba(241, 196, 15, 0.15);
         border-bottom: 1px solid rgba(241, 196, 15, 0.15);
     }
-    .tao-section-inner {
-        max-width: 1100px;
-        margin: 0 auto;
-    }
-    .tao-section-head {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        margin-bottom: 3rem;
-    }
-    .tao-section-line {
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(90deg, var(--tao-primary), transparent);
-    }
+    .tao-section-inner { max-width: 1100px; margin: 0 auto; }
+    .tao-section-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 3rem; }
+    .tao-section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--tao-primary), transparent); }
     .tao-section-title {
-        font-family: var(--font-display);
-        font-size: 1.5rem;
-        font-weight: 900;
-        letter-spacing: 0.18em;
-        color: var(--tao-glow);
-        text-transform: uppercase;
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.18em;
+        color: var(--tao-glow); text-transform: uppercase;
     }
-
-    /* ДОСЬЕ */
-    .tao-dossier {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
+    .tao-dossier { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
     .tao-dossier-table {
-        background: rgba(93, 74, 0, 0.3);
-        border: 1px solid rgba(241, 196, 15, 0.2);
-        border-radius: var(--radius-lg);
-        overflow: hidden;
+        background: rgba(93, 74, 0, 0.3); border: 1px solid rgba(241, 196, 15, 0.2);
+        border-radius: var(--radius-lg); overflow: hidden;
     }
     .tao-dossier-row {
-        display: grid;
-        grid-template-columns: 140px 1fr;
-        border-bottom: 1px solid rgba(241, 196, 15, 0.1);
+        display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid rgba(241, 196, 15, 0.1);
     }
     .tao-dossier-key {
-        padding: 0.85rem 1.2rem;
-        font-family: var(--font-display);
-        font-size: 0.65rem;
-        font-weight: 800;
-        color: var(--tao-primary);
-        border-right: 1px solid rgba(241, 196, 15, 0.15);
+        padding: 0.85rem 1.2rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
+        color: var(--tao-primary); border-right: 1px solid rgba(241, 196, 15, 0.15);
     }
-    .tao-dossier-val {
-        padding: 0.85rem 1.2rem;
-        font-size: 0.88rem;
-        color: var(--clr-text);
-    }
-
+    .tao-dossier-val { padding: 0.85rem 1.2rem; font-size: 0.88rem; color: var(--clr-text); }
     .tao-stats-block {
-        background: rgba(93, 74, 0, 0.3);
-        border: 1px solid rgba(241, 196, 15, 0.2);
-        border-radius: var(--radius-lg);
-        padding: 1.8rem;
+        background: rgba(93, 74, 0, 0.3); border: 1px solid rgba(241, 196, 15, 0.2);
+        border-radius: var(--radius-lg); padding: 1.8rem;
     }
     .tao-stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
     .tao-stat-bar { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; }
-    .tao-stat-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--tao-dark), var(--tao-primary)); box-shadow: 0 0 8px rgba(241, 196, 15, 0.6); }
-
-    /* НАВЫКИ */
-    .tao-skills-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.2rem;
+    .tao-stat-fill {
+        height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--tao-dark), var(--tao-primary));
+        box-shadow: 0 0 8px rgba(241, 196, 15, 0.6);
     }
+    .tao-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
     .tao-skill-card {
-        background: rgba(93, 74, 0, 0.25);
-        border: 1px solid rgba(241, 196, 15, 0.2);
-        border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        display: flex;
-        gap: 1.1rem;
-        transition: all 0.3s ease;
+        background: rgba(93, 74, 0, 0.25); border: 1px solid rgba(241, 196, 15, 0.2);
+        border-radius: var(--radius-lg); padding: 1.5rem; display: flex; gap: 1.1rem; transition: all 0.3s ease;
     }
-    .tao-skill-card:hover {
-        border-color: var(--tao-primary);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
+    .tao-skill-card:hover { border-color: var(--tao-primary); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
     .tao-skill-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: var(--radius-md);
-        background: rgba(241, 196, 15, 0.15);
-        border: 1px solid rgba(241, 196, 15, 0.4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
+        width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(241, 196, 15, 0.15);
+        border: 1px solid rgba(241, 196, 15, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
     }
     .tao-skill-name {
-        font-family: var(--font-display);
-        font-size: 0.88rem;
-        font-weight: 800;
-        color: var(--tao-glow);
-        margin-bottom: 0.4rem;
+        font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; color: var(--tao-glow); margin-bottom: 0.4rem;
     }
     .tao-skill-type {
-        display: inline-block;
-        font-size: 0.58rem;
-        background: var(--tao-dim);
-        padding: 0.15rem 0.5rem;
-        border-radius: 3px;
-        margin-bottom: 0.6rem;
-        color: #fff;
+        display: inline-block; font-size: 0.58rem; background: var(--tao-dim); padding: 0.15rem 0.5rem;
+        border-radius: 3px; margin-bottom: 0.6rem; color: #fff;
     }
-    .tao-skill-desc {
-        font-size: 0.83rem;
-        color: var(--clr-text-dim);
-        line-height: 1.7;
-    }
-
-    /* ФУТЕР */
+    .tao-skill-desc { font-size: 0.83rem; color: var(--clr-text-dim); line-height: 1.7; }
     .tao-footer {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: rgba(10, 8, 0, 0.98);
+        text-align: center; padding: 3rem 2rem; background: rgba(10, 8, 0, 0.98);
         border-top: 1px solid rgba(241, 196, 15, 0.2);
     }
     .tao-back-top {
-        margin-top: 1.5rem;
-        padding: 0.5rem 1.5rem;
-        border: 1px solid rgba(241, 196, 15, 0.2);
-        border-radius: var(--radius-sm);
-        font-family: var(--font-display);
-        font-size: 0.75rem;
-        color: var(--clr-text-dim);
-        text-transform: uppercase;
-        cursor: pointer;
-        background: none;
+        margin-top: 1.5rem; padding: 0.5rem 1.5rem; border: 1px solid rgba(241, 196, 15, 0.2);
+        border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 0.75rem;
+        color: var(--clr-text-dim); text-transform: uppercase; cursor: pointer; background: none;
     }
-    .tao-back-top:hover {
-        border-color: var(--tao-primary);
-        color: var(--tao-glow);
-    }
+    .tao-back-top:hover { border-color: var(--tao-primary); color: var(--tao-glow); }
     </style>
 </head>
 <body>
-
 <canvas id="taoBg"></canvas>
-
 <header class="tao-header">
     <div class="tao-header-inner">
         <a href="index.html" class="tao-back-btn">← НАЗАД</a>
         <div class="tao-header-logo">
             <svg viewBox="0 0 100 88"><polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(241,196,15,0.9)" stroke-width="3"/></svg>
-            <span class="tao-header-title">Taokaka — Shadow Cat</span>
+            <span class="tao-header-title">Taokaka — Kaka Clan Guardian</span>
         </div>
         <div class="tao-breadcrumb">BlazBlue: Entropy Effect <span>/</span> Персонажи <span>/</span> <span style="color:var(--tao-glow)">Taokaka</span></div>
     </div>
@@ -379,10 +168,9 @@
     <section>
         <div class="tao-hero">
             <div class="tao-hero-info">
-                <div class="tao-tag">◈ SHADOW CAT</div>
+                <div class="tao-tag">◈ KAKA CLAN · AGILE RUSHDOWN</div>
                 <h1 class="tao-hero-name">Taokaka</h1>
                 <div class="tao-hero-subtitle">BlazBlue: Entropy Effect — Персонаж</div>
-
                 <div class="tao-quick-stats">
                     <div class="tao-qs-item"><div class="tao-qs-val">70</div><div class="tao-qs-lbl">Атака</div></div>
                     <div class="tao-qs-item"><div class="tao-qs-val">35</div><div class="tao-qs-lbl">Защита</div></div>
@@ -391,18 +179,20 @@
                     <div class="tao-qs-item"><div class="tao-qs-val">★★★</div><div class="tao-qs-lbl">Сложность</div></div>
                     <div class="tao-qs-item"><div class="tao-qs-val">Ближний</div><div class="tao-qs-lbl">Тип боя</div></div>
                 </div>
-
                 <p class="tao-hero-desc">
-                    Taokaka — самый быстрый персонаж. Она создаёт теневых клонов и атакует с нескольких направлений, сбивая врагов с толку.
+                    Taokaka — представительница клана Кака, чрезвычайно подвижный прототип,
+                    специализирующийся на создании клонов для умножения урона.
+                    Мастерское владение метательными предметами и правильный выбор момента
+                    для использования клонов и заряженных атак — ключ к её успеху.
+                    Кроме того, она обладает одним из лучших рывков (Dash) в игре с огромным
+                    количеством кадров уклонения.[reference:0]
                 </p>
-
                 <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
                     <span style="border:1px solid rgba(241,196,15,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--tao-glow);">Клоны</span>
-                    <span style="border:1px solid rgba(241,196,15,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--tao-glow);">Скорость</span>
-                    <span style="border:1px solid rgba(241,196,15,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--tao-glow);">Воздушные комбо</span>
+                    <span style="border:1px solid rgba(241,196,15,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--tao-glow);">Dash i-frames</span>
+                    <span style="border:1px solid rgba(241,196,15,0.4); padding:0.3rem 0.9rem; font-size:0.65rem; color:var(--tao-glow);">Combo Scaling</span>
                 </div>
             </div>
-
             <div class="tao-hero-visual">
                 <div class="tao-char-frame">
                     <img src="taokaka.jpg" class="tao-char-img" alt="Taokaka">
@@ -421,15 +211,24 @@
             <div class="tao-dossier">
                 <div class="tao-dossier-table">
                     <div class="tao-dossier-row"><div class="tao-dossier-key">Имя</div><div class="tao-dossier-val">Taokaka</div></div>
-                    <div class="tao-dossier-row"><div class="tao-dossier-key">Оружие</div><div class="tao-dossier-val">Когти</div></div>
-                    <div class="tao-dossier-row"><div class="tao-dossier-key">Талант</div><div class="tao-dossier-val">Shadow Clone — создание теневых клонов</div></div>
-                    <div class="tao-dossier-row"><div class="tao-dossier-key">Роль</div><div class="tao-dossier-val">Мобильный боец / Ассасин</div></div>
+                    <div class="tao-dossier-row"><div class="tao-dossier-key">Клан</div><div class="tao-dossier-val">Кака (Kaka Clan)</div></div>
+                    <div class="tao-dossier-row"><div class="tao-dossier-key">Оружие</div><div class="tao-dossier-val">Когти / Метательные предметы</div></div>
+                    <div class="tao-dossier-row"><div class="tao-dossier-key">База HP / Атака</div><div class="tao-dossier-val">1060 / 150 (33 потенциала, +660%)[reference:1]</div></div>
+                    <div class="tao-dossier-row"><div class="tao-dossier-key">Роль</div><div class="tao-dossier-val">Rushdown / Клон-специалист</div></div>
                 </div>
                 <div class="tao-stats-block">
+                    <div style="font-family:var(--font-display);font-size:0.7rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--tao-glow);margin-bottom:1rem;">Характеристики</div>
                     <div class="tao-stat-row"><span>ATK</span><div class="tao-stat-bar"><div class="tao-stat-fill" style="width:70%"></div></div><span>70</span></div>
                     <div class="tao-stat-row"><span>DEF</span><div class="tao-stat-bar"><div class="tao-stat-fill" style="width:35%"></div></div><span>35</span></div>
                     <div class="tao-stat-row"><span>SPD</span><div class="tao-stat-bar"><div class="tao-stat-fill" style="width:95%"></div></div><span>95</span></div>
                     <div class="tao-stat-row"><span>HP</span><div class="tao-stat-bar"><div class="tao-stat-fill" style="width:60%"></div></div><span>60</span></div>
+                    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(241,196,15,0.1);">
+                        <div style="font-family:var(--font-display);font-size:0.62rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:0.7rem;">Талант: Impatience</div>
+                        <div style="font-family:var(--font-main);font-size:0.82rem;color:var(--tao-glow);line-height:1.6;">
+                            При счётчике комбо >30 наносит до <strong>+30% урона</strong> (растёт постепенно, максимум на 100 комбо).[reference:2]
+                            Даёт эффект, эквивалентный 2 потенциалам, и особенно полезен на персонажах с низким стартовым уроном.[reference:3]
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -438,11 +237,67 @@
     <!-- НАВЫКИ -->
     <section class="tao-section">
         <div class="tao-section-inner">
-            <div class="tao-section-head"><h2 class="tao-section-title">Навыки</h2><div class="tao-section-line"></div></div>
+            <div class="tao-section-head"><h2 class="tao-section-title">Навыки и приёмы</h2><div class="tao-section-line"></div></div>
             <div class="tao-skills-grid">
-                <div class="tao-skill-card"><div class="tao-skill-icon">🐾</div><div class="tao-skill-info"><div class="tao-skill-name">Cat Spirit Encore</div><div class="tao-skill-type">Наследуемый 1</div><div class="tao-skill-desc">Создаёт клона, повторяющего последнюю атаку.</div></div></div>
-                <div class="tao-skill-card"><div class="tao-skill-icon">💨</div><div class="tao-skill-info"><div class="tao-skill-name">Dancing Edge</div><div class="tao-skill-type">Наследуемый 2 [EX]</div><div class="tao-skill-desc">Серия быстрых рывков, наносящих урон всем встречным врагам.</div></div></div>
-                <div class="tao-skill-card"><div class="tao-skill-icon">🔄</div><div class="tao-skill-info"><div class="tao-skill-name">Triple Dash</div><div class="tao-skill-type">Мобильность</div><div class="tao-skill-desc">Три рывка подряд без кулдауна.</div></div></div>
+                <div class="tao-skill-card">
+                    <div class="tao-skill-icon">🐾</div>
+                    <div class="tao-skill-info">
+                        <div class="tao-skill-name">Almost Becoming Two!</div>
+                        <div class="tao-skill-type">SP Skill (Уникальная механика)</div>
+                        <div class="tao-skill-desc">
+                            Создаёт временного клона, который повторяет действия Taokaka с небольшой задержкой.
+                            Клоны также создают дополнительные снаряды от таких умений, как Fervent Kaka Knock! и Spinny-Spinny!.
+                            Стоимость: 50 SP.[reference:4]
+                        </div>
+                    </div>
+                </div>
+                <div class="tao-skill-card">
+                    <div class="tao-skill-icon">🐱</div>
+                    <div class="tao-skill-info">
+                        <div class="tao-skill-name">Kaka Attack Command!</div>
+                        <div class="tao-skill-type">Legacy Talent 1</div>
+                        <div class="tao-skill-desc">
+                            Призывает котят клана Кака, которые атакуют врагов. Количество котят увеличивается с уровнем.
+                            Полезно для сдерживания нескольких врагов, пока вы сосредоточены на других.[reference:5]
+                        </div>
+                    </div>
+                </div>
+                <div class="tao-skill-card">
+                    <div class="tao-skill-icon">⚙️</div>
+                    <div class="tao-skill-info">
+                        <div class="tao-skill-name">Crunchy Crunch!</div>
+                        <div class="tao-skill-type">Legacy Talent 2</div>
+                        <div class="tao-skill-desc">
+                            Призывает лезвие-колесо, которое наносит постоянный урон, следует за прототипом
+                            и отражает снаряды. Скорость атаки колеса увеличивается с уровнем.
+                            Отличный выбор против боссов с большим количеством снарядов (например, Arakune).[reference:6]
+                        </div>
+                    </div>
+                </div>
+                <div class="tao-skill-card">
+                    <div class="tao-skill-icon">💨</div>
+                    <div class="tao-skill-info">
+                        <div class="tao-skill-name">Dancing Edge</div>
+                        <div class="tao-skill-type">Drive / Мобильность</div>
+                        <div class="tao-skill-desc">
+                            Фирменный Drive — высокоскоростной рывок с рубящим ударом.
+                            Позволяет стремительно сближаться с противником и уклоняться от атак благодаря
+                            огромному количеству кадров неуязвимости (i-frames).[reference:7]
+                        </div>
+                    </div>
+                </div>
+                <div class="tao-skill-card">
+                    <div class="tao-skill-icon">🎯</div>
+                    <div class="tao-skill-info">
+                        <div class="tao-skill-name">Heavy Strike</div>
+                        <div class="tao-skill-type">Заряженная атака</div>
+                        <div class="tao-skill-desc">
+                            Многие потенциалы Taokaka наносят урон в течение длительного времени.
+                            В сочетании с клонами Heavy Strike позволяет наносить огромный суммарный урон,
+                            особенно когда враг обездвижен или оглушён.[reference:8]
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

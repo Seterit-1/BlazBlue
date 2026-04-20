@@ -4,489 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlazBlue: Entropy Effect</title>
+    <!-- Подключение внешнего файла стилей -->
     <link rel="stylesheet" href="style.css">
-    <style>
-    /* ══════════════════════════════════════════
-       INTRO SCREEN
-       ══════════════════════════════════════════ */
-    .intro-screen {
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        background: #070b17;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 0;
-        transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .intro-screen.intro-exit {
-        opacity: 0;
-        transform: scale(1.04);
-        pointer-events: none;
-    }
-    .intro-inner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-    .intro-svg {
-        width: 90px;
-        height: 80px;
-        filter: drop-shadow(0 0 18px rgba(116,192,252,0.9));
-        animation: introLogoSpin 2s ease-in-out forwards;
-    }
-    @keyframes introLogoSpin {
-        0%   { opacity: 0; transform: scale(0.4) rotate(-20deg); }
-        60%  { opacity: 1; transform: scale(1.08) rotate(2deg); }
-        100% { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-    .intro-blazblue {
-        font-family: 'Orbitron', monospace, sans-serif;
-        font-size: 0.8rem;
-        letter-spacing: 0.45em;
-        color: rgba(226,232,240,0.85);
-        text-shadow: 0 0 12px rgba(116,192,252,0.8);
-        text-transform: uppercase;
-        animation: introFadeUp 0.6s 0.4s both;
-    }
-    .intro-entropy {
-        font-family: 'Big Shoulders Display', sans-serif;
-        font-size: 2.6rem;
-        font-weight: 900;
-        letter-spacing: 0.06em;
-        color: #e2e8f0;
-        text-transform: uppercase;
-        text-shadow: 0 0 30px rgba(116,192,252,0.6);
-        animation: introFadeUp 0.6s 0.6s both;
-        line-height: 1;
-    }
-    @keyframes introFadeUp {
-        from { opacity: 0; transform: translateY(14px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .intro-divider {
-        width: 260px;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(116,192,252,0.5), transparent);
-        margin: 0.5rem 0;
-        animation: introFadeUp 0.4s 0.8s both;
-    }
-    .intro-bar-wrap {
-        width: 260px;
-        height: 3px;
-        background: rgba(255,255,255,0.07);
-        border-radius: 2px;
-        overflow: hidden;
-        animation: introFadeUp 0.4s 0.9s both;
-    }
-    .intro-bar {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #1565c0, #74c0fc);
-        border-radius: 2px;
-        transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
-        box-shadow: 0 0 10px rgba(116,192,252,0.7);
-    }
-    .intro-status {
-        font-family: 'Courier New', monospace;
-        font-size: 0.68rem;
-        letter-spacing: 0.2em;
-        color: rgba(116,192,252,0.7);
-        min-height: 1.2em;
-        animation: introFadeUp 0.4s 1s both;
-    }
-    .intro-skip {
-        position: absolute;
-        bottom: 2rem;
-        right: 2rem;
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 0.7rem;
-        letter-spacing: 0.15em;
-        color: rgba(136,146,176,0.4);
-        cursor: pointer;
-        border: 1px solid rgba(136,146,176,0.15);
-        padding: 0.35rem 0.9rem;
-        border-radius: 3px;
-        transition: all 0.3s;
-        animation: introFadeUp 0.4s 1.5s both;
-    }
-    .intro-skip:hover { color: rgba(116,192,252,0.7); border-color: rgba(116,192,252,0.3); }
-
-    /* ══════════════════════════════════════════
-       TOAST УВЕДОМЛЕНИЯ
-       ══════════════════════════════════════════ */
-    .toast-container {
-        position: fixed;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9990;
-        display: flex;
-        flex-direction: column-reverse;
-        gap: 0.5rem;
-        align-items: center;
-        pointer-events: none;
-    }
-    .toast {
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 0.82rem;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        color: #e2e8f0;
-        background: rgba(11,18,37,0.95);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-left: 3px solid #74c0fc;
-        border-radius: 4px;
-        padding: 0.55rem 1.2rem 0.55rem 0.9rem;
-        backdrop-filter: blur(12px);
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateY(12px) scale(0.95);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        pointer-events: none;
-    }
-    .toast.toast-show {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    .toast.toast-hide {
-        opacity: 0;
-        transform: translateY(-8px) scale(0.95);
-    }
-    .toast-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-
-    /* ══════════════════════════════════════════
-       ПОИСК ПЕРСОНАЖЕЙ
-       ══════════════════════════════════════════ */
-    .search-wrap {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1.2rem;
-        padding: 0 2rem;
-    }
-    .char-search {
-        width: 100%;
-        max-width: 340px;
-        padding: 0.55rem 1rem 0.55rem 2.4rem;
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 0.82rem;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #ccd6f6;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid #1e3461;
-        border-radius: 4px;
-        outline: none;
-        transition: all 0.3s ease;
-        caret-color: #74c0fc;
-    }
-    .char-search::placeholder { color: rgba(136,146,176,0.4); }
-    .char-search:focus {
-        border-color: #42a5f5;
-        background: rgba(21,101,192,0.08);
-        box-shadow: 0 0 15px rgba(21,101,192,0.25);
-    }
-    .search-icon {
-        position: absolute;
-        left: calc(50% - 155px);
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1rem;
-        color: rgba(116,192,252,0.5);
-        pointer-events: none;
-    }
-    .search-no-result {
-        text-align: center;
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 0.78rem;
-        letter-spacing: 0.15em;
-        color: rgba(136,146,176,0.4);
-        padding: 0.3rem 0;
-        min-height: 1.4em;
-    }
-
-    /* ══════════════════════════════════════════
-       КНОПКА СЛУЧАЙНОГО ПЕРСОНАЖА
-       ══════════════════════════════════════════ */
-    .filter.random-btn {
-        background: linear-gradient(135deg, rgba(21,101,192,0.15), rgba(13,148,136,0.12));
-        border-color: rgba(116,192,252,0.35);
-        color: #74c0fc;
-        position: relative;
-        overflow: hidden;
-    }
-    .filter.random-btn:hover {
-        border-color: #74c0fc;
-        background: rgba(21,101,192,0.2);
-        color: #fff;
-        box-shadow: 0 0 18px rgba(116,192,252,0.35);
-    }
-    .filter.random-btn .dice-icon {
-        display: inline-block;
-        animation: diceSpin 0.4s ease;
-    }
-    @keyframes diceSpin {
-        0%   { transform: rotate(0deg) scale(1); }
-        50%  { transform: rotate(180deg) scale(1.3); }
-        100% { transform: rotate(360deg) scale(1); }
-    }
-
-    /* ══════════════════════════════════════════
-       СЧЁТЧИКИ НА ГЛАВНОЙ
-       ══════════════════════════════════════════ */
-    .hero-counters {
-        display: flex;
-        gap: 2.5rem;
-        justify-content: center;
-        margin-top: 2.5rem;
-        flex-wrap: wrap;
-    }
-    .hc-item {
-        text-align: center;
-        position: relative;
-    }
-    .hc-item::after {
-        content: '';
-        position: absolute;
-        right: -1.25rem;
-        top: 20%;
-        height: 60%;
-        width: 1px;
-        background: rgba(116,192,252,0.2);
-    }
-    .hc-item:last-child::after { display: none; }
-    .hc-num {
-        font-family: 'Big Shoulders Display', sans-serif;
-        font-size: 2.8rem;
-        font-weight: 900;
-        color: #38bdf8;
-        line-height: 1;
-        text-shadow: 0 0 20px rgba(56,189,248,0.5);
-        letter-spacing: 0.02em;
-    }
-    .hc-label {
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 0.68rem;
-        font-weight: 600;
-        letter-spacing: 0.2em;
-        color: rgba(136,146,176,0.65);
-        text-transform: uppercase;
-        margin-top: 0.2rem;
-    }
-
-    /* ══════════════════════════════════════════
-       ИНДИКАТОР РЕЖИМА ФОНА
-       ══════════════════════════════════════════ */
-    .bg-mode-indicator {
-        position: fixed;
-        bottom: 1.2rem;
-        right: 1.4rem;
-        z-index: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(7,11,23,0.75);
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 20px;
-        padding: 0.35rem 0.8rem;
-        backdrop-filter: blur(10px);
-        transition: opacity 0.3s;
-    }
-    .bg-mode-indicator:hover { opacity: 0.95; }
-    .bmi-label {
-        font-family: 'Courier New', monospace;
-        font-size: 0.58rem;
-        letter-spacing: 0.15em;
-        color: rgba(136,146,176,0.45);
-        text-transform: uppercase;
-    }
-    .bmi-dots {
-        display: flex;
-        gap: 5px;
-        align-items: center;
-    }
-    .bmi-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: rgba(136,146,176,0.22);
-        transition: all 0.5s ease;
-        cursor: default;
-    }
-    .bmi-dot.active {
-        background: #74c0fc;
-        box-shadow: 0 0 6px rgba(116,192,252,0.8);
-        transform: scale(1.25);
-    }
-    .bmi-mode-name {
-        font-family: 'Courier New', monospace;
-        font-size: 0.55rem;
-        letter-spacing: 0.12em;
-        color: rgba(116,192,252,0.55);
-        min-width: 24px;
-        text-align: left;
-    }
-
-    /* ══════════════════════════════════════════
-       КЛАВИАТУРНАЯ ПОДСКАЗКА
-       ══════════════════════════════════════════ */
-    .keyboard-hint {
-        text-align: center;
-        font-family: 'Courier New', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.15em;
-        color: rgba(136,146,176,0.3);
-        margin-top: -2rem;
-        margin-bottom: 2rem;
-    }
-    .kbd {
-        display: inline-block;
-        border: 1px solid rgba(136,146,176,0.2);
-        border-radius: 3px;
-        padding: 0.05rem 0.35rem;
-        font-size: 0.62rem;
-        margin: 0 2px;
-        color: rgba(136,146,176,0.4);
-    }
-
-    /* ══════════════════════════════════════════
-       КНОПКА СТРАНИЦЫ ПЕРСОНАЖА
-       ══════════════════════════════════════════ */
-    .detail-panel {
-        position: relative;
-    }
-
-    .char-page-btn {
-        position: absolute;
-        bottom: 1.6rem;
-        right: 1.8rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.55rem 1.35rem;
-        font-family: 'Big Shoulders Display', sans-serif;
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: var(--clr-gold, #38bdf8);
-        border: 1px solid rgba(56,189,248,0.35);
-        border-radius: 4px;
-        background: rgba(21,101,192,0.09);
-        text-decoration: none;
-        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-        overflow: hidden;
-        white-space: nowrap;
-        z-index: 5;
-    }
-
-    .char-page-btn::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
-        transform: translateX(-100%);
-        transition: transform 0.45s ease;
-    }
-
-    .char-page-btn:hover::before { transform: translateX(100%); }
-
-    .char-page-btn:hover {
-        color: #fff;
-        border-color: var(--clr-blue-light, #42a5f5);
-        background: rgba(21,101,192,0.22);
-        box-shadow:
-            0 0 18px rgba(66,165,245,0.35),
-            inset 0 0 12px rgba(66,165,245,0.08);
-        transform: translateY(-2px);
-    }
-
-    .char-page-btn .cpb-arrow {
-        font-size: 0.85em;
-        transition: transform 0.25s ease;
-    }
-    .char-page-btn:hover .cpb-arrow {
-        transform: translateX(4px);
-    }
-
-    /* END-тема */
-    :root.theme-end .char-page-btn {
-        color: #ff8844;
-        border-color: rgba(255,80,0,0.35);
-        background: rgba(180,20,0,0.09);
-    }
-    :root.theme-end .char-page-btn:hover {
-        border-color: #cc1500;
-        background: rgba(180,20,0,0.22);
-        box-shadow: 0 0 18px rgba(220,60,0,0.35), inset 0 0 12px rgba(200,40,0,0.08);
-    }
-
-    @media (max-width: 768px) {
-        .char-page-btn {
-            position: static;
-            margin: 1.2rem auto 0;
-            display: flex;
-            justify-content: center;
-            width: fit-content;
-        }
-    }
-
-    /* Исправление: убираем вертикальную полоску на активной карточке */
-    .c-panel.center .panel-glow-line {
-        display: none;
-    }
-
-    /* END-тема адаптации */
-    :root.theme-end .intro-bar {
-        background: linear-gradient(90deg, #8b0000, #ff3300);
-        box-shadow: 0 0 10px rgba(255,50,0,0.7);
-    }
-    :root.theme-end .toast {
-        background: rgba(13,0,0,0.95);
-        border-left-color: #ff3300;
-    }
-    :root.theme-end .bmi-dot.active {
-        background: #ff4400;
-        box-shadow: 0 0 6px rgba(255,60,0,0.8);
-    }
-    :root.theme-end .hc-num {
-        color: #ff7722;
-        text-shadow: 0 0 20px rgba(255,80,0,0.5);
-    }
-    :root.theme-end .char-search:focus {
-        border-color: #cc1500;
-        box-shadow: 0 0 15px rgba(200,0,0,0.25);
-    }
-    </style>
 </head>
 <body>
 
-<!-- ════════ INTRO SCREEN ════════ -->
+<!-- INTRO SCREEN -->
 <div class="intro-screen" id="introScreen">
     <div class="intro-inner">
         <svg class="intro-svg" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="50,4 96,82 4,82" fill="none"
-                stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linejoin="round"/>
-            <line x1="4" y1="82" x2="96" y2="82"
-                stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
-            <polyline points="50,22 68,64 32,64" fill="none"
-                stroke="rgba(255,255,255,0.88)" stroke-width="2" stroke-linejoin="round"/>
-            <line x1="38" y1="53" x2="62" y2="53"
-                stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
+            <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linejoin="round"/>
+            <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
+            <polyline points="50,22 68,64 32,64" fill="none" stroke="rgba(255,255,255,0.88)" stroke-width="2" stroke-linejoin="round"/>
+            <line x1="38" y1="53" x2="62" y2="53" stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
         </svg>
         <div class="intro-blazblue">─ BLAZBLUE ─</div>
         <div class="intro-entropy">ENTROPY EFFECT</div>
@@ -499,10 +29,10 @@
     <button class="intro-skip" id="introSkip">ПРОПУСТИТЬ</button>
 </div>
 
-<!-- ════════ TOAST CONTAINER ════════ -->
+<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ════════ BG MODE INDICATOR ════════ -->
+<!-- BG MODE INDICATOR -->
 <div class="bg-mode-indicator" id="bgModeIndicator">
     <span class="bmi-label">BG</span>
     <div class="bmi-dots">
@@ -522,14 +52,10 @@
     <div class="header-inner">
         <div class="header-logo">
             <svg class="logo-svg" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="50,4 96,82 4,82" fill="none"
-                    stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linejoin="round"/>
-                <line x1="4" y1="82" x2="96" y2="82"
-                    stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
-                <polyline points="50,22 68,64 32,64" fill="none"
-                    stroke="rgba(255,255,255,0.88)" stroke-width="2" stroke-linejoin="round"/>
-                <line x1="38" y1="53" x2="62" y2="53"
-                    stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
+                <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(255,255,255,0.92)" stroke-width="3"/>
+                <polyline points="50,22 68,64 32,64" fill="none" stroke="rgba(255,255,255,0.88)" stroke-width="2" stroke-linejoin="round"/>
+                <line x1="38" y1="53" x2="62" y2="53" stroke="rgba(255,255,255,0.88)" stroke-width="2"/>
             </svg>
             <div class="logo-text-block">
                 <span class="logo-blazblue">─ BLAZBLUE ─</span>
@@ -537,79 +63,42 @@
             </div>
         </div>
 
-        <button class="theme-toggle-btn" id="themeToggle" data-theme="new"
-                aria-label="Переключить тему">
-            <span class="theme-label-full">NEW STORY</span>
-            <span class="theme-label-short" style="display:none">◈</span>
-        </button>
-
         <nav class="tab-nav" role="tablist">
-            <button class="tab-btn active" data-tab="home"
-                    role="tab" aria-selected="true">Главная</button>
-            <button class="tab-btn" data-tab="characters"
-                    role="tab" aria-selected="false">Персонажи</button>
-            <button class="tab-btn" data-tab="about"
-                    role="tab" aria-selected="false">Об игре</button>
+            <button class="tab-btn active" data-tab="home" role="tab" aria-selected="true">Главная</button>
+            <button class="tab-btn" data-tab="characters" role="tab" aria-selected="false">Персонажи</button>
+            <button class="tab-btn" data-tab="about" role="tab" aria-selected="false">Об игре</button>
         </nav>
     </div>
 </header>
 
 <main>
-
-    <!-- ════════ ГЛАВНАЯ ════════ -->
+    <!-- ГЛАВНАЯ -->
     <div class="tab-pane active" id="tab-home" role="tabpanel">
         <section class="hero">
             <div class="hero-text">
                 <div class="hero-label">— Roguelite Action —</div>
-                <h1 class="hero-title" data-text="ENTROPY">
-                    ENTROPY<br><span class="accent">EFFECT</span>
-                </h1>
-                <p class="hero-sub">
-                    Выбери персонажа, прокачай навыки и сражайся<br>
-                    в процедурно генерируемых уровнях
-                </p>
+                <h1 class="hero-title" data-text="ENTROPY">ENTROPY<br><span class="accent">EFFECT</span></h1>
+                <p class="hero-sub">Выбери персонажа, прокачай навыки и сражайся<br>в процедурно генерируемых уровнях</p>
                 <button class="btn-primary" id="goToChars">⚔ ВЫБРАТЬ ПЕРСОНАЖА</button>
-
                 <div class="hero-counters" id="heroCounters">
-                    <div class="hc-item">
-                        <div class="hc-num" data-target="13" id="cntChars">0</div>
-                        <div class="hc-label">Персонажей</div>
-                    </div>
-                    <div class="hc-item">
-                        <div class="hc-num" data-target="5" id="cntTypes">0</div>
-                        <div class="hc-label">Стилей боя</div>
-                    </div>
-                    <div class="hc-item">
-                        <div class="hc-num" data-target="2" id="cntGuest">0</div>
-                        <div class="hc-label">Гостевых</div>
-                    </div>
-                    <div class="hc-item">
-                        <div class="hc-num" data-target="4" id="cntBg">0</div>
-                        <div class="hc-label">Режима фона</div>
-                    </div>
+                    <div class="hc-item"><div class="hc-num" data-target="13" id="cntChars">0</div><div class="hc-label">Персонажей</div></div>
+                    <div class="hc-item"><div class="hc-num" data-target="5" id="cntTypes">0</div><div class="hc-label">Стилей боя</div></div>
+                    <div class="hc-item"><div class="hc-num" data-target="2" id="cntGuest">0</div><div class="hc-label">Гостевых</div></div>
+                    <div class="hc-item"><div class="hc-num" data-target="4" id="cntBg">0</div><div class="hc-label">Режима фона</div></div>
                 </div>
             </div>
-
             <div class="hero-deco">
                 <div class="hero-ring r1"></div>
                 <div class="hero-ring r2"></div>
                 <div class="hero-ring r3"></div>
                 <div class="hero-center">
                     <div class="hero-logo-display">
-                        <svg class="hero-logo-svg-large" viewBox="0 0 100 88"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <polygon points="50,4 96,82 4,82" fill="none"
-                                stroke="rgba(255,255,255,0.95)" stroke-width="2.5"
-                                stroke-linejoin="round"/>
-                            <line x1="4" y1="82" x2="96" y2="82"
-                                stroke="rgba(255,255,255,0.95)" stroke-width="2.5"/>
-                            <polyline points="50,20 70,66 30,66" fill="none"
-                                stroke="rgba(255,255,255,0.9)" stroke-width="2"
-                                stroke-linejoin="round"/>
-                            <line x1="36" y1="54" x2="64" y2="54"
-                                stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
-                            <polygon points="50,20 70,66 30,66"
-                                fill="rgba(116,192,252,0.06)"/>
+                        <svg class="hero-logo-svg-large" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="50,4 96,82 4,82" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2.5" stroke-linejoin="round"/>
+                            <line x1="4" y1="82" x2="96" y2="82" stroke="rgba(255,255,255,0.95)" stroke-width="2.5"/>
+                            <polyline points="50,20 70,66 30,66" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linejoin="round"/>
+                            <line x1="36" y1="54" x2="64" y2="54" stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
+                            <polygon points="50,20 70,66 30,66" fill="rgba(116,192,252,0.06)"/>
                         </svg>
                         <span class="hero-logo-blazblue">─ BLAZBLUE ─</span>
                         <span class="hero-logo-entropy">ENTROPY EFFECT</span>
@@ -619,7 +108,7 @@
         </section>
     </div>
 
-    <!-- ════════ ПЕРСОНАЖИ ════════ -->
+    <!-- ПЕРСОНАЖИ -->
     <div class="tab-pane" id="tab-characters" role="tabpanel">
         <section class="char-section">
             <div class="section-title-wrap">
@@ -627,33 +116,23 @@
                 <h2 class="section-title">ВЫБОР ПЕРСОНАЖА</h2>
                 <span class="title-line"></span>
             </div>
-
             <div class="search-wrap">
                 <span class="search-icon">⌕</span>
-                <input type="text" class="char-search" id="charSearch"
-                       placeholder="ПОИСК: ИМЯ / РОЛЬ / ТЕГ..."
-                       autocomplete="off" spellcheck="false">
+                <input type="text" class="char-search" id="charSearch" placeholder="ПОИСК: ИМЯ / РОЛЬ / ТЕГ..." autocomplete="off" spellcheck="false">
             </div>
             <div class="search-no-result" id="searchNoResult"></div>
-
             <div class="filter-bar">
                 <button class="filter active" data-filter="all">ВСЕ</button>
-                <button class="filter random-btn" id="randomChar">
-                    <span class="dice-icon" id="diceIcon">⚄</span> СЛУЧАЙНЫЙ
-                </button>
+                <button class="filter random-btn" id="randomChar"><span class="dice-icon" id="diceIcon">⚄</span> СЛУЧАЙНЫЙ</button>
             </div>
-
             <div class="carousel-wrap">
                 <button class="nav-btn" id="navPrev">&#9664;</button>
                 <div class="carousel-stage" id="carouselStage"></div>
                 <button class="nav-btn" id="navNext">&#9654;</button>
             </div>
-
             <div class="keyboard-hint">
-                <span class="kbd">←</span> <span class="kbd">→</span>
-                &nbsp;навигация клавиатурой
+                <span class="kbd">←</span> <span class="kbd">→</span> &nbsp;навигация клавиатурой
             </div>
-
             <div class="detail-panel" id="detailPanel">
                 <div class="dp-left">
                     <div class="dp-tag" id="dpTag">—</div>
@@ -670,18 +149,14 @@
                         <div class="dp-platform"></div>
                     </div>
                 </div>
-
-                <!-- КНОПКА СТРАНИЦЫ ПЕРСОНАЖА -->
-                <a href="#" class="char-page-btn" id="charPageBtn"
-                   title="Открыть страницу персонажа">
-                    ◈ СТРАНИЦА ПЕРСОНАЖА
-                    <span class="cpb-arrow">→</span>
+                <a href="#" class="char-page-btn" id="charPageBtn" title="Открыть страницу персонажа">
+                    ◈ СТРАНИЦА ПЕРСОНАЖА <span class="cpb-arrow">→</span>
                 </a>
             </div>
         </section>
     </div>
 
-    <!-- ════════ ОБ ИГРЕ ════════ -->
+    <!-- ОБ ИГРЕ -->
     <div class="tab-pane" id="tab-about" role="tabpanel">
         <section class="about-section">
             <div class="about-inner">
@@ -717,7 +192,6 @@
             </div>
         </section>
     </div>
-
 </main>
 
 <footer class="site-footer">
@@ -727,1243 +201,763 @@
 </footer>
 
 <script>
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ВЕСЬ JavaScript-код (карусель, данные персонажей, фон, переключение вкладок)
+    // ═══════════════════════════════════════════════════════════════════════════
 
-/* ═══════════════════════════════════════════
-   ДАННЫЕ ПЕРСОНАЖЕЙ (ОЧИЩЕННАЯ ВЕРСИЯ)
-   ═══════════════════════════════════════════ */
-const characters = [
-    {
-        id: 'ragna',
-        name: 'Ragna',
-        img: 'ragna.jpg',
-        role: 'Ближний боец',
-        type: 'melee',
-        tag: 'SS-КЛАСС', // ИЗМЕНЕНО: Bloodedge заменён на SS-КЛАСС
-        color: '#3d0a0a',
-        glow: '#e74c3c',
-        stats: { atk: 90, def: 50, spd: 70, hp: 85 },
-        desc: `
-<span style="font-size:1.12em;font-weight:900;letter-spacing:3px;
-      color:#e74c3c;text-transform:uppercase;
-      text-shadow:0 0 12px #e74c3c88;">
-  СИЛА ЛАЗУРНОГО ГРИМУАРА
-</span><br><br>
-Ragna использует мощь <strong style="color:#e74c3c;">Azure Grimoire</strong>.
-Каждый удар активирует пассивный эффект
-<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#ff8888;">Soul&nbsp;Eater</span>:
-часть нанесённого урона возвращается как <em>восстановление HP</em>.<br><br>
-Чем <strong style="color:#ff4444;">ниже полоса здоровья</strong>,
-тем <em>разрушительнее</em> его атаки.
-При критически низком HP активируется режим
-<span style="font-weight:900;font-size:1.05em;color:#ff2222;text-shadow:0 0 10px #ff000099;">BERSERKER</span>.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Хватит болтать. Покажи, на что способен.»
-</span>`,
-        abilities: [
-            '<strong>Soul Eater</strong> — восстановление HP от урона',
-            'Берсерк при низком HP',
-            'Dead Spike — тёмная волна',
-            'Inferno Divider — удар вверх',
-            'Gauntlet Hades — таран'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'jin',
-        name: 'Jin Kisaragi',
-        img: 'jin.jpg',
-        role: 'Ледяной мечник',
-        type: 'melee',
-        tag: 'FROST BLADE',
-        color: '#0d3b6e',
-        glow: '#5dade2',
-        stats: { atk: 80, def: 60, spd: 75, hp: 70 },
-        desc: `
-<span style="font-family:'Courier New',monospace;font-size:0.9em;letter-spacing:2px;color:#5dade2;">
-[ ИНИЦИАЛИЗАЦИЯ — ПЕРВЫЙ ЛЕЙТЕНАНТ НОЛ ]<br>
-[ СТАТУС: БОЕВАЯ ГОТОВНОСТЬ ]
-</span><br><br>
-Меч <em>Yukianesa</em> — реликвия, реагирующая на
-<span style="color:#85c1e9;">ледяные Ars Magus</span>.
-При контакте с врагом накладывает
-<strong style="color:#5dade2;">статус заморозки</strong>.<br><br>
-Правильное исполнение комбо даёт <strong>нарастающий бонус ATK</strong>.
-Точность важнее скорости.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Ты недостоин даже скрестить клинки со мной.»
-</span>`,
-        abilities: [
-            '<strong>Yukianesa</strong> — ледяной меч-реликвия',
-            'Заморозка при попадании',
-            'Ледяной след Hyōga no Kamosu',
-            'Musō Battōjin — вакуумный слэш',
-            'Нарастающий ATK за комбо'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'noel',
-        name: 'Noel Vermillion',
-        img: 'noel.jpg',
-        role: 'Дальнобойный боец',
-        type: 'ranged',
-        tag: 'GUNSLINGER',
-        color: '#1a4d2e',
-        glow: '#2ecc71',
-        stats: { atk: 75, def: 45, spd: 80, hp: 65 },
-        desc: `
-<em style="color:#2ecc71;font-size:1.0em;">
-  Нежная внешность, стальная воля — и два пистолета.
-</em><br><br>
-Ноэль управляет двойными пистолетами
-<strong style="color:#58d68d;">Bolverk</strong>.
-Уникальная механика
-<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#abebc6;">Over-Exhaust</span>:
-навыки <strong>даже при нулевом MP</strong> — в обмен на HP.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Я постараюсь! Я… обязательно справлюсь.»
-</span>`,
-        abilities: [
-            '<strong>Bolverk</strong> — двойные пистолеты-реликвии',
-            'Over-Exhaust — навык без MP (−HP)',
-            'Chain Drive — серийный скорострельный огонь',
-            'Сокращение кулдауна за выстрелы',
-            'Высокая мобильность'
-        ],
-        diff: '★☆☆'
-    },
-    {
-        id: 'taokaka',
-        name: 'Taokaka',
-        img: 'taokaka.jpg',
-        role: 'Мобильный боец',
-        type: 'melee',
-        tag: 'SHADOW CAT',
-        color: '#5d4a00',
-        glow: '#f1c40f',
-        stats: { atk: 70, def: 35, spd: 95, hp: 60 },
-        desc: `
-<span style="font-size:1.18em;font-weight:900;color:#f1c40f;">НЯА~! ВАУ ВАУ ВАУ!!!</span>
-<span style="font-size:0.78em;color:#f39c12;"> ...тао хочет кушать.</span><br><br>
-<strong style="font-size:1.06em;color:#f4d03f;">САМЫЙ БЫСТРЫЙ</strong> персонаж.
-Скорость <em>95/100</em>. Создаёт
-<span style="color:#f1c40f;font-weight:700;">теневые клоны</span>
-клана Кака.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Тао поймает тебя! Обязательно! Ня~»
-</span>`,
-        abilities: [
-            '<strong>Shadow Clone</strong> — теневые двойники клана Кака',
-            'Тройной рывок без кулдауна',
-            'Скорость 95/100 — быстрейшая в игре',
-            'Непредсказуемые комбо из воздуха',
-            'Атаки с нескольких направлений'
-        ],
-        diff: '★★★'
-    },
-    {
-        id: 'rachel',
-        name: 'Rachel Alucard',
-        img: 'rachel.jpg',
-        role: 'Маг / Контролёр',
-        type: 'control',
-        tag: 'MISTRESS',
-        color: '#4a1e6e',
-        glow: '#a569bd',
-        stats: { atk: 85, def: 50, spd: 60, hp: 70 },
-        desc: `
-<span style="font-family:Georgia,serif;font-size:1.05em;font-style:italic;color:#c39bd3;">
-  Как невыносимо утомительно…
-</span><br><br>
-Вампирская аристократка. Фамильяры
-<strong style="color:#a569bd;">Наго</strong> и
-<strong style="color:#bb8fce;">Гии</strong> служат
-оружием, щитом и платформой.<br><br>
-<span style="font-style:italic;font-family:Georgia,serif;color:#777;font-size:0.87em;">
-  «Мне смешно. По-настоящему смешно.»
-</span>`,
-        abilities: [
-            '<strong>Наго & Гии</strong> — фамильяры-щит/атака',
-            'Джордж XIII — зарядный молниевый удар',
-            'Silpheed — ветровой барьер и отражение',
-            'Высасывание HP у врагов',
-            'Отражение снарядов обратно'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'hakumen',
-        name: 'Hakumen',
-        img: 'hakumen.jpg',
-        role: 'Танк / Контратакер',
-        type: 'tank',
-        tag: 'VOID WARRIOR',
-        color: '#2c3e50',
-        glow: '#bdc3c7',
-        stats: { atk: 85, def: 95, spd: 45, hp: 95 },
-        desc: `
-<span style="font-size:1.1em;font-weight:900;letter-spacing:4px;color:#ecf0f1;
-      font-family:'Courier New',monospace;text-shadow:0 0 10px #bdc3c766;">
-  Я — БЕЛАЯ ПУСТОТА. Я — МЕЧ ПРАВОСУДИЯ.
-</span><br><br>
-Облачён в <em>Susano'o Unit</em>. Использует магатамы — каждый принятый удар заряжает контратаку.
-<strong style="color:#ecf0f1;letter-spacing:2px;">Медленный. Непреклонный. Неостановимый.</strong><br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Правосудие не знает пощады.»
-</span>`,
-        abilities: [
-            '<strong>Susano\'o Unit</strong> — доспехи суперброни',
-            'Magatama — зарядка контратаки от урона',
-            '<strong>Ōkami</strong> — меч, рвущий пространство',
-            'Контратака — удвоенный урон',
-            'Суперброня — не прерывается ударами'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'es',
-        name: 'Es',
-        img: 'es-new.jpg',
-        role: 'Пространственный боец',
-        type: 'melee',
-        tag: 'AZURE SHRINE',
-        color: '#083d30',
-        glow: '#1abc9c',
-        stats: { atk: 80, def: 65, spd: 65, hp: 75 },
-        desc: `
-<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#1abc9c;letter-spacing:1px;">
-  [ CODENAME: ES ]<br>
-  [ ROLE: AZURE SHRINE MAIDEN ]<br>
-  [ MISSION STATUS: ACTIVE ]
-</span><br><br>
-Бой строится на <em>геометрической точности</em>:
-система <span style="font-family:'Courier New',monospace;color:#76d7c4;">Cross&nbsp;Combination</span>
-требует активации крестов в строгий временной интервал.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;font-family:'Courier New',monospace;">
-  «Я выполняю свою миссию. Этого достаточно.»
-</span>`,
-        abilities: [
-            '<strong>Cross Combination</strong> — тайминг-крест атаки',
-            'Пространственные плавающие мечи',
-            'Нарастающий урон за точный тайминг',
-            'Лазурное усиление — бонус за серию',
-            'Контроль зон через расстановку крестов'
-        ],
-        diff: '★★★'
-    },
-    {
-        id: 'kokonoe',
-        name: 'Kokonoe',
-        img: 'kokonoe.jpg',
-        role: 'Зональный контроль',
-        type: 'control',
-        tag: 'PROFESSOR',
-        color: '#6e2a00',
-        glow: '#e67e22',
-        stats: { atk: 90, def: 40, spd: 55, hp: 60 },
-        desc: `
-<span style="font-family:'Courier New',monospace;font-size:0.92em;color:#e67e22;">
-  // PROFESSOR_MERCURY.EXE — ЗАПУЩЕНО<br>
-  // Терпение к союзникам : NULL<br>
-  // Сарказм              : ПЕРЕПОЛНЕНИЕ
-</span><br><br>
-Управляет полем через систему <span style="font-family:'Courier New',monospace;color:#fad7a0;">Grimalkin</span>:
-наводимые ракеты, лазерные столбы, орбитальные турели.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;font-family:'Courier New',monospace;">
-  // «Тупицы. Я окружена тупицами. Дайте кофе.»
-</span>`,
-        abilities: [
-            '<strong>Grimalkin</strong> — система наводимых ракет',
-            'Лазерные столбы-турели',
-            'Kill Streak — до ×4.0 бонус урона',
-            'Орбитальный зональный контроль',
-            'Ядерный финальный удар'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'mai',
-        name: 'Mai Natsume',
-        img: 'mai.jpg',
-        role: 'Контроль толпы',
-        type: 'control',
-        tag: 'SPEAR MAIDEN',
-        color: '#6e0028',
-        glow: '#e84393',
-        stats: { atk: 75, def: 60, spd: 70, hp: 70 },
-        desc: `
-<em style="color:#e84393;font-size:1.0em;">Мягкость снаружи — и совсем другое внутри.</em><br><br>
-Магическое копьё <strong style="color:#f1948a;">Gallia Sphyra: Outseal</strong> генерирует
-<span style="color:#e84393;">торнадо и ударные волны</span>.
-Чем <em style="color:#f8c471;">больше врагов в зоне</em> — тем <strong>эффективнее</strong> каждая атака.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Я защищу тех, кто мне дорог. Любой ценой.»
-</span>`,
-        abilities: [
-            '<strong>Outseal</strong> — магическое копьё AoE',
-            'Торнадо — stunlock врагов в воздухе',
-            'Ударная волна по площади',
-            'Бонус урона за количество целей',
-            'Силовое поле — кратковременная защита'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'hibiki',
-        name: 'Hibiki Kohaku',
-        img: 'hibiki.jpg',
-        role: 'Скрытный боец',
-        type: 'melee',
-        tag: 'PROTOTYPE',
-        color: '#0d1b2a',
-        glow: '#5d6d7e',
-        stats: { atk: 85, def: 50, spd: 85, hp: 65 },
-        desc: `
-<span style="color:#85929e;font-size:0.9em;letter-spacing:3px;font-family:'Courier New',monospace;">
-  ...он уже рядом. Вы просто ещё не знаете.
-</span><br><br>
-Создаёт <span style="color:#7f8c8d;font-weight:700;">теневые клоны</span>:
-двойники атакуют с задержкой, формируя кольцо поражения.
-Внезапный удар из тени — <strong>критический бонус</strong>.<br><br>
-<span style="font-style:italic;color:#666;font-size:0.87em;font-family:'Courier New',monospace;">
-  «Теперь — никто не должен.»
-</span>`,
-        abilities: [
-            '<strong>Shadow Clone</strong> — двойники с задержкой',
-            'Внезапный удар из тени — крит',
-            'Кольцо окружения из клонов',
-            'Скрытное перемещение',
-            'Асассин: мгновенное устранение' // ИЗМЕНЕНО: "убийство" -> "устранение"
-        ],
-        diff: '★★★'
-    },
-    {
-        id: 'lambda',
-        name: 'Lambda-11',
-        img: 'lambda.jpg',
-        role: 'Зональный боец',
-        type: 'ranged',
-        tag: 'PRIME FIELD',
-        color: '#063025',
-        glow: '#17a589',
-        stats: { atk: 80, def: 45, spd: 70, hp: 65 },
-        desc: `
-<span style="font-family:'Courier New',monospace;font-size:0.86em;color:#17a589;letter-spacing:1px;">
-  PRIME FIELD DEVICE Λ-11<br>
-  STATUS ............. OPERATIONAL<br>
-  MEMORY CORE ........ FRAGMENTED
-</span><br><br>
-Призывает <strong style="color:#17a589;">нематериальные клинки</strong>.
-<em>Phantom Edge</em> — массовый залп всех лезвий одновременно.<br><br>
-<span style="font-style:italic;color:#666;font-size:0.87em;font-family:'Courier New',monospace;">
-  «…тепло. Что это такое?»
-</span>`,
-        abilities: [
-            '<strong>Sword Summoner</strong> — парящие клинки-ловушки',
-            'Phantom Edge — одновременный залп всех лезвий',
-            'Зональный контроль через расстановку',
-            'Дистанционные атаки без отдачи',
-            'Пассивный барьер из клинков'
-        ],
-        diff: '★★☆'
-    },
-    {
-        id: 'icey',
-        name: 'ICEY',
-        img: 'icey.jpg',
-        role: 'Гость: Стремительный боец',
-        type: 'guest',
-        tag: '★ GUEST',
-        color: '#4d3e00',
-        glow: '#f4d03f',
-        stats: { atk: 85, def: 55, spd: 95, hp: 70 },
-        desc: `
-<span style="font-size:1.1em;font-weight:900;color:#f4d03f;letter-spacing:2px;
-      text-shadow:0 0 10px #f4d03f66;">
-  ★ ГОСТЕВОЙ ПЕРСОНАЖ — ВСЕЛЕННАЯ ICEY ★
-</span><br><br>
-Фирменный <span style="color:#f4d03f;font-weight:700;">Infinite Dash</span> —
-рывок в любом направлении без кулдауна.
-Специализируется на <em>сломе вражеской брони</em>.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «SAI, следующая цель — там! Не отставай!»
-</span>`,
-        abilities: [
-            '<strong>Infinite Dash</strong> — рывок в любом направлении',
-            'Нет кулдауна у рывка',
-            'Разрушение брони и щита боссов',
-            'Скорость 95/100 — наравне с Таокакой',
-            'SAI — голосовой навигатор'
-        ],
-        diff: '★☆☆'
-    },
-    {
-        id: 'prisoner',
-        name: 'The Prisoner',
-        img: 'char_guest_dc.jpg',
-        role: 'Гость: Dead Cells',
-        type: 'guest',
-        tag: '★ DEAD CELLS',
-        color: '#2c2c2c',
-        glow: '#aab7b8',
-        stats: { atk: 80, def: 60, spd: 75, hp: 80 },
-        desc: `
-<span style="font-weight:700;color:#bdc3c7;letter-spacing:2px;font-size:0.95em;">
-  ★ ГОСТЕВОЙ ПЕРСОНАЖ — DEAD CELLS
-</span><br><br>
-Три набора снаряжения: <span style="color:#e74c3c;font-weight:700;">Ближний</span>,
-<span style="color:#5dade2;font-weight:700;">Дальний</span>,
-<span style="color:#a569bd;font-weight:700;">Ловушечный</span>.
-Тайминговое парирование — <strong>крит ×2</strong>.<br><br>
-<span style="font-style:italic;color:#777;font-size:0.87em;">
-  «Ещё одна ячейка. Ещё одна попытка.»
-</span>`,
-        abilities: [
-            '<strong>3 набора</strong> — ближний / дальний / ловушки',
-            'Тайминг-парирование — крит ×2',
-            'Адаптивный стиль под ситуацию',
-            'Яды и капканы — пассивный урон',
-            'Особый перк при поражении' // ИЗМЕНЕНО: "Смерть — временна" -> "Особый перк"
-        ],
-        diff: '★★☆'
-    }
-];
-
-/* ═══════════════════════════════════════════
-   СОСТОЯНИЕ
-   ═══════════════════════════════════════════ */
-let selectedIndex  = 0; // Начинаем с Ragna (индекс 0)
-let currentFilter  = 'all';
-let activeTheme    = 'new';
-
-/* ═══════════════════════════════════════════
-   TOAST-УВЕДОМЛЕНИЯ
-   ═══════════════════════════════════════════ */
-function showToast(msg, color, duration) {
-    color    = color    || '#74c0fc';
-    duration = duration || 2500;
-    var container = document.getElementById('toastContainer');
-    var toast     = document.createElement('div');
-    toast.className = 'toast';
-    toast.style.borderLeftColor = color;
-    toast.innerHTML = '<span class="toast-dot" style="background:' + color + '"></span>' + msg;
-    container.appendChild(toast);
-    requestAnimationFrame(function() {
-        requestAnimationFrame(function() { toast.classList.add('toast-show'); });
-    });
-    setTimeout(function() {
-        toast.classList.remove('toast-show');
-        toast.classList.add('toast-hide');
-        setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
-    }, duration);
-}
-
-/* ═══════════════════════════════════════════
-   ПЕРЕКЛЮЧЕНИЕ ТЕМЫ
-   ═══════════════════════════════════════════ */
-const themeToggleBtn = document.getElementById('themeToggle');
-const glitchBar      = document.getElementById('glitchBar');
-
-function toggleTheme() {
-    if (activeTheme === 'new') {
-        activeTheme = 'end';
-        document.documentElement.classList.add('theme-end');
-        themeToggleBtn.querySelector('.theme-label-full').textContent = 'END STORY';
-        themeToggleBtn.querySelector('.theme-label-short').textContent = '✕';
-        startGlitchBars();
-        showToast('⚠ END STORY режим активирован', '#ff3300', 2000);
-    } else {
-        activeTheme = 'new';
-        document.documentElement.classList.remove('theme-end');
-        themeToggleBtn.querySelector('.theme-label-full').textContent = 'NEW STORY';
-        themeToggleBtn.querySelector('.theme-label-short').textContent = '◈';
-        stopGlitchBars();
-        showToast('◈ NEW STORY режим восстановлен', '#74c0fc', 2000);
-    }
-}
-themeToggleBtn.addEventListener('click', toggleTheme);
-
-let glitchBarInterval = null;
-function startGlitchBars() { scheduleGlitchBar(); }
-function scheduleGlitchBar() {
-    if (activeTheme !== 'end') return;
-    var delay = 1200 + Math.random() * 3000;
-    glitchBarInterval = setTimeout(function() { showGlitchBar(); scheduleGlitchBar(); }, delay);
-}
-function showGlitchBar() {
-    var y = Math.random() * window.innerHeight;
-    var h = 1 + Math.random() * 4;
-    var r = Math.floor(150 + Math.random() * 105);
-    glitchBar.style.top    = y + 'px';
-    glitchBar.style.height = h + 'px';
-    glitchBar.style.background =
-        'linear-gradient(90deg, transparent, rgba(' + r + ',0,0,0.85) 20%, rgba(' + r + ',30,0,0.9) 50%, transparent)';
-    glitchBar.style.opacity = '1';
-    if (Math.random() > 0.6) {
-        glitchBar.style.transform = 'scaleX(' + (0.3 + Math.random() * 0.7) + ') translateX(' + ((Math.random()-0.5)*40) + '%)';
-    } else {
-        glitchBar.style.transform = 'none';
-    }
-    setTimeout(function() { glitchBar.style.opacity = '0'; }, 80 + Math.random() * 120);
-}
-function stopGlitchBars() {
-    clearTimeout(glitchBarInterval);
-    glitchBarInterval = null;
-    glitchBar.style.opacity = '0';
-}
-
-/* ═══════════════════════════════════════════
-   УТИЛИТЫ
-   ═══════════════════════════════════════════ */
-function makeStatBar(label, value, glowColor) {
-    return '<div class="stat-row">' +
-        '<span class="stat-label">' + label + '</span>' +
-        '<div class="stat-bar"><div class="stat-fill" style="width:' + value + '%;background:linear-gradient(90deg,' + glowColor + '77,' + glowColor + ');"></div></div>' +
-        '<span class="stat-val">' + value + '</span>' +
-        '</div>';
-}
-
-/* ═══════════════════════════════════════════
-   PARALLAX HELPER
-   ═══════════════════════════════════════════ */
-function addParallax(panel, strength) {
-    var img = panel.querySelector('.panel-char-img');
-    if (!img) return;
-    panel.addEventListener('mousemove', function(e) {
-        var rect = panel.getBoundingClientRect();
-        var xRel = (e.clientX - rect.left) / rect.width  - 0.5;
-        var yRel = (e.clientY - rect.top)  / rect.height - 0.5;
-        img.style.transform = 'translate(' + (xRel*strength) + 'px,' + (yRel*strength*0.6) + 'px) scale(1.04)';
-        img.style.transitionDuration = '0.08s';
-    });
-    panel.addEventListener('mouseleave', function() {
-        img.style.transform = '';
-        img.style.transitionDuration = '0.4s';
-    });
-}
-
-/* ═══════════════════════════════════════════
-   КАРУСЕЛЬ
-   ═══════════════════════════════════════════ */
-function renderCarousel(animate) {
-    animate = animate || false;
-    var stage = document.getElementById('carouselStage');
-    stage.innerHTML = '';
-
-    for (var offset = -2; offset <= 2; offset++) {
-        var idx = (selectedIndex + offset + characters.length) % characters.length;
-        var c   = characters[idx];
-        var panel = document.createElement('div');
-
-        var posMap = { '-2':'left-2','-1':'left-1','0':'center','1':'right-1','2':'right-2' };
-        var posClass = posMap[String(offset)];
-        panel.className = 'c-panel ' + posClass;
-        panel.style.setProperty('--cc', c.color);
-        panel.style.setProperty('--cg', c.glow);
-
-        var isCenter = offset === 0;
-
-        panel.innerHTML =
-            '<div class="panel-bg-grad"></div>' +
-            '<img src="' + c.img + '" class="panel-char-img' + (isCenter && animate ? ' entering' : '') + '" alt="' + c.name + '" draggable="false">' +
-            '<div class="panel-info">' +
-                '<div class="panel-char-name">' + c.name.split(' ')[0].toUpperCase() + '</div>' +
-                '<div class="panel-char-role">' + c.role + '</div>' +
-            '</div>';
-
-        if (isCenter && animate) {
-            panel.classList.add('flash');
-            panel.addEventListener('animationend', function() {
-                this.classList.remove('flash');
-            }.bind(panel), { once: true });
+    // ---------- ДАННЫЕ ПЕРСОНАЖЕЙ (цензурированная версия) ----------
+    const characters = [
+        {
+            id: 'ragna', name: 'Ragna', img: 'ragna.jpg', role: 'Ближний боец', type: 'melee',
+            tag: 'SS-КЛАСС', color: '#3d0a0a', glow: '#e74c3c',
+            stats: { atk: 90, def: 50, spd: 70, hp: 85 },
+            desc: `<span style="font-size:1.12em;font-weight:900;letter-spacing:3px;color:#e74c3c;text-transform:uppercase;text-shadow:0 0 12px #e74c3c88;">СИЛА ЛАЗУРНОГО ГРИМУАРА</span><br><br>Ragna использует мощь <strong style="color:#e74c3c;">Azure Grimoire</strong>. Каждый удар активирует пассивный эффект <span style="font-family:'Courier New',monospace;font-size:0.88em;color:#ff8888;">Soul Eater</span>: часть нанесённого урона возвращается как <em>восстановление HP</em>.<br><br>Чем <strong style="color:#ff4444;">ниже полоса здоровья</strong>, тем <em>разрушительнее</em> его атаки. При критически низком HP активируется режим <span style="font-weight:900;font-size:1.05em;color:#ff2222;text-shadow:0 0 10px #ff000099;">BERSERKER</span>.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Хватит болтать. Покажи, на что способен.»</span>`,
+            abilities: ['<strong>Soul Eater</strong> — восстановление HP от урона','Берсерк при низком HP','Dead Spike — тёмная волна','Inferno Divider — удар вверх','Gauntlet Hades — таран'],
+            diff: '★★☆'
+        },
+        {
+            id: 'jin', name: 'Jin Kisaragi', img: 'jin.jpg', role: 'Ледяной мечник', type: 'melee',
+            tag: 'FROST BLADE', color: '#0d3b6e', glow: '#5dade2',
+            stats: { atk: 80, def: 60, spd: 75, hp: 70 },
+            desc: `<span style="font-family:'Courier New',monospace;font-size:0.9em;letter-spacing:2px;color:#5dade2;">[ ИНИЦИАЛИЗАЦИЯ — ПЕРВЫЙ ЛЕЙТЕНАНТ НОЛ ]<br>[ СТАТУС: БОЕВАЯ ГОТОВНОСТЬ ]</span><br><br>Меч <em>Yukianesa</em> — реликвия, реагирующая на <span style="color:#85c1e9;">ледяные Ars Magus</span>. При контакте с врагом накладывает <strong style="color:#5dade2;">статус заморозки</strong>.<br><br>Правильное исполнение комбо даёт <strong>нарастающий бонус ATK</strong>. Точность важнее скорости.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Ты недостоин даже скрестить клинки со мной.»</span>`,
+            abilities: ['<strong>Yukianesa</strong> — ледяной меч-реликвия','Заморозка при попадании','Ледяной след Hyōga no Kamosu','Musō Battōjin — вакуумный слэш','Нарастающий ATK за комбо'],
+            diff: '★★☆'
+        },
+        {
+            id: 'noel', name: 'Noel Vermillion', img: 'noel.jpg', role: 'Дальнобойный боец', type: 'ranged',
+            tag: 'GUNSLINGER', color: '#1a4d2e', glow: '#2ecc71',
+            stats: { atk: 75, def: 45, spd: 80, hp: 65 },
+            desc: `<em style="color:#2ecc71;font-size:1.0em;">Нежная внешность, стальная воля — и два пистолета.</em><br><br>Ноэль управляет двойными пистолетами <strong style="color:#58d68d;">Bolverk</strong>. Уникальная механика <span style="font-family:'Courier New',monospace;font-size:0.88em;color:#abebc6;">Over-Exhaust</span>: навыки <strong>даже при нулевом MP</strong> — в обмен на HP.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Я постараюсь! Я… обязательно справлюсь.»</span>`,
+            abilities: ['<strong>Bolverk</strong> — двойные пистолеты-реликвии','Over-Exhaust — навык без MP (−HP)','Chain Drive — серийный скорострельный огонь','Сокращение кулдауна за выстрелы','Высокая мобильность'],
+            diff: '★☆☆'
+        },
+        {
+            id: 'taokaka', name: 'Taokaka', img: 'taokaka.jpg', role: 'Мобильный боец', type: 'melee',
+            tag: 'SHADOW CAT', color: '#5d4a00', glow: '#f1c40f',
+            stats: { atk: 70, def: 35, spd: 95, hp: 60 },
+            desc: `<span style="font-size:1.18em;font-weight:900;color:#f1c40f;">НЯА~! ВАУ ВАУ ВАУ!!!</span><span style="font-size:0.78em;color:#f39c12;"> ...тао хочет кушать.</span><br><br><strong style="font-size:1.06em;color:#f4d03f;">САМЫЙ БЫСТРЫЙ</strong> персонаж. Скорость <em>95/100</em>. Создаёт <span style="color:#f1c40f;font-weight:700;">теневые клоны</span> клана Кака.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Тао поймает тебя! Обязательно! Ня~»</span>`,
+            abilities: ['<strong>Shadow Clone</strong> — теневые двойники клана Кака','Тройной рывок без кулдауна','Скорость 95/100 — быстрейшая в игре','Непредсказуемые комбо из воздуха','Атаки с нескольких направлений'],
+            diff: '★★★'
+        },
+        {
+            id: 'rachel', name: 'Rachel Alucard', img: 'rachel.jpg', role: 'Маг / Контролёр', type: 'control',
+            tag: 'MISTRESS', color: '#4a1e6e', glow: '#a569bd',
+            stats: { atk: 85, def: 50, spd: 60, hp: 70 },
+            desc: `<span style="font-family:Georgia,serif;font-size:1.05em;font-style:italic;color:#c39bd3;">Как невыносимо утомительно…</span><br><br>Вампирская аристократка. Фамильяры <strong style="color:#a569bd;">Наго</strong> и <strong style="color:#bb8fce;">Гии</strong> служат оружием, щитом и платформой.<br><br><span style="font-style:italic;font-family:Georgia,serif;color:#777;font-size:0.87em;">«Мне смешно. По-настоящему смешно.»</span>`,
+            abilities: ['<strong>Наго & Гии</strong> — фамильяры-щит/атака','Джордж XIII — зарядный молниевый удар','Silpheed — ветровой барьер и отражение','Высасывание HP у врагов','Отражение снарядов обратно'],
+            diff: '★★☆'
+        },
+        {
+            id: 'hakumen', name: 'Hakumen', img: 'hakumen.jpg', role: 'Танк / Контратакер', type: 'tank',
+            tag: 'VOID WARRIOR', color: '#2c3e50', glow: '#bdc3c7',
+            stats: { atk: 85, def: 95, spd: 45, hp: 95 },
+            desc: `<span style="font-size:1.1em;font-weight:900;letter-spacing:4px;color:#ecf0f1;font-family:'Courier New',monospace;text-shadow:0 0 10px #bdc3c766;">Я — БЕЛАЯ ПУСТОТА. Я — МЕЧ ПРАВОСУДИЯ.</span><br><br>Облачён в <em>Susano'o Unit</em>. Использует магатамы — каждый принятый удар заряжает контратаку. <strong style="color:#ecf0f1;letter-spacing:2px;">Медленный. Непреклонный. Неостановимый.</strong><br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Правосудие не знает пощады.»</span>`,
+            abilities: ['<strong>Susano\'o Unit</strong> — доспехи суперброни','Magatama — зарядка контратаки от урона','<strong>Ōkami</strong> — меч, рвущий пространство','Контратака — удвоенный урон','Суперброня — не прерывается ударами'],
+            diff: '★★☆'
+        },
+        {
+            id: 'es', name: 'Es', img: 'es-new.jpg', role: 'Пространственный боец', type: 'melee',
+            tag: 'AZURE SHRINE', color: '#083d30', glow: '#1abc9c',
+            stats: { atk: 80, def: 65, spd: 65, hp: 75 },
+            desc: `<span style="font-family:'Courier New',monospace;font-size:0.88em;color:#1abc9c;letter-spacing:1px;">[ CODENAME: ES ]<br>[ ROLE: AZURE SHRINE MAIDEN ]<br>[ MISSION STATUS: ACTIVE ]</span><br><br>Бой строится на <em>геометрической точности</em>: система <span style="font-family:'Courier New',monospace;color:#76d7c4;">Cross Combination</span> требует активации крестов в строгий временной интервал.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;font-family:'Courier New',monospace;">«Я выполняю свою миссию. Этого достаточно.»</span>`,
+            abilities: ['<strong>Cross Combination</strong> — тайминг-крест атаки','Пространственные плавающие мечи','Нарастающий урон за точный тайминг','Лазурное усиление — бонус за серию','Контроль зон через расстановку крестов'],
+            diff: '★★★'
+        },
+        {
+            id: 'kokonoe', name: 'Kokonoe', img: 'kokonoe.jpg', role: 'Зональный контроль', type: 'control',
+            tag: 'PROFESSOR', color: '#6e2a00', glow: '#e67e22',
+            stats: { atk: 90, def: 40, spd: 55, hp: 60 },
+            desc: `<span style="font-family:'Courier New',monospace;font-size:0.92em;color:#e67e22;">// PROFESSOR_MERCURY.EXE — ЗАПУЩЕНО<br>// Терпение к союзникам : NULL<br>// Сарказм : ПЕРЕПОЛНЕНИЕ</span><br><br>Управляет полем через систему <span style="font-family:'Courier New',monospace;color:#fad7a0;">Grimalkin</span>: наводимые ракеты, лазерные столбы, орбитальные турели.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;font-family:'Courier New',monospace;">// «Тупицы. Я окружена тупицами. Дайте кофе.»</span>`,
+            abilities: ['<strong>Grimalkin</strong> — система наводимых ракет','Лазерные столбы-турели','Kill Streak — до ×4.0 бонус урона','Орбитальный зональный контроль','Ядерный финальный удар'],
+            diff: '★★☆'
+        },
+        {
+            id: 'mai', name: 'Mai Natsume', img: 'mai.jpg', role: 'Контроль толпы', type: 'control',
+            tag: 'SPEAR MAIDEN', color: '#6e0028', glow: '#e84393',
+            stats: { atk: 75, def: 60, spd: 70, hp: 70 },
+            desc: `<em style="color:#e84393;font-size:1.0em;">Мягкость снаружи — и совсем другое внутри.</em><br><br>Магическое копьё <strong style="color:#f1948a;">Gallia Sphyra: Outseal</strong> генерирует <span style="color:#e84393;">торнадо и ударные волны</span>. Чем <em style="color:#f8c471;">больше врагов в зоне</em> — тем <strong>эффективнее</strong> каждая атака.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Я защищу тех, кто мне дорог. Любой ценой.»</span>`,
+            abilities: ['<strong>Outseal</strong> — магическое копьё AoE','Торнадо — stunlock врагов в воздухе','Ударная волна по площади','Бонус урона за количество целей','Силовое поле — кратковременная защита'],
+            diff: '★★☆'
+        },
+        {
+            id: 'hibiki', name: 'Hibiki Kohaku', img: 'hibiki.jpg', role: 'Скрытный боец', type: 'melee',
+            tag: 'PROTOTYPE', color: '#0d1b2a', glow: '#5d6d7e',
+            stats: { atk: 85, def: 50, spd: 85, hp: 65 },
+            desc: `<span style="color:#85929e;font-size:0.9em;letter-spacing:3px;font-family:'Courier New',monospace;">...он уже рядом. Вы просто ещё не знаете.</span><br><br>Создаёт <span style="color:#7f8c8d;font-weight:700;">теневые клоны</span>: двойники атакуют с задержкой, формируя кольцо поражения. Внезапный удар из тени — <strong>критический бонус</strong>.<br><br><span style="font-style:italic;color:#666;font-size:0.87em;font-family:'Courier New',monospace;">«Теперь — никто не должен.»</span>`,
+            abilities: ['<strong>Shadow Clone</strong> — двойники с задержкой','Внезапный удар из тени — крит','Кольцо окружения из клонов','Скрытное перемещение','Асассин: мгновенное устранение'],
+            diff: '★★★'
+        },
+        {
+            id: 'lambda', name: 'Lambda-11', img: 'lambda.jpg', role: 'Зональный боец', type: 'ranged',
+            tag: 'PRIME FIELD', color: '#063025', glow: '#17a589',
+            stats: { atk: 80, def: 45, spd: 70, hp: 65 },
+            desc: `<span style="font-family:'Courier New',monospace;font-size:0.86em;color:#17a589;letter-spacing:1px;">PRIME FIELD DEVICE Λ-11<br>STATUS ............. OPERATIONAL<br>MEMORY CORE ........ FRAGMENTED</span><br><br>Призывает <strong style="color:#17a589;">нематериальные клинки</strong>. <em>Phantom Edge</em> — массовый залп всех лезвий одновременно.<br><br><span style="font-style:italic;color:#666;font-size:0.87em;font-family:'Courier New',monospace;">«…тепло. Что это такое?»</span>`,
+            abilities: ['<strong>Sword Summoner</strong> — парящие клинки-ловушки','Phantom Edge — одновременный залп всех лезвий','Зональный контроль через расстановку','Дистанционные атаки без отдачи','Пассивный барьер из клинков'],
+            diff: '★★☆'
+        },
+        {
+            id: 'icey', name: 'ICEY', img: 'icey.jpg', role: 'Гость: Стремительный боец', type: 'guest',
+            tag: '★ GUEST', color: '#4d3e00', glow: '#f4d03f',
+            stats: { atk: 85, def: 55, spd: 95, hp: 70 },
+            desc: `<span style="font-size:1.1em;font-weight:900;color:#f4d03f;letter-spacing:2px;text-shadow:0 0 10px #f4d03f66;">★ ГОСТЕВОЙ ПЕРСОНАЖ — ВСЕЛЕННАЯ ICEY ★</span><br><br>Фирменный <span style="color:#f4d03f;font-weight:700;">Infinite Dash</span> — рывок в любом направлении без кулдауна. Специализируется на <em>сломе вражеской брони</em>.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«SAI, следующая цель — там! Не отставай!»</span>`,
+            abilities: ['<strong>Infinite Dash</strong> — рывок в любом направлении','Нет кулдауна у рывка','Разрушение брони и щита боссов','Скорость 95/100 — наравне с Таокакой','SAI — голосовой навигатор'],
+            diff: '★☆☆'
+        },
+        {
+            id: 'prisoner', name: 'The Beheaded', img: 'char_guest_dc.jpg', role: 'Гость: Dead Cells', type: 'guest',
+            tag: '★ DEAD CELLS', color: '#2c2c2c', glow: '#aab7b8',
+            stats: { atk: 80, def: 60, spd: 75, hp: 80 },
+            desc: `<span style="font-weight:700;color:#bdc3c7;letter-spacing:2px;font-size:0.95em;">★ ГОСТЕВОЙ ПЕРСОНАЖ — DEAD CELLS</span><br><br>Три набора снаряжения: <span style="color:#e74c3c;font-weight:700;">Ближний</span>, <span style="color:#5dade2;font-weight:700;">Дальний</span>, <span style="color:#a569bd;font-weight:700;">Ловушечный</span>. Тайминговое парирование — <strong>крит ×2</strong>.<br><br><span style="font-style:italic;color:#777;font-size:0.87em;">«Ещё одна ячейка. Ещё одна попытка.»</span>`,
+            abilities: ['<strong>3 набора</strong> — ближний / дальний / ловушки','Тайминг-парирование — крит ×2','Адаптивный стиль под ситуацию','Яды и капканы — пассивный урон','Особый перк при поражении'],
+            diff: '★★☆'
         }
+    ];
 
-        addParallax(panel, isCenter ? 10 : 5);
+    // ---------- СОСТОЯНИЕ ----------
+    let selectedIndex = 0;
+    let currentFilter = 'all';
+    let activeTheme = 'new'; // Тема не используется активно, оставлено для совместимости
 
-        (function(capturedIdx) {
-            panel.addEventListener('click', function() {
-                selectedIndex = capturedIdx;
+    // ---------- TOAST-УВЕДОМЛЕНИЯ ----------
+    function showToast(msg, color, duration) {
+        color = color || '#74c0fc';
+        duration = duration || 2500;
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.borderLeftColor = color;
+        toast.innerHTML = '<span class="toast-dot" style="background:' + color + '"></span>' + msg;
+        container.appendChild(toast);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => toast.classList.add('toast-show'));
+        });
+        setTimeout(() => {
+            toast.classList.remove('toast-show');
+            toast.classList.add('toast-hide');
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 400);
+        }, duration);
+    }
+
+    // ---------- УТИЛИТЫ ----------
+    function makeStatBar(label, value, glowColor) {
+        return `<div class="stat-row">
+            <span class="stat-label">${label}</span>
+            <div class="stat-bar"><div class="stat-fill" style="width:${value}%;background:linear-gradient(90deg,${glowColor}77,${glowColor});"></div></div>
+            <span class="stat-val">${value}</span>
+        </div>`;
+    }
+
+    // ---------- PARALLAX HELPER ----------
+    function addParallax(panel, strength) {
+        const img = panel.querySelector('.panel-char-img');
+        if (!img) return;
+        panel.addEventListener('mousemove', (e) => {
+            const rect = panel.getBoundingClientRect();
+            const xRel = (e.clientX - rect.left) / rect.width - 0.5;
+            const yRel = (e.clientY - rect.top) / rect.height - 0.5;
+            img.style.transform = `translate(${xRel*strength}px, ${yRel*strength*0.6}px) scale(1.04)`;
+            img.style.transitionDuration = '0.08s';
+        });
+        panel.addEventListener('mouseleave', () => {
+            img.style.transform = '';
+            img.style.transitionDuration = '0.4s';
+        });
+    }
+
+    // ---------- КАРУСЕЛЬ ----------
+    function renderCarousel(animate = false) {
+        const stage = document.getElementById('carouselStage');
+        stage.innerHTML = '';
+        for (let offset = -2; offset <= 2; offset++) {
+            const idx = (selectedIndex + offset + characters.length) % characters.length;
+            const c = characters[idx];
+            const panel = document.createElement('div');
+            const posMap = { '-2':'left-2','-1':'left-1','0':'center','1':'right-1','2':'right-2' };
+            panel.className = 'c-panel ' + posMap[String(offset)];
+            panel.style.setProperty('--cc', c.color);
+            panel.style.setProperty('--cg', c.glow);
+            const isCenter = offset === 0;
+            panel.innerHTML = `
+                <div class="panel-bg-grad"></div>
+                <img src="${c.img}" class="panel-char-img${isCenter && animate ? ' entering' : ''}" alt="${c.name}" draggable="false">
+                <div class="panel-info">
+                    <div class="panel-char-name">${c.name.split(' ')[0].toUpperCase()}</div>
+                    <div class="panel-char-role">${c.role}</div>
+                </div>
+            `;
+            if (isCenter && animate) {
+                panel.classList.add('flash');
+                panel.addEventListener('animationend', () => panel.classList.remove('flash'), { once: true });
+            }
+            addParallax(panel, isCenter ? 10 : 5);
+            panel.addEventListener('click', () => {
+                selectedIndex = idx;
                 renderCarousel(true);
                 renderDetail();
             });
-        })(idx);
-
-        stage.appendChild(panel);
+            stage.appendChild(panel);
+        }
     }
-}
 
-/* ═══════════════════════════════════════════
-   ДЕТАЛЬНАЯ ПАНЕЛЬ (ИЗМЕНЕНО)
-   ═══════════════════════════════════════════ */
-function renderDetail() {
-    var c = characters[selectedIndex];
+    // ---------- ДЕТАЛЬНАЯ ПАНЕЛЬ ----------
+    function renderDetail() {
+        const c = characters[selectedIndex];
+        document.getElementById('dpTag').textContent = c.tag;
+        document.getElementById('dpTag').style.background = c.glow;
+        document.getElementById('dpName').textContent = c.name.toUpperCase();
+        document.getElementById('dpRole').textContent = c.role;
+        document.getElementById('dpDesc').innerHTML = c.desc;
 
-    document.getElementById('dpTag').textContent   = c.tag;
-    document.getElementById('dpTag').style.background = c.glow;
-    document.getElementById('dpName').textContent  = c.name.toUpperCase();
-    document.getElementById('dpRole').textContent  = c.role;
-    document.getElementById('dpDesc').innerHTML    = c.desc;
+        const icon = document.getElementById('dpIcon');
+        icon.src = c.img;
+        icon.style.filter = `drop-shadow(0 0 25px ${c.glow}) drop-shadow(0 0 55px ${c.glow})`;
 
-    var icon = document.getElementById('dpIcon');
-    icon.src = c.img;
-    icon.style.filter = 'drop-shadow(0 0 25px ' + c.glow + ') drop-shadow(0 0 55px ' + c.glow + ')';
+        const glow = document.getElementById('dpGlow');
+        glow.style.background = `radial-gradient(circle, ${c.glow}88 0%, ${c.color}44 45%, transparent 75%)`;
 
-    var glow = document.getElementById('dpGlow');
-    glow.style.background =
-        'radial-gradient(circle, ' + c.glow + '88 0%, ' + c.color + '44 45%, transparent 75%)';
+        document.getElementById('dpStats').innerHTML =
+            makeStatBar('ATK', c.stats.atk, c.glow) +
+            makeStatBar('DEF', c.stats.def, c.glow) +
+            makeStatBar('SPD', c.stats.spd, c.glow) +
+            makeStatBar('HP',  c.stats.hp,  c.glow);
 
-    document.getElementById('dpStats').innerHTML =
-        makeStatBar('ATK', c.stats.atk, c.glow) +
-        makeStatBar('DEF', c.stats.def, c.glow) +
-        makeStatBar('SPD', c.stats.spd, c.glow) +
-        makeStatBar('HP',  c.stats.hp,  c.glow);
+        document.getElementById('dpAbilities').innerHTML =
+            `<div class="diff-row">Сложность: <span style="color:${c.glow}">${c.diff}</span></div>` +
+            c.abilities.map(a => `<span class="ab-tag" style="border-color:${c.glow};color:${c.glow};">${a}</span>`).join('');
 
-    document.getElementById('dpAbilities').innerHTML =
-        '<div class="diff-row">Сложность: <span style="color:' + c.glow + '">' + c.diff + '</span></div>' +
-        c.abilities.map(function(a) {
-            return '<span class="ab-tag" style="border-color:' + c.glow + ';color:' + c.glow + ';">' + a + '</span>';
-        }).join('');
+        const pageBtn = document.getElementById('charPageBtn');
+        pageBtn.style.borderColor = c.glow + '55';
+        pageBtn.style.color = c.glow;
 
-/* ═══════════════════════════════════════════
-   ИЗМЕНЕНО: УПРАВЛЕНИЕ КНОПКОЙ СТРАНИЦЫ ПЕРСОНАЖА
-   ═══════════════════════════════════════════ */
-var pageBtn = document.getElementById('charPageBtn');
+        // Управление ссылками на страницы персонажей
+        const id = c.id;
+        if (id === 'es') pageBtn.href = 'es.html';
+        else if (id === 'ragna') pageBtn.href = 'ragna.html';
+        else if (id === 'rachel') pageBtn.href = 'rachel.html';
+        else if (id === 'taokaka') pageBtn.href = 'taokaka.html';
+        else if (id === 'noel') pageBtn.href = 'noel.html';
+        else if (id === 'jin') pageBtn.href = 'jin.html';
+        else if (id === 'kokonoe') pageBtn.href = 'kokonoe.html';
+        else if (id === 'hakumen') pageBtn.href = 'hakumen.html';
+        else if (id === 'mai') pageBtn.href = 'mai.html';
+        else if (id === 'hibiki') pageBtn.href = 'hibiki.html';
+        else if (id === 'lambda') pageBtn.href = 'lambda.html';
+        else if (id === 'icey') pageBtn.href = 'icey.html';
+        else if (id === 'prisoner') pageBtn.href = 'beheaded.html';
+        else {
+            pageBtn.href = '#';
+            pageBtn.style.opacity = '0.4';
+            pageBtn.style.pointerEvents = 'none';
+            pageBtn.style.cursor = 'default';
+            pageBtn.setAttribute('title', 'Страница в разработке');
+            return;
+        }
+        pageBtn.style.opacity = '1';
+        pageBtn.style.pointerEvents = 'auto';
+        pageBtn.style.cursor = 'pointer';
+        pageBtn.setAttribute('title', `Открыть страницу ${c.name}`);
+    }
 
-// Стилизуем кнопку под цвет персонажа
-pageBtn.style.borderColor = c.glow + '55';
-pageBtn.style.color = c.glow;
-
-// Определяем, какая страница существует
-if (c.id === 'es') {
-    pageBtn.href = 'es.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Es');
-} else if (c.id === 'ragna') {
-    pageBtn.href = 'ragna.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Ragna');
-} else if (c.id === 'rachel') {
-    pageBtn.href = 'rachel.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Rachel');
-} else if (c.id === 'taokaka') {
-    pageBtn.href = 'taokaka.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Taokaka');
-} else if (c.id === 'noel') {
-    pageBtn.href = 'noel.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Noel');
-} else if (c.id === 'jin') {
-    pageBtn.href = 'jin.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Jin');
-} else if (c.id === 'kokonoe') {
-    pageBtn.href = 'kokonoe.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Kokonoe');
-} else if (c.id === 'hakumen') {
-    pageBtn.href = 'hakumen.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Hakumen');
-} else if (c.id === 'mai') {
-    pageBtn.href = 'mai.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Mai');
-} else if (c.id === 'hibiki') {
-    pageBtn.href = 'hibiki.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Hibiki');
-} else if (c.id === 'lambda') {
-    pageBtn.href = 'lambda.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу Lambda-11');
-} else if (c.id === 'icey') {        // <-- ДОБАВИТЬ
-    pageBtn.href = 'icey.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу ICEY');
-} else if (c.id === 'prisoner') {    // <-- ДОБАВИТЬ
-    pageBtn.href = 'beheaded.html';
-    pageBtn.style.opacity = '1';
-    pageBtn.style.pointerEvents = 'auto';
-    pageBtn.style.cursor = 'pointer';
-    pageBtn.setAttribute('title', 'Открыть страницу The Prisoner');
-} else {
-    pageBtn.href = '#';
-    pageBtn.style.opacity = '0.4';
-    pageBtn.style.pointerEvents = 'none';
-    pageBtn.style.cursor = 'default';
-    pageBtn.setAttribute('title', 'Страница в разработке');
-}
-}
-
-/* ═══════════════════════════════════════════
-   НАВИГАЦИЯ КАРУСЕЛИ
-   ═══════════════════════════════════════════ */
-document.getElementById('navPrev').addEventListener('click', function() {
-    selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
-    renderCarousel(true); renderDetail();
-});
-document.getElementById('navNext').addEventListener('click', function() {
-    selectedIndex = (selectedIndex + 1) % characters.length;
-    renderCarousel(true); renderDetail();
-});
-
-/* ═══════════════════════════════════════════
-   КЛАВИАТУРНАЯ НАВИГАЦИЯ ← →
-   ═══════════════════════════════════════════ */
-document.addEventListener('keydown', function(e) {
-    var activePane = document.querySelector('.tab-pane.active');
-    if (!activePane || activePane.id !== 'tab-characters') return;
-    if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
-    if (e.key === 'ArrowLeft' || e.key === 'Left') {
-        e.preventDefault();
+    // ---------- НАВИГАЦИЯ КАРУСЕЛИ ----------
+    document.getElementById('navPrev').addEventListener('click', () => {
         selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
-        renderCarousel(true); renderDetail();
-    } else if (e.key === 'ArrowRight' || e.key === 'Right') {
-        e.preventDefault();
+        renderCarousel(true);
+        renderDetail();
+    });
+    document.getElementById('navNext').addEventListener('click', () => {
         selectedIndex = (selectedIndex + 1) % characters.length;
-        renderCarousel(true); renderDetail();
-    }
-});
+        renderCarousel(true);
+        renderDetail();
+    });
 
-/* ═══════════════════════════════════════════
-   ФИЛЬТР "ВСЕ"
-   ═══════════════════════════════════════════ */
-document.querySelectorAll('.filter:not(.random-btn)').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter:not(.random-btn)').forEach(function(b) {
+    // ---------- КЛАВИАТУРНАЯ НАВИГАЦИЯ ----------
+    document.addEventListener('keydown', (e) => {
+        const activePane = document.querySelector('.tab-pane.active');
+        if (!activePane || activePane.id !== 'tab-characters') return;
+        if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex - 1 + characters.length) % characters.length;
+            renderCarousel(true);
+            renderDetail();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            selectedIndex = (selectedIndex + 1) % characters.length;
+            renderCarousel(true);
+            renderDetail();
+        }
+    });
+
+    // ---------- ФИЛЬТР "ВСЕ" ----------
+    document.querySelectorAll('.filter:not(.random-btn)').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter:not(.random-btn)').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderCarousel(true);
+            renderDetail();
+        });
+    });
+
+    // ---------- СЛУЧАЙНЫЙ ПЕРСОНАЖ ----------
+    document.getElementById('randomChar').addEventListener('click', () => {
+        const dice = document.getElementById('diceIcon');
+        dice.style.animation = 'none';
+        void dice.offsetWidth;
+        dice.style.animation = 'diceSpin 0.4s ease';
+        let newIdx;
+        do { newIdx = Math.floor(Math.random() * characters.length); }
+        while (newIdx === selectedIndex && characters.length > 1);
+        selectedIndex = newIdx;
+        renderCarousel(true);
+        renderDetail();
+        showToast('⚄ Случайный выбор: ' + characters[newIdx].name.split(' ')[0], characters[newIdx].glow, 2200);
+    });
+
+    // ---------- ПОИСК ПЕРСОНАЖЕЙ ----------
+    let searchTimeout;
+    document.getElementById('charSearch').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const el = this;
+        const noR = document.getElementById('searchNoResult');
+        noR.textContent = '';
+        searchTimeout = setTimeout(() => {
+            const query = el.value.trim().toLowerCase();
+            if (!query) return;
+            const idx = characters.findIndex(c =>
+                c.name.toLowerCase().includes(query) ||
+                c.role.toLowerCase().includes(query) ||
+                c.tag.toLowerCase().includes(query) ||
+                (c.id && c.id.toLowerCase().includes(query))
+            );
+            if (idx !== -1) {
+                selectedIndex = idx;
+                renderCarousel(true);
+                renderDetail();
+                document.querySelectorAll('.filter:not(.random-btn)').forEach(b => b.classList.remove('active'));
+                document.querySelector('.filter[data-filter="all"]').classList.add('active');
+                noR.textContent = '';
+            } else {
+                noR.textContent = `— персонаж «${el.value.trim()}» не найден —`;
+            }
+        }, 300);
+    });
+    document.getElementById('charSearch').addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            e.target.value = '';
+            document.getElementById('searchNoResult').textContent = '';
+        }
+    });
+
+    // ---------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ----------
+    const LEAVE_MS = 500, ENTER_MS = 850;
+    let isTabSwitching = false;
+    function switchTab(tabId) {
+        if (isTabSwitching) return;
+        const currentPane = document.querySelector('.tab-pane.active');
+        const targetPane = document.getElementById('tab-' + tabId);
+        if (!targetPane || currentPane === targetPane) return;
+        isTabSwitching = true;
+        document.querySelectorAll('.tab-btn').forEach(b => {
             b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
         });
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderCarousel(true); renderDetail();
-    });
-});
-
-/* ═══════════════════════════════════════════
-   СЛУЧАЙНЫЙ ПЕРСОНАЖ
-   ═══════════════════════════════════════════ */
-document.getElementById('randomChar').addEventListener('click', function() {
-    var dice = document.getElementById('diceIcon');
-    dice.style.animation = 'none';
-    void dice.offsetWidth;
-    dice.style.animation = 'diceSpin 0.4s ease';
-
-    var prev = selectedIndex;
-    var newIdx;
-    do { newIdx = Math.floor(Math.random() * characters.length); }
-    while (newIdx === prev && characters.length > 1);
-
-    selectedIndex = newIdx;
-    renderCarousel(true); renderDetail();
-    var c = characters[newIdx];
-    showToast('⚄ Случайный выбор: ' + c.name.split(' ')[0], c.glow, 2200);
-});
-
-/* ═══════════════════════════════════════════
-   ПОИСК ПЕРСОНАЖЕЙ
-   ═══════════════════════════════════════════ */
-var searchTimeout = null;
-document.getElementById('charSearch').addEventListener('input', function() {
-    clearTimeout(searchTimeout);
-    var el  = this;
-    var noR = document.getElementById('searchNoResult');
-    noR.textContent = '';
-    searchTimeout = setTimeout(function() {
-        var query = el.value.trim().toLowerCase();
-        if (!query) return;
-        var idx = characters.findIndex(function(c) {
-            return c.name.toLowerCase().includes(query) ||
-                   c.role.toLowerCase().includes(query) ||
-                   c.tag.toLowerCase().includes(query)  ||
-                   (c.id && c.id.toLowerCase().includes(query));
-        });
-        if (idx !== -1) {
-            selectedIndex = idx;
-            renderCarousel(true); renderDetail();
-            document.querySelectorAll('.filter:not(.random-btn)').forEach(function(b) {
-                b.classList.remove('active');
+        const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            activeBtn.setAttribute('aria-selected', 'true');
+        }
+        currentPane.classList.add('tab-leave');
+        setTimeout(() => {
+            currentPane.classList.remove('active', 'tab-leave');
+            targetPane.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    targetPane.classList.add('tab-enter');
+                    if (tabId === 'home') setTimeout(runCounters, 200);
+                    setTimeout(() => {
+                        targetPane.classList.remove('tab-enter');
+                        isTabSwitching = false;
+                    }, ENTER_MS + 50);
+                });
             });
-            document.querySelector('.filter[data-filter="all"]').classList.add('active');
-            noR.textContent = '';
-        } else {
-            noR.textContent = '— персонаж «' + el.value.trim() + '» не найден —';
-        }
-    }, 300);
-});
-
-document.getElementById('charSearch').addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        this.value = '';
-        document.getElementById('searchNoResult').textContent = '';
+        }, LEAVE_MS);
     }
-});
-
-/* ═══════════════════════════════════════════
-   ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-   ═══════════════════════════════════════════ */
-var LEAVE_MS = 500;
-var ENTER_MS = 850;
-var isTabSwitching = false;
-
-function switchTab(tabId) {
-    if (isTabSwitching) return;
-    var currentPane = document.querySelector('.tab-pane.active');
-    var targetPane  = document.getElementById('tab-' + tabId);
-    if (!targetPane || currentPane === targetPane) return;
-    isTabSwitching = true;
-    document.querySelectorAll('.tab-btn').forEach(function(b) {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
-    var activeBtn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
-    if (activeBtn) {
-        activeBtn.classList.add('active');
-        activeBtn.setAttribute('aria-selected', 'true');
-    }
-    currentPane.classList.add('tab-leave');
-    setTimeout(function() {
-        currentPane.classList.remove('active', 'tab-leave');
-        targetPane.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-                targetPane.classList.add('tab-enter');
-                if (tabId === 'home') setTimeout(runCounters, 200);
-                setTimeout(function() {
-                    targetPane.classList.remove('tab-enter');
-                    isTabSwitching = false;
-                }, ENTER_MS + 50);
-            });
-        });
-    }, LEAVE_MS);
-}
+    document.getElementById('goToChars').addEventListener('click', () => switchTab('characters'));
+    document.getElementById('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-document.querySelectorAll('.tab-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
-});
-document.getElementById('goToChars').addEventListener('click', function() { switchTab('characters'); });
-document.getElementById('backTop').addEventListener('click', function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-/* ═══════════════════════════════════════════
-   АНИМИРОВАННЫЕ СЧЁТЧИКИ
-   ═══════════════════════════════════════════ */
-var countersRan = false;
-
-function animateCounter(el) {
-    var target   = parseInt(el.dataset.target, 10);
-    var duration = 1400;
-    var start    = performance.now();
-    function update(now) {
-        var elapsed  = now - start;
-        var progress = Math.min(elapsed / duration, 1);
-        var eased    = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(eased * target);
-        if (progress < 1) requestAnimationFrame(update);
-        else el.textContent = target;
-    }
-    requestAnimationFrame(update);
-}
-
-function runCounters() {
-    if (countersRan) return;
-    countersRan = true;
-    var nums = document.querySelectorAll('#heroCounters .hc-num');
-    nums.forEach(function(el, i) {
-        setTimeout(function() { animateCounter(el); }, i * 120);
-    });
-}
-
-setTimeout(runCounters, 800);
-
-/* ═══════════════════════════════════════════
-   ПЕРВИЧНЫЙ РЕНДЕР
-   ═══════════════════════════════════════════ */
-renderCarousel(false);
-renderDetail();
-
-/* ═══════════════════════════════════════════
-   INTRO SCREEN
-   ═══════════════════════════════════════════ */
-(function initIntro() {
-    var screen = document.getElementById('introScreen');
-    var bar    = document.getElementById('introBar');
-    var status = document.getElementById('introStatus');
-    var skip   = document.getElementById('introSkip');
-
-    var steps = [
-        { pct: 12,  text: 'LOADING ASSETS...'         },
-        { pct: 30,  text: 'INITIALIZING ENTROPY...'   },
-        { pct: 55,  text: 'LOADING CHARACTERS...'     },
-        { pct: 78,  text: 'CALIBRATING SYSTEMS...'    },
-        { pct: 92,  text: 'AZURE LINK ESTABLISHED...' },
-        { pct: 100, text: 'READY'                     },
-    ];
-    var stepIdx = 0;
-
-    function closeIntro() {
-        screen.classList.add('intro-exit');
-        setTimeout(function() {
-            if (screen.parentNode) screen.parentNode.removeChild(screen);
-        }, 750);
-    }
-
-    function nextStep() {
-        if (stepIdx >= steps.length) { setTimeout(closeIntro, 350); return; }
-        var s = steps[stepIdx++];
-        bar.style.width    = s.pct + '%';
-        status.textContent = s.text;
-        var delay = (stepIdx === steps.length) ? 500 : 280 + Math.random() * 180;
-        setTimeout(nextStep, delay);
-    }
-
-    skip.addEventListener('click', closeIntro);
-    setTimeout(nextStep, 450);
-})();
-
-/* ╔══════════════════════════════════════════════════════════╗
-   ║  АНИМИРОВАННЫЙ ФОН — ЧЕТЫРЕ РЕЖИМА С CROSSFADE          ║
-   ╚══════════════════════════════════════════════════════════╝ */
-(function initBackground() {
-    'use strict';
-    var cvA  = document.getElementById('bgCanvasA');
-    var cvB  = document.getElementById('bgCanvasB');
-    var ctxA = cvA.getContext('2d');
-    var ctxB = cvB.getContext('2d');
-    window.__bgCurrentMode = 0;
-
-    function resize() {
-        cvA.width  = cvB.width  = window.innerWidth;
-        cvA.height = cvB.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', function() {
-        resize();
-        modes.forEach(function(m) { if (m.resize) m.resize(cvA.width, cvA.height); });
-    });
-
-    function getBgPalette() {
-        var isEnd = document.documentElement.classList.contains('theme-end');
-        if (isEnd) return [[180,10,0],[220,60,0],[255,100,30]];
-        return [[21,101,192],[13,148,136],[116,192,252]];
-    }
-
-    function CalamityRain(w, h) { this.resize(w, h); }
-    CalamityRain.prototype.resize = function(w, h) {
-        this.w = w; this.h = h;
-        this.chars = 'アイウエオカキクサシスΔΨΩ∞◈⬡01ABCDEF∇◆';
-        this.colW  = 22;
-        this.cols  = Math.floor(w / this.colW);
-        this.drops  = Array.from({length:this.cols}, function() { return Math.random() * -(h/22); });
-        this.speeds = Array.from({length:this.cols}, function() { return 0.25 + Math.random()*0.75; });
-        this.cidx   = Array.from({length:this.cols}, function() { return Math.floor(Math.random()*3); });
-    };
-    CalamityRain.prototype.draw = function(ctx) {
-        var palette = getBgPalette();
-        var bgAlpha = document.documentElement.classList.contains('theme-end')
-            ? 'rgba(13,0,0,0.16)' : 'rgba(7,11,23,0.16)';
-        ctx.fillStyle = bgAlpha;
-        ctx.fillRect(0,0,this.w,this.h);
-        ctx.font = 'bold 13px "Courier New", monospace';
-        for (var i=0; i<this.cols; i++) {
-            var x  = i*this.colW+2;
-            var yH = Math.floor(this.drops[i])*this.colW;
-            ctx.fillStyle = 'rgba(220,235,255,0.92)';
-            ctx.fillText(this.chars[Math.floor(Math.random()*this.chars.length)], x, yH);
-            var rgb = palette[this.cidx[i]];
-            var tailLen = 6 + Math.floor(Math.random()*4);
-            for (var t=1; t<=tailLen; t++) {
-                var a = (1-t/tailLen)*0.65;
-                ctx.fillStyle = 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')';
-                ctx.fillText(this.chars[Math.floor(Math.random()*this.chars.length)], x, yH-t*this.colW);
-            }
-            this.drops[i] += this.speeds[i];
-            if (yH > this.h+50 && Math.random()>0.975) this.drops[i] = Math.random()*-8;
+    // ---------- АНИМИРОВАННЫЕ СЧЁТЧИКИ ----------
+    let countersRan = false;
+    function animateCounter(el) {
+        const target = parseInt(el.dataset.target, 10);
+        const duration = 1400;
+        const start = performance.now();
+        function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target);
+            if (progress < 1) requestAnimationFrame(update);
+            else el.textContent = target;
         }
-        var vign = ctx.createRadialGradient(this.w/2,this.h/2,this.h*0.3,this.w/2,this.h/2,this.h*0.85);
-        vign.addColorStop(0,'transparent');
-        vign.addColorStop(1,'rgba(4,7,16,0.55)');
-        ctx.fillStyle = vign;
-        ctx.fillRect(0,0,this.w,this.h);
-    };
-
-    function HexGrid(w, h) { this.t=0; this.resize(w,h); }
-    HexGrid.prototype.resize = function(w, h) {
-        this.w=w; this.h=h; this.hexes=[];
-        var S=40, dx=S*1.73, dy=S*1.5;
-        for (var r=-1; r<=Math.ceil(h/dy)+1; r++) {
-            for (var c=-1; c<=Math.ceil(w/dx)+1; c++) {
-                this.hexes.push({ x: c*dx+(r%2===0?0:dx/2), y: r*dy, s:S, phase: Math.random()*Math.PI*2 });
-            }
-        }
-    };
-    HexGrid.prototype.hexPath = function(ctx, x, y, s) {
-        ctx.beginPath();
-        for (var i=0; i<6; i++) {
-            var a = (Math.PI/3)*i - Math.PI/6;
-            i===0 ? ctx.moveTo(x+s*Math.cos(a),y+s*Math.sin(a)) : ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));
-        }
-        ctx.closePath();
-    };
-    HexGrid.prototype.draw = function(ctx) {
-        var palette = getBgPalette();
-        var isEnd   = document.documentElement.classList.contains('theme-end');
-        ctx.clearRect(0,0,this.w,this.h);
-        ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
-        ctx.fillRect(0,0,this.w,this.h);
-        var cx=this.w/2, cy=this.h/2, T=this.t*0.012;
-        for (var i=0; i<this.hexes.length; i++) {
-            var hex  = this.hexes[i];
-            var dist = Math.hypot(hex.x-cx, hex.y-cy);
-            var wave = Math.sin(dist*0.014 - T*2.8 + hex.phase*0.25);
-            var pulse = (wave+1)/2;
-            var p0=palette[0];
-            ctx.strokeStyle='rgba('+p0[0]+','+p0[1]+','+p0[2]+','+(0.06+pulse*0.20)+')';
-            ctx.lineWidth=0.8;
-            this.hexPath(ctx, hex.x, hex.y, hex.s-1); ctx.stroke();
-            if (pulse>0.78) {
-                var t=(pulse-0.78)/0.22, p1=palette[1];
-                ctx.fillStyle='rgba('+p1[0]+','+p1[1]+','+p1[2]+','+(t*0.18)+')';
-                this.hexPath(ctx, hex.x, hex.y, hex.s-1); ctx.fill();
-            }
-            if (pulse>0.65) {
-                var t2=(pulse-0.65)/0.35, p2=palette[2];
-                ctx.fillStyle='rgba('+p2[0]+','+p2[1]+','+p2[2]+','+(t2*0.85)+')';
-                ctx.beginPath(); ctx.arc(hex.x,hex.y,1.5+t2*1.5,0,Math.PI*2); ctx.fill();
-            }
-        }
-        this.t++;
-    };
-
-    function VoidRings(w, h) {
-        this.t=0; this.resize(w,h);
-        var self=this;
-        this.particles = Array.from({length:140}, function() { return self._mkParticle(); });
+        requestAnimationFrame(update);
     }
-    VoidRings.prototype._mkParticle = function() {
-        var orbitR=[110,165,230,310];
-        var radius = orbitR[Math.floor(Math.random()*orbitR.length)]+(Math.random()-0.5)*35;
-        return { angle:Math.random()*Math.PI*2, radius:radius,
-                 speed:(0.0018+Math.random()*0.0055)*(Math.random()>0.5?1:-1),
-                 size:0.8+Math.random()*2.2, alpha:0.15+Math.random()*0.65, ci:Math.floor(Math.random()*3) };
-    };
-    VoidRings.prototype.resize = function(w,h) { this.w=w; this.h=h; };
-    VoidRings.prototype.draw = function(ctx) {
-        var palette=getBgPalette(), isEnd=document.documentElement.classList.contains('theme-end');
-        ctx.clearRect(0,0,this.w,this.h);
-        ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
-        ctx.fillRect(0,0,this.w,this.h);
-        var cx=this.w/2, cy=this.h/2, T=this.t, p0=palette[0];
-        var bg=ctx.createRadialGradient(cx,cy,0,cx,cy,380);
-        bg.addColorStop(0, isEnd?'rgba(22,0,0,0.8)':'rgba(11,18,37,0.8)');
-        bg.addColorStop(0.4,'rgba('+p0[0]+','+p0[1]+','+p0[2]+',0.06)');
-        bg.addColorStop(1,'transparent');
-        ctx.fillStyle=bg; ctx.fillRect(0,0,this.w,this.h);
-        var rings=[
-            {r:110,w:1.8,spd:0.0022,dir:1, ci:0,alpha:0.42,marks:12},
-            {r:165,w:1.2,spd:0.0015,dir:-1,ci:2,alpha:0.30,marks:18},
-            {r:230,w:2.2,spd:0.0009,dir:1, ci:1,alpha:0.22,marks:24},
-            {r:310,w:1.0,spd:0.0005,dir:-1,ci:0,alpha:0.13,marks:32},
+    function runCounters() {
+        if (countersRan) return;
+        countersRan = true;
+        const nums = document.querySelectorAll('#heroCounters .hc-num');
+        nums.forEach((el, i) => setTimeout(() => animateCounter(el), i * 120));
+    }
+    setTimeout(runCounters, 800);
+
+    // ---------- ПЕРВИЧНЫЙ РЕНДЕР ----------
+    renderCarousel(false);
+    renderDetail();
+
+    // ---------- INTRO SCREEN ----------
+    (function initIntro() {
+        const screen = document.getElementById('introScreen');
+        const bar = document.getElementById('introBar');
+        const status = document.getElementById('introStatus');
+        const skip = document.getElementById('introSkip');
+        const steps = [
+            { pct: 12, text: 'LOADING ASSETS...' },
+            { pct: 30, text: 'INITIALIZING ENTROPY...' },
+            { pct: 55, text: 'LOADING CHARACTERS...' },
+            { pct: 78, text: 'CALIBRATING SYSTEMS...' },
+            { pct: 92, text: 'AZURE LINK ESTABLISHED...' },
+            { pct: 100, text: 'READY' }
         ];
-        for (var ri=0; ri<rings.length; ri++) {
-            var ring=rings[ri], rgb=palette[ring.ci];
-            var rot=T*ring.spd*ring.dir;
-            ctx.beginPath(); ctx.arc(cx,cy,ring.r,0,Math.PI*2);
-            ctx.strokeStyle='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+ring.alpha+')';
-            ctx.lineWidth=ring.w; ctx.stroke();
-            for (var m=0; m<ring.marks; m++) {
-                var ang=rot+(Math.PI*2/ring.marks)*m;
-                var mx=cx+Math.cos(ang)*ring.r, my=cy+Math.sin(ang)*ring.r;
-                var pulse2=(Math.sin(T*0.04+m*0.7+ri)+1)/2;
-                ctx.fillStyle='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+(ring.alpha+pulse2*0.45)+')';
-                ctx.beginPath(); ctx.arc(mx,my,1.5+pulse2*2.5,0,Math.PI*2); ctx.fill();
-            }
+        let stepIdx = 0;
+        function closeIntro() {
+            screen.classList.add('intro-exit');
+            setTimeout(() => { if (screen.parentNode) screen.remove(); }, 750);
         }
-        for (var pi=0; pi<this.particles.length; pi++) {
-            var p=this.particles[pi]; p.angle+=p.speed;
-            var px=cx+Math.cos(p.angle)*p.radius, py=cy+Math.sin(p.angle)*p.radius;
-            var rgb2=palette[p.ci];
-            ctx.fillStyle='rgba('+rgb2[0]+','+rgb2[1]+','+rgb2[2]+','+p.alpha+')';
-            ctx.beginPath(); ctx.arc(px,py,p.size,0,Math.PI*2); ctx.fill();
+        function nextStep() {
+            if (stepIdx >= steps.length) { setTimeout(closeIntro, 350); return; }
+            const s = steps[stepIdx++];
+            bar.style.width = s.pct + '%';
+            status.textContent = s.text;
+            const delay = (stepIdx === steps.length) ? 500 : 280 + Math.random() * 180;
+            setTimeout(nextStep, delay);
         }
-        var pulse3=(Math.sin(T*0.048)+1)/2, orbR=55+pulse3*15;
-        var orb=ctx.createRadialGradient(cx,cy,0,cx,cy,orbR);
-        orb.addColorStop(0,'rgba(180,230,255,'+(0.18+pulse3*0.12)+')');
-        orb.addColorStop(0.4,'rgba('+p0[0]+','+p0[1]+','+p0[2]+','+(0.10+pulse3*0.08)+')');
-        orb.addColorStop(1,'transparent');
-        ctx.fillStyle=orb; ctx.beginPath(); ctx.arc(cx,cy,orbR,0,Math.PI*2); ctx.fill();
-        var coreR=5+pulse3*4, core=ctx.createRadialGradient(cx,cy,0,cx,cy,coreR);
-        core.addColorStop(0,'rgba(220,245,255,'+(0.7+pulse3*0.3)+')');
-        core.addColorStop(1,'transparent');
-        ctx.fillStyle=core; ctx.beginPath(); ctx.arc(cx,cy,coreR,0,Math.PI*2); ctx.fill();
-        this.t++;
-    };
+        skip.addEventListener('click', closeIntro);
+        setTimeout(nextStep, 450);
+    })();
 
-    function NeuralWeb(w, h) { this.t=0; this.NODE_COUNT=80; this.LINK_DIST=160; this.resize(w,h); }
-    NeuralWeb.prototype.resize = function(w, h) {
-        this.w=w; this.h=h;
-        this.nodes = Array.from({length:this.NODE_COUNT}, function() {
-            return { x:Math.random()*w, y:Math.random()*h,
-                     vx:(Math.random()-0.5)*0.55, vy:(Math.random()-0.5)*0.55,
-                     r:1.5+Math.random()*2.5, phase:Math.random()*Math.PI*2,
-                     ci:Math.floor(Math.random()*3) };
-        });
-    };
-    NeuralWeb.prototype.draw = function(ctx) {
-        var palette=getBgPalette(), isEnd=document.documentElement.classList.contains('theme-end'), T=this.t;
-        ctx.clearRect(0,0,this.w,this.h);
-        ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
-        ctx.fillRect(0,0,this.w,this.h);
-        for (var ni=0; ni<this.nodes.length; ni++) {
-            var n=this.nodes[ni];
-            n.x+=n.vx; n.y+=n.vy;
-            if(n.x<0){n.x=0;n.vx*=-1;} if(n.x>this.w){n.x=this.w;n.vx*=-1;}
-            if(n.y<0){n.y=0;n.vy*=-1;} if(n.y>this.h){n.y=this.h;n.vy*=-1;}
+    // ---------- АНИМИРОВАННЫЙ ФОН (ЧЕТЫРЕ РЕЖИМА) ----------
+    (function initBackground() {
+        'use strict';
+        const cvA = document.getElementById('bgCanvasA');
+        const cvB = document.getElementById('bgCanvasB');
+        const ctxA = cvA.getContext('2d');
+        const ctxB = cvB.getContext('2d');
+        window.__bgCurrentMode = 0;
+
+        function resize() {
+            cvA.width = cvB.width = window.innerWidth;
+            cvA.height = cvB.height = window.innerHeight;
         }
-        for (var i=0; i<this.nodes.length; i++) {
-            for (var j=i+1; j<this.nodes.length; j++) {
-                var a=this.nodes[i], b=this.nodes[j];
-                var dist=Math.hypot(a.x-b.x, a.y-b.y);
-                if (dist<this.LINK_DIST) {
-                    var alpha=(1-dist/this.LINK_DIST)*0.35, rgb=palette[a.ci];
-                    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-                    ctx.strokeStyle='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
-                    ctx.lineWidth=(1-dist/this.LINK_DIST)*1.2; ctx.stroke();
+        resize();
+        window.addEventListener('resize', () => {
+            resize();
+            modes.forEach(m => { if (m.resize) m.resize(cvA.width, cvA.height); });
+        });
+
+        function getBgPalette() {
+            const isEnd = document.documentElement.classList.contains('theme-end');
+            if (isEnd) return [[180,10,0],[220,60,0],[255,100,30]];
+            return [[21,101,192],[13,148,136],[116,192,252]];
+        }
+
+        function CalamityRain(w, h) { this.resize(w, h); }
+        CalamityRain.prototype.resize = function(w, h) {
+            this.w = w; this.h = h;
+            this.chars = 'アイウエオカキクサシスΔΨΩ∞◈⬡01ABCDEF∇◆';
+            this.colW = 22;
+            this.cols = Math.floor(w / this.colW);
+            this.drops = Array.from({length: this.cols}, () => Math.random() * -(h/22));
+            this.speeds = Array.from({length: this.cols}, () => 0.25 + Math.random()*0.75);
+            this.cidx = Array.from({length: this.cols}, () => Math.floor(Math.random()*3));
+        };
+        CalamityRain.prototype.draw = function(ctx) {
+            const palette = getBgPalette();
+            const bgAlpha = document.documentElement.classList.contains('theme-end') ? 'rgba(13,0,0,0.16)' : 'rgba(7,11,23,0.16)';
+            ctx.fillStyle = bgAlpha;
+            ctx.fillRect(0,0,this.w,this.h);
+            ctx.font = 'bold 13px "Courier New", monospace';
+            for (let i=0; i<this.cols; i++) {
+                const x = i*this.colW+2;
+                const yH = Math.floor(this.drops[i])*this.colW;
+                ctx.fillStyle = 'rgba(220,235,255,0.92)';
+                ctx.fillText(this.chars[Math.floor(Math.random()*this.chars.length)], x, yH);
+                const rgb = palette[this.cidx[i]];
+                const tailLen = 6 + Math.floor(Math.random()*4);
+                for (let t=1; t<=tailLen; t++) {
+                    const a = (1-t/tailLen)*0.65;
+                    ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+                    ctx.fillText(this.chars[Math.floor(Math.random()*this.chars.length)], x, yH-t*this.colW);
+                }
+                this.drops[i] += this.speeds[i];
+                if (yH > this.h+50 && Math.random()>0.975) this.drops[i] = Math.random()*-8;
+            }
+            const vign = ctx.createRadialGradient(this.w/2,this.h/2,this.h*0.3,this.w/2,this.h/2,this.h*0.85);
+            vign.addColorStop(0,'transparent');
+            vign.addColorStop(1,'rgba(4,7,16,0.55)');
+            ctx.fillStyle = vign;
+            ctx.fillRect(0,0,this.w,this.h);
+        };
+
+        function HexGrid(w, h) { this.t=0; this.resize(w,h); }
+        HexGrid.prototype.resize = function(w, h) {
+            this.w=w; this.h=h; this.hexes=[];
+            const S=40, dx=S*1.73, dy=S*1.5;
+            for (let r=-1; r<=Math.ceil(h/dy)+1; r++) {
+                for (let c=-1; c<=Math.ceil(w/dx)+1; c++) {
+                    this.hexes.push({ x: c*dx+(r%2===0?0:dx/2), y: r*dy, s:S, phase: Math.random()*Math.PI*2 });
                 }
             }
+        };
+        HexGrid.prototype.hexPath = function(ctx, x, y, s) {
+            ctx.beginPath();
+            for (let i=0; i<6; i++) {
+                const a = (Math.PI/3)*i - Math.PI/6;
+                i===0 ? ctx.moveTo(x+s*Math.cos(a),y+s*Math.sin(a)) : ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));
+            }
+            ctx.closePath();
+        };
+        HexGrid.prototype.draw = function(ctx) {
+            const palette = getBgPalette();
+            const isEnd = document.documentElement.classList.contains('theme-end');
+            ctx.clearRect(0,0,this.w,this.h);
+            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+            ctx.fillRect(0,0,this.w,this.h);
+            const cx=this.w/2, cy=this.h/2, T=this.t*0.012;
+            for (let i=0; i<this.hexes.length; i++) {
+                const hex = this.hexes[i];
+                const dist = Math.hypot(hex.x-cx, hex.y-cy);
+                const wave = Math.sin(dist*0.014 - T*2.8 + hex.phase*0.25);
+                const pulse = (wave+1)/2;
+                const p0=palette[0];
+                ctx.strokeStyle = `rgba(${p0[0]},${p0[1]},${p0[2]},${0.06+pulse*0.20})`;
+                ctx.lineWidth = 0.8;
+                this.hexPath(ctx, hex.x, hex.y, hex.s-1); ctx.stroke();
+                if (pulse>0.78) {
+                    const t=(pulse-0.78)/0.22, p1=palette[1];
+                    ctx.fillStyle = `rgba(${p1[0]},${p1[1]},${p1[2]},${t*0.18})`;
+                    this.hexPath(ctx, hex.x, hex.y, hex.s-1); ctx.fill();
+                }
+                if (pulse>0.65) {
+                    const t2=(pulse-0.65)/0.35, p2=palette[2];
+                    ctx.fillStyle = `rgba(${p2[0]},${p2[1]},${p2[2]},${t2*0.85})`;
+                    ctx.beginPath(); ctx.arc(hex.x,hex.y,1.5+t2*1.5,0,Math.PI*2); ctx.fill();
+                }
+            }
+            this.t++;
+        };
+
+        function VoidRings(w, h) {
+            this.t=0; this.resize(w,h);
+            const self=this;
+            this.particles = Array.from({length:140}, () => self._mkParticle());
         }
-        for (var ni2=0; ni2<this.nodes.length; ni2++) {
-            var nd=this.nodes[ni2];
-            var pulse4=(Math.sin(T*0.03+nd.phase)+1)/2, rgb3=palette[nd.ci];
-            var nodeR=nd.r+pulse4*1.5;
-            var grd=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,nodeR*3);
-            grd.addColorStop(0,'rgba('+rgb3[0]+','+rgb3[1]+','+rgb3[2]+','+(0.4+pulse4*0.35)+')');
-            grd.addColorStop(1,'rgba('+rgb3[0]+','+rgb3[1]+','+rgb3[2]+',0)');
-            ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(nd.x,nd.y,nodeR*3,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='rgba('+rgb3[0]+','+rgb3[1]+','+rgb3[2]+','+(0.7+pulse4*0.3)+')';
-            ctx.beginPath(); ctx.arc(nd.x,nd.y,nodeR,0,Math.PI*2); ctx.fill();
+        VoidRings.prototype._mkParticle = function() {
+            const orbitR=[110,165,230,310];
+            const radius = orbitR[Math.floor(Math.random()*orbitR.length)]+(Math.random()-0.5)*35;
+            return {
+                angle:Math.random()*Math.PI*2, radius:radius,
+                speed:(0.0018+Math.random()*0.0055)*(Math.random()>0.5?1:-1),
+                size:0.8+Math.random()*2.2, alpha:0.15+Math.random()*0.65, ci:Math.floor(Math.random()*3)
+            };
+        };
+        VoidRings.prototype.resize = function(w,h) { this.w=w; this.h=h; };
+        VoidRings.prototype.draw = function(ctx) {
+            const palette=getBgPalette(), isEnd=document.documentElement.classList.contains('theme-end');
+            ctx.clearRect(0,0,this.w,this.h);
+            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+            ctx.fillRect(0,0,this.w,this.h);
+            const cx=this.w/2, cy=this.h/2, T=this.t, p0=palette[0];
+            const bg=ctx.createRadialGradient(cx,cy,0,cx,cy,380);
+            bg.addColorStop(0, isEnd?'rgba(22,0,0,0.8)':'rgba(11,18,37,0.8)');
+            bg.addColorStop(0.4,`rgba(${p0[0]},${p0[1]},${p0[2]},0.06)`);
+            bg.addColorStop(1,'transparent');
+            ctx.fillStyle=bg; ctx.fillRect(0,0,this.w,this.h);
+            const rings=[
+                {r:110,w:1.8,spd:0.0022,dir:1, ci:0,alpha:0.42,marks:12},
+                {r:165,w:1.2,spd:0.0015,dir:-1,ci:2,alpha:0.30,marks:18},
+                {r:230,w:2.2,spd:0.0009,dir:1, ci:1,alpha:0.22,marks:24},
+                {r:310,w:1.0,spd:0.0005,dir:-1,ci:0,alpha:0.13,marks:32},
+            ];
+            for (let ri=0; ri<rings.length; ri++) {
+                const ring=rings[ri], rgb=palette[ring.ci];
+                const rot=T*ring.spd*ring.dir;
+                ctx.beginPath(); ctx.arc(cx,cy,ring.r,0,Math.PI*2);
+                ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${ring.alpha})`;
+                ctx.lineWidth=ring.w; ctx.stroke();
+                for (let m=0; m<ring.marks; m++) {
+                    const ang=rot+(Math.PI*2/ring.marks)*m;
+                    const mx=cx+Math.cos(ang)*ring.r, my=cy+Math.sin(ang)*ring.r;
+                    const pulse2=(Math.sin(T*0.04+m*0.7+ri)+1)/2;
+                    ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${ring.alpha+pulse2*0.45})`;
+                    ctx.beginPath(); ctx.arc(mx,my,1.5+pulse2*2.5,0,Math.PI*2); ctx.fill();
+                }
+            }
+            for (let pi=0; pi<this.particles.length; pi++) {
+                const p=this.particles[pi]; p.angle+=p.speed;
+                const px=cx+Math.cos(p.angle)*p.radius, py=cy+Math.sin(p.angle)*p.radius;
+                const rgb2=palette[p.ci];
+                ctx.fillStyle = `rgba(${rgb2[0]},${rgb2[1]},${rgb2[2]},${p.alpha})`;
+                ctx.beginPath(); ctx.arc(px,py,p.size,0,Math.PI*2); ctx.fill();
+            }
+            const pulse3=(Math.sin(T*0.048)+1)/2, orbR=55+pulse3*15;
+            const orb=ctx.createRadialGradient(cx,cy,0,cx,cy,orbR);
+            orb.addColorStop(0,`rgba(180,230,255,${0.18+pulse3*0.12})`);
+            orb.addColorStop(0.4,`rgba(${p0[0]},${p0[1]},${p0[2]},${0.10+pulse3*0.08})`);
+            orb.addColorStop(1,'transparent');
+            ctx.fillStyle=orb; ctx.beginPath(); ctx.arc(cx,cy,orbR,0,Math.PI*2); ctx.fill();
+            const coreR=5+pulse3*4, core=ctx.createRadialGradient(cx,cy,0,cx,cy,coreR);
+            core.addColorStop(0,`rgba(220,245,255,${0.7+pulse3*0.3})`);
+            core.addColorStop(1,'transparent');
+            ctx.fillStyle=core; ctx.beginPath(); ctx.arc(cx,cy,coreR,0,Math.PI*2); ctx.fill();
+            this.t++;
+        };
+
+        function NeuralWeb(w, h) { this.t=0; this.NODE_COUNT=80; this.LINK_DIST=160; this.resize(w,h); }
+        NeuralWeb.prototype.resize = function(w, h) {
+            this.w=w; this.h=h;
+            this.nodes = Array.from({length: this.NODE_COUNT}, () => ({
+                x:Math.random()*w, y:Math.random()*h,
+                vx:(Math.random()-0.5)*0.55, vy:(Math.random()-0.5)*0.55,
+                r:1.5+Math.random()*2.5, phase:Math.random()*Math.PI*2,
+                ci:Math.floor(Math.random()*3)
+            }));
+        };
+        NeuralWeb.prototype.draw = function(ctx) {
+            const palette=getBgPalette(), isEnd=document.documentElement.classList.contains('theme-end'), T=this.t;
+            ctx.clearRect(0,0,this.w,this.h);
+            ctx.fillStyle = isEnd ? '#0d0000' : '#070b17';
+            ctx.fillRect(0,0,this.w,this.h);
+            for (let ni=0; ni<this.nodes.length; ni++) {
+                const n=this.nodes[ni];
+                n.x+=n.vx; n.y+=n.vy;
+                if(n.x<0){n.x=0;n.vx*=-1;} if(n.x>this.w){n.x=this.w;n.vx*=-1;}
+                if(n.y<0){n.y=0;n.vy*=-1;} if(n.y>this.h){n.y=this.h;n.vy*=-1;}
+            }
+            for (let i=0; i<this.nodes.length; i++) {
+                for (let j=i+1; j<this.nodes.length; j++) {
+                    const a=this.nodes[i], b=this.nodes[j];
+                    const dist=Math.hypot(a.x-b.x, a.y-b.y);
+                    if (dist<this.LINK_DIST) {
+                        const alpha=(1-dist/this.LINK_DIST)*0.35, rgb=palette[a.ci];
+                        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+                        ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+                        ctx.lineWidth=(1-dist/this.LINK_DIST)*1.2; ctx.stroke();
+                    }
+                }
+            }
+            for (let ni2=0; ni2<this.nodes.length; ni2++) {
+                const nd=this.nodes[ni2];
+                const pulse4=(Math.sin(T*0.03+nd.phase)+1)/2, rgb3=palette[nd.ci];
+                const nodeR=nd.r+pulse4*1.5;
+                const grd=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,nodeR*3);
+                grd.addColorStop(0,`rgba(${rgb3[0]},${rgb3[1]},${rgb3[2]},${0.4+pulse4*0.35})`);
+                grd.addColorStop(1,`rgba(${rgb3[0]},${rgb3[1]},${rgb3[2]},0)`);
+                ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(nd.x,nd.y,nodeR*3,0,Math.PI*2); ctx.fill();
+                ctx.fillStyle = `rgba(${rgb3[0]},${rgb3[1]},${rgb3[2]},${0.7+pulse4*0.3})`;
+                ctx.beginPath(); ctx.arc(nd.x,nd.y,nodeR,0,Math.PI*2); ctx.fill();
+            }
+            const cx=this.w/2, cy=this.h/2, p00=palette[0];
+            const radGl=ctx.createRadialGradient(cx,cy,0,cx,cy,350);
+            radGl.addColorStop(0,`rgba(${p00[0]},${p00[1]},${p00[2]},0.07)`);
+            radGl.addColorStop(1,'transparent');
+            ctx.fillStyle=radGl; ctx.fillRect(0,0,this.w,this.h);
+            this.t++;
+        };
+
+        const W=cvA.width, H=cvA.height;
+        const modes = [
+            new CalamityRain(W,H),
+            new HexGrid(W,H),
+            new VoidRings(W,H),
+            new NeuralWeb(W,H)
+        ];
+        const modeNames = ['RAIN','HEX','VOID','WEB'];
+        let modeA = 0, modeB = 1, isTransitioning = false;
+        const SWITCH_MS = 10000, CROSSFADE_MS = 2500;
+
+        ctxA.fillStyle = '#070b17';
+        ctxA.fillRect(0,0,cvA.width,cvA.height);
+
+        function updateBgIndicator(idx) {
+            document.querySelectorAll('.bmi-dot').forEach((dot, i) => dot.classList.toggle('active', i === idx));
+            const nameEl = document.getElementById('bmiModeName');
+            if (nameEl) nameEl.textContent = modeNames[idx] || '';
+            window.__bgCurrentMode = idx;
         }
-        var cx=this.w/2, cy=this.h/2, p00=palette[0];
-        var radGl=ctx.createRadialGradient(cx,cy,0,cx,cy,350);
-        radGl.addColorStop(0,'rgba('+p00[0]+','+p00[1]+','+p00[2]+',0.07)');
-        radGl.addColorStop(1,'transparent');
-        ctx.fillStyle=radGl; ctx.fillRect(0,0,this.w,this.h);
-        this.t++;
-    };
+        updateBgIndicator(0);
 
-    var W=cvA.width, H=cvA.height;
-    var modes = [
-        new CalamityRain(W,H),
-        new HexGrid(W,H),
-        new VoidRings(W,H),
-        new NeuralWeb(W,H)
-    ];
-    var modeNames       = ['RAIN','HEX','VOID','WEB'];
-    var modeA           = 0;
-    var modeB           = 1;
-    var isTransitioning = false;
-    var SWITCH_MS    = 10000;
-    var CROSSFADE_MS = 2500;
-
-    ctxA.fillStyle = '#070b17';
-    ctxA.fillRect(0,0,cvA.width,cvA.height);
-
-    function updateBgIndicator(idx) {
-        document.querySelectorAll('.bmi-dot').forEach(function(dot, i) {
-            dot.classList.toggle('active', i === idx);
-        });
-        var nameEl = document.getElementById('bmiModeName');
-        if (nameEl) nameEl.textContent = modeNames[idx] || '';
-        window.__bgCurrentMode = idx;
-    }
-    updateBgIndicator(0);
-
-    function startTransition() {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        modeB = (modeA+1) % modes.length;
-        cvB.style.transition = 'none';
-        cvB.style.opacity    = '0';
-        requestAnimationFrame(function() {
-            cvB.style.transition = 'opacity '+CROSSFADE_MS+'ms ease-in-out';
-            cvA.style.transition = 'opacity '+CROSSFADE_MS+'ms ease-in-out';
-            cvB.style.opacity    = '1';
-            cvA.style.opacity    = '0';
-        });
-        setTimeout(function() {
-            modeA = modeB;
-            cvA.style.transition = 'none';
-            cvA.style.opacity    = '1';
-            cvB.style.transition = 'none';
-            cvB.style.opacity    = '0';
-            isTransitioning      = false;
-            updateBgIndicator(modeA);
-        }, CROSSFADE_MS + 80);
-    }
-
-    function animate() {
-        modes[modeA].draw(ctxA);
-        if (isTransitioning) modes[modeB].draw(ctxB);
-        requestAnimationFrame(animate);
-    }
-    animate();
-    setInterval(startTransition, SWITCH_MS);
-
-    document.querySelectorAll('.bmi-dot').forEach(function(dot) {
-        dot.addEventListener('click', function() {
-            var targetMode = parseInt(this.dataset.mode, 10);
-            if (targetMode === modeA || isTransitioning) return;
-            modeB = targetMode;
-            cvB.style.transition = 'none';
-            cvB.style.opacity    = '0';
+        function startTransition() {
+            if (isTransitioning) return;
             isTransitioning = true;
-            requestAnimationFrame(function() {
-                cvB.style.transition = 'opacity 1200ms ease-in-out';
-                cvA.style.transition = 'opacity 1200ms ease-in-out';
-                cvB.style.opacity    = '1';
-                cvA.style.opacity    = '0';
+            modeB = (modeA+1) % modes.length;
+            cvB.style.transition = 'none';
+            cvB.style.opacity = '0';
+            requestAnimationFrame(() => {
+                cvB.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
+                cvA.style.transition = `opacity ${CROSSFADE_MS}ms ease-in-out`;
+                cvB.style.opacity = '1';
+                cvA.style.opacity = '0';
             });
-            setTimeout(function() {
+            setTimeout(() => {
                 modeA = modeB;
                 cvA.style.transition = 'none';
-                cvA.style.opacity    = '1';
+                cvA.style.opacity = '1';
                 cvB.style.transition = 'none';
-                cvB.style.opacity    = '0';
-                isTransitioning      = false;
+                cvB.style.opacity = '0';
+                isTransitioning = false;
                 updateBgIndicator(modeA);
-                showToast('Фон: ' + modeNames[modeA], '#74c0fc', 1500);
-            }, 1280);
-        });
-    });
-})();
+            }, CROSSFADE_MS + 80);
+        }
 
+        function animate() {
+            modes[modeA].draw(ctxA);
+            if (isTransitioning) modes[modeB].draw(ctxB);
+            requestAnimationFrame(animate);
+        }
+        animate();
+        setInterval(startTransition, SWITCH_MS);
+
+        document.querySelectorAll('.bmi-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                const targetMode = parseInt(this.dataset.mode, 10);
+                if (targetMode === modeA || isTransitioning) return;
+                modeB = targetMode;
+                cvB.style.transition = 'none';
+                cvB.style.opacity = '0';
+                isTransitioning = true;
+                requestAnimationFrame(() => {
+                    cvB.style.transition = 'opacity 1200ms ease-in-out';
+                    cvA.style.transition = 'opacity 1200ms ease-in-out';
+                    cvB.style.opacity = '1';
+                    cvA.style.opacity = '0';
+                });
+                setTimeout(() => {
+                    modeA = modeB;
+                    cvA.style.transition = 'none';
+                    cvA.style.opacity = '1';
+                    cvB.style.transition = 'none';
+                    cvB.style.opacity = '0';
+                    isTransitioning = false;
+                    updateBgIndicator(modeA);
+                    showToast('Фон: ' + modeNames[modeA], '#74c0fc', 1500);
+                }, 1280);
+            });
+        });
+    })();
 </script>
 </body>
 </html>
